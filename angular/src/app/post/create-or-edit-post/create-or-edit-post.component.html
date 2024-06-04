@@ -1,0 +1,313 @@
+<div bsModal #createOrEditModal="bs-modal" class="modal fade" aria-labelledby="createOrEditModal" aria-hidden="true"
+  [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-md modal-lg">
+    <div class="modal-content">
+      <form class="form-horizontal" autocomplete="off" #createpostsModal="ngForm" (ngSubmit)="save()" *ngIf="active">
+
+        <abp-modal-header *ngIf="posts.id" [title]="'EditPosts' | localize"
+          (onCloseClick)="modal.hide()"></abp-modal-header>
+        <abp-modal-header *ngIf="!posts.id" [title]="'CreateNewPost' | localize"
+          (onCloseClick)="modal.hide()"></abp-modal-header>
+
+        <div class="modal-body">
+          <tabset>
+            <tab [heading]="'PostsDetails' | localize" class="pt-3 px-2">
+              <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="title">
+                  {{ "Title" | localize }}
+                </label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" name="title" id="title" required [(ngModel)]="posts.title"
+                    #titleModel="ngModel" #titleEl />
+                  <abp-validation-summary [control]="titleModel" [controlEl]="titleEl"></abp-validation-summary>
+                </div>
+              </div>
+              <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="contentPost">
+                  {{ "ContentPost" | localize }}
+                </label>
+                <div class="col-md-9">
+                  <textarea type="text" class="form-control" name="contentPost" id="contentPost" required
+                    [(ngModel)]="posts.contentPost" #contentPostModel="ngModel" #contentPostEl > </textarea>
+                  <abp-validation-summary [control]="contentPostModel"
+                    [controlEl]="contentPostEl"></abp-validation-summary>
+                </div>
+              </div>
+              <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="address">
+                  {{ "Address" | localize }}
+                </label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" name="address" id="address" required
+                    [(ngModel)]="posts.address" ngModel #addressModel="ngModel" #addressEl />
+                  <abp-validation-summary [control]="addressModel" [controlEl]="addressEl"></abp-validation-summary>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6 ">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="city">
+                      {{ "Thành phố" | localize }}
+                    </label>
+                    <div class="">
+                      <select type="text" class="form-control" name="city" id="city" required
+                        [(ngModel)]="posts.city" #cityModel="ngModel" #cityEl >
+                        <option selected>Hà Nội</option></select>
+                      <abp-validation-summary [control]="cityModel"
+                        [controlEl]="cityEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="district">
+                      {{ "Quận" | localize }}
+                    </label>
+                    <div class="">
+                      <select type="text" class="form-control" name="district" id="district" required
+                        [(ngModel)]="posts.district" #districtModel="ngModel" #districtEl>
+                        <option value="Ba Đình">Ba Đình</option>
+                        <option value="Cầu Giấy">Cầu Giấy</option>
+                        <option value="Đống Đa">Đống Đa</option>
+                        <option value="Hai Bà Trưng">Hai Bà Trưng</option>
+                        <option value="Hoàn Kiếm">Hoàn Kiếm</option>
+                        <option value="Thanh Xuân">Thanh Xuân</option>
+                        <option value="Hoàng Mai">Hoàng Mai</option>
+                        <option value="Long Biên">Long Biên</option>
+                        <option value="Hà Đông">Hà Đông</option>
+                        <option value="Tây Hồ">Tây Hồ</option>
+                        <option value="Nam Từ Liêm">Nam Từ Liêm</option>
+                        <option value="Bắc Từ Liêm">Bắc Từ Liêm</option></select>
+
+                      <abp-validation-summary [control]="districtModel"
+                        [controlEl]="districtEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="priceCategory">
+                  {{ "PriceCategory" | localize }}
+                </label>
+                <div class="col-md-9">
+                  <select type="text" class="form-control" name="priceCategory" id="priceCategory" required
+                    [(ngModel)]="posts.priceCategory" #priceCategoryModel="ngModel" #priceCategoryEl >
+                    <option selected>Phòng đơn</option>
+                    <option value="Chung cư mini">Chung cư mini</option>
+                    <option value="Từ 2 người">Từ 2 người</option></select>
+                  <abp-validation-summary [control]="priceCategoryModel"
+                    [controlEl]="priceCategoryEl"></abp-validation-summary>
+                </div>
+              </div>
+              <!-- <div class="row">
+                <div class="col-6 ">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="ward">
+                      {{ "Phường/xã" | localize }}
+                    </label>
+                    <div class="">
+                      <select type="text" class="form-control" name="city" id="city" required
+                        [(ngModel)]="posts.city" #cityModel="ngModel" #cityEl >
+                        <option selected>Hà Nội</option>
+                        <option value="Hà Nội">Hà Nội</option></select>
+                      <abp-validation-summary [control]="cityModel"
+                        [controlEl]="cityEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="priceCategory">
+                      {{ "PriceCategory" | localize }}
+                    </label>
+                    <div class="">
+                      <select type="text" class="form-control" name="priceCategory" id="priceCategory" required
+                        [(ngModel)]="posts.priceCategory" #priceCategoryModel="ngModel" #priceCategoryEl >
+                        <option selected>Phòng đơn</option>
+                        <option value="Chung cư mini">Chung cư mini</option>
+                        <option value="Từ 2 người">Từ 2 người</option></select>
+                      <abp-validation-summary [control]="priceCategoryModel"
+                        [controlEl]="priceCategoryEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+              <div class="col" style="margin-left: -9px;">
+                  <label class="">
+                    {{ "Tiện ích" | localize }}
+                  </label>
+                  <div class="row ml-4">
+                    <div class="col-12 col-sm-4">
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" name="conditioner" id="conditioner"
+                            [(ngModel)]="posts.conditioner" />
+                          <label class="custom-control-label" style="font-weight: normal;" for="conditioner">{{ "Điều hóa" | localize }}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" name="parking" id="parking"
+                            [(ngModel)]="posts.parking" />
+                          <label class="custom-control-label" style="font-weight: normal;" for="parking">{{ "Chỗ để xe" | localize }}</label>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" name="wifi" id="wifi"
+                            [(ngModel)]="posts.wifi" />
+                          <label class="custom-control-label" style="font-weight: normal;" for="wifi">{{ "Internet" | localize }}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-6 ">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="roomPrice">
+                      {{ "RoomPrice" | localize }}
+                    </label>
+                    <div class="">
+                      <input type="text" class="form-control" name="roomPrice" id="roomPrice" required
+                        [(ngModel)]="posts.roomPrice" #roomPriceModel="ngModel" #roomPriceEl />
+                      <abp-validation-summary [control]="roomPriceModel" [controlEl]="roomPriceEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group col required">
+                    <label class="col-form-label" for="square">
+                      {{ "Square" | localize }}
+                    </label>
+                    <div class="">
+                      <input type="text" class="form-control" name="square" id="square" required
+                        [(ngModel)]="posts.square" #squareModel="ngModel" #squareEl />
+                      <abp-validation-summary [control]="squareModel" [controlEl]="squareEl"></abp-validation-summary>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row mb-0">
+                <label class="col-md-3 col-form-label">
+                  {{ "RoomStatus" | localize }}
+                </label>
+                <div class="col-md-9">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="roomStatus" id="roomStatus"
+                      [(ngModel)]="posts.roomStatus" />
+                    <label class="custom-control-label mt-2" for="roomStatus"></label>
+                  </div>
+                </div>
+              </div>
+            </tab>
+
+            <tab *ngIf="posts.id" [heading]="'PhotosDetails' | localize" class="pt-3 px-2">
+              <div class="row">
+                <div class="col-2" *ngFor="let photo of postPhotos">
+                  <img src="{{photo.url}}" alt="{{photo.url}}" class="img-thumbnail p-1">
+                  <div class="text-center">
+                    <button
+                      [disabled]="photo.isMain"
+                      (click)="setMainPhotos(posts.id, photo.id)"
+                      [ngClass]='photo.isMain ? "btn-success active" : "btn-outline-success"'
+                      class="btn btn-sm">
+                       Chính
+                    </button>
+                    <button
+                      [disabled]="photo.isMain"
+                      (click)="deletePhoto(posts.id, photo.id)"
+                      class="btn btn-sm btn-danger">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+              </div>
+              </div>
+              <div class="row mt-4">
+
+                <div class="col-md-3">
+
+                  <h3 class="Add_photos">Thêm hình ảnh</h3>
+
+                  <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropzoneOver}" (fileOver)="fileOverBase($event)"
+                    [uploader]="uploader" class="card bg-faded p-3 text-center mb-3 my-drop-zone">
+                    <i class="fa fa-upload fa-3x"></i>
+                    Thả vào đây
+                  </div>
+
+                  Nhiều ảnh
+                  <input type="file" ng2FileSelect [uploader]="uploader" multiple /><br />
+
+                  Đơn ảnh
+                  <input type="file" ng2FileSelect [uploader]="uploader" />
+                </div>
+
+                <div class="col-md-9" style="margin-bottom: 40px">
+
+                  <h3 class="Add_photos">Chờ tải lên</h3>
+                  <p>Kích thước: {{ uploader?.queue?.length }}</p>
+
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th width="50%">Tên</th>
+                        <th>Kích cỡ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of uploader.queue">
+                        <td><strong>{{ item?.file?.name }}</strong></td>
+                        <td *ngIf="uploader.options.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div>
+                    <div>
+                      Tiến trình xếp hàng
+                      <div class="progress">
+                        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }">
+                        </div>
+                      </div>
+                    </div>
+                    <button class="btn btn-success btn-s" (click)="uploader.uploadAll()"
+                      [disabled]="!uploader.getNotUploadedItems().length">
+                      <span class="fa fa-upload"></span> Tải lên
+                    </button>
+                    <button class="btn btn-warning btn-s" (click)="uploader.cancelAll()"
+                      [disabled]="!uploader.isUploading">
+                      <span class="fa fa-ban"></span> Hủy bỏ
+                    </button>
+                    <button class="btn btn-danger btn-s" (click)="uploader.clearQueue()"
+                      [disabled]="!uploader.queue.length">
+                      <span class="fa fa-trash"></span> Xóa bỏ
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </tab>
+          </tabset>
+        </div>
+        <div class="modal-footer">
+          <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createpostsModal.form.valid || saving"
+            (onCancelClick)="modal.hide()"></abp-modal-footer>
+          <!-- <button [disabled]="saving" type="button" class="tmss-btn btn-outline-dark"
+            (click)="close()">{{l("Cancel")}}</button>
+          <button type="submit" class="btn btn-outline-primary" [cancelDisabled]="saving"  [saveDisabled]="!createpostsModal.form.valid || saving"
+            ><i class="fa fa-save mr-1"></i>
+            <span>{{l("Save")}}</span></button> -->
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

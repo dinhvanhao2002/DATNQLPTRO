@@ -1,0 +1,17 @@
+.banner {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  .banner img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .banner img:hover {
+    transform: scale(1.1);
+  }

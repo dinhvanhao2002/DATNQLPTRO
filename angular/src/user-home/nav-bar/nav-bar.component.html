@@ -1,0 +1,21 @@
+<header class="d-flex flex-row align-items-center justify-content-between p-3 px-4 mb-3
+    bg-white border-bottom fixed-top shadow-sm">
+    <img src="/assets/logochuan.jpg" alt="logo" class="logo" style="max-height: 80px;" routerLink="/user-home">
+    <nav class="my-2 text-uppercase fs-4">
+        <a class="p-2"
+            routerLink="/user-home"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+        >Trang chủ</a>
+        <a class="p-2" routerLink="/user-home/homemain" routerLinkActive="active">Nhà cho thuê</a>
+        <a class="p-2" routerLink="/user-home/banner" routerLinkActive="active">Liên hệ</a>
+        <a class="p-2" routerLink="/reports" routerLinkActive="active">Người cho thuê</a>
+    </nav>
+    <div class="d-flex align-items-center">
+        <a  routerLink="/app/post" *ngIf="this.showRoleId == 3" class="btn btn-outline-secondary me-3">Đăng tin</a>
+        <a  routerLink="/app" *ngIf="(this.showRoleId == 2) || (this.showRoleId == 3)" class="btn btn-outline-secondary me-3">Quản trị viên</a>
+        <a href="" routerLink="/account/register" *ngIf="!this.showUserId && this.showRoleId != 3" class="btn btn-outline-secondary me-3">Đăng ký</a>
+        <a href="" routerLink="/account/login" *ngIf="!this.showUserId && this.showRoleId != 3" class="btn btn-outline-secondary me-3">Đăng nhập</a>
+        <a  (click)="logout()" *ngIf="this.showUserId" class="btn btn-outline-secondary me-2">Đăng xuất</a>
+    </div>
+</header>
