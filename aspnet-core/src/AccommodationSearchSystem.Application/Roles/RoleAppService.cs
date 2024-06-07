@@ -100,6 +100,7 @@ namespace AccommodationSearchSystem.Roles
         public Task<ListResultDto<PermissionDto>> GetAllPermissions()
         {
             var permissions = PermissionManager.GetAllPermissions();
+            //lấy toán bộ quyền
 
             return Task.FromResult(new ListResultDto<PermissionDto>(
                 ObjectMapper.Map<List<PermissionDto>>(permissions).OrderBy(p => p.DisplayName).ToList()

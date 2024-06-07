@@ -11,6 +11,10 @@ export class UserHomeComponent extends AppComponentBase {
 
   showRoleId: number;
   showUserId: number;
+  shownLoginName = '';
+  shownLoginRoleId: number;
+  shownLoginNameRole = '';
+
 
   constructor(injector: Injector,
     private _authService: AppAuthService
@@ -23,6 +27,16 @@ export class UserHomeComponent extends AppComponentBase {
 
     this.showRoleId = this.appSession.getShownLoginRoleId();
     this.showUserId = this.appSession.getShownLoginId();
+
+    this.shownLoginName = this.appSession.getShownLoginName();
+    this.shownLoginRoleId = this.appSession.getShownLoginRoleId();
+    if (this.shownLoginRoleId == 4 ) {
+      this.shownLoginNameRole = 'Chủ trọ';
+    } else if (this.shownLoginRoleId == 5) {
+      this.shownLoginNameRole = 'Người thuê trọ';
+    } else {
+      this.shownLoginNameRole = 'Admin'
+    }
 
   }
   logout(): void {

@@ -161,5 +161,10 @@ import { AppPackagePostsPaymentSuccessComponent } from './app-package-posts/app-
     CreateOrEditPostComponent,
     PostAdminViewComponent
   ],
+  // Nếu muốn những component này được hiện thị sang root mới thì phải exports
+  exports: [
+    PostViewComponent,
+    PostViewDetailComponent,
+  ]
 })
 export class AppModule {}

@@ -72,7 +72,7 @@ export class AppSessionService {
 
 
     getShownLoginName(): string {
-        const userName = this._user.userName;
+        const userName = this._user?.userName;
         if (!this._abpMultiTenancyService.isEnabled) {
             return userName;
         }

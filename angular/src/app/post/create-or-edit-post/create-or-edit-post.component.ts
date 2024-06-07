@@ -49,7 +49,7 @@ export class CreateOrEditPostComponent extends AppComponentBase {
     this._sessionService.getCurrentLoginInformations().subscribe((res) => {
       this.tenantId = res.tenant.id;
     });
-    this._postComponent.updateTable();
+    //this._postComponent.updateTable();
   }
 
   show(PostId?: number): void {
@@ -68,7 +68,6 @@ export class CreateOrEditPostComponent extends AppComponentBase {
           this.modal.show();
         });
       this.initializeUploader(PostId);
-      this._postComponent.updateTable();
     }
   }
 

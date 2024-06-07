@@ -48,7 +48,10 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
 
   ngOnInit(): void {
     this.shownLogin = this.appSession.getShownLoginRoleId();
-    if (this.shownLogin == 3) {
+     // check nếu là chủ trọ thì RoId = 3
+    // nếu là admin thì roid = 2
+    console.log(this.shownLogin);
+    if (this.shownLogin == 2) {
       this.isAdmin = true;
     } else {
       this.isAdmin = false;

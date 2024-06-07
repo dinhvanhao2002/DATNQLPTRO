@@ -33,6 +33,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { AgmCoreModule } from '@agm/core';
 import { GoogleMapsModule  } from '@angular/google-maps';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
     imports: [
@@ -54,6 +55,7 @@ import { GoogleMapsModule  } from '@angular/google-maps';
         CalendarModule,
         GoogleMapsModule,
         NgxGalleryModule,
+        DropdownModule
 
     ],
 
@@ -87,7 +89,8 @@ import { GoogleMapsModule  } from '@angular/google-maps';
         CalendarModule,
         NgxPaginationModule,
         PaginatorModule,
-        NgxGalleryModule
+        NgxGalleryModule,
+        DropdownModule
 
     ]
 })
