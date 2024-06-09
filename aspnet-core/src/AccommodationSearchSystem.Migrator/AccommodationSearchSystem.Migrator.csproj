@@ -20,6 +20,7 @@
     <PackageReference Include="Az.Storage.Core.TempFile" Version="1.0.1.203" />
     <PackageReference Include="CloudinaryDotNet" Version="1.20.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AccommodationSearchSystem.Core\AccommodationSearchSystem.Core.csproj" />

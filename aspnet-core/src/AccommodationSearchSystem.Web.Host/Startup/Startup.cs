@@ -26,6 +26,10 @@ using AccommodationSearchSystem.Services;
 using AccommodationSearchSystem.EntityFrameworkCore;
 using AccommodationSearchSystem.Chat.Signalr;
 using AccommodationSearchSystem.VnPayment;
+using AccommodationSearchSystem.Email;
+using AccommodationSearchSystem.Email.Dto;
+using AccommodationSearchSystem.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace AccommodationSearchSystem.Web.Host.Startup
 {
@@ -99,6 +103,8 @@ namespace AccommodationSearchSystem.Web.Host.Startup
             services.AddSingleton<IVnPayService, VnPayService>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddDbContext<AccommodationSearchSystemDbContext>();
+            services.AddScoped<IEmailService, EmailService>();
+           
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

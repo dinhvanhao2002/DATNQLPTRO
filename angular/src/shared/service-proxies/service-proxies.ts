@@ -206,6 +206,70 @@ export class ConfigurationServiceProxy {
 }
 
 @Injectable()
+export class EmailServiceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    sendEmail(body: EmailModel | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/EmailService/SendEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendEmail(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSendEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
 export class InforUserServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -4781,6 +4845,108 @@ export class UserServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    sendResetEmail(email: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/User/send-reset-email/{email}";
+        if (email === undefined || email === null)
+            throw new Error("The parameter 'email' must be defined.");
+        url_ = url_.replace("{email}", encodeURIComponent("" + email));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendResetEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendResetEmail(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSendResetEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    resetPasswordToken(body: ResetPasswordTokenDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/User/reset-passwordToken";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processResetPasswordToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processResetPasswordToken(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processResetPasswordToken(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -7822,6 +7988,61 @@ export interface IDashBoardTotalUser {
     totalUser: number;
 }
 
+export class EmailModel implements IEmailModel {
+    id: number | undefined;
+    to: string | undefined;
+    subject: string | undefined;
+    content: string | undefined;
+
+    constructor(data?: IEmailModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.to = _data["to"];
+            this.subject = _data["subject"];
+            this.content = _data["content"];
+        }
+    }
+
+    static fromJS(data: any): EmailModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["to"] = this.to;
+        data["subject"] = this.subject;
+        data["content"] = this.content;
+        return data;
+    }
+
+    clone(): EmailModel {
+        const json = this.toJSON();
+        let result = new EmailModel();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IEmailModel {
+    id: number | undefined;
+    to: string | undefined;
+    subject: string | undefined;
+    content: string | undefined;
+}
+
 export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
     authProvider: string;
     providerKey: string;
@@ -9786,6 +10007,61 @@ export interface IResetPasswordDto {
     adminPassword: string;
     userId: number;
     newPassword: string;
+}
+
+export class ResetPasswordTokenDto implements IResetPasswordTokenDto {
+    email: string | undefined;
+    emailToken: string | undefined;
+    newPassword: string | undefined;
+    confirmPassword: string | undefined;
+
+    constructor(data?: IResetPasswordTokenDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.emailToken = _data["emailToken"];
+            this.newPassword = _data["newPassword"];
+            this.confirmPassword = _data["confirmPassword"];
+        }
+    }
+
+    static fromJS(data: any): ResetPasswordTokenDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResetPasswordTokenDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["emailToken"] = this.emailToken;
+        data["newPassword"] = this.newPassword;
+        data["confirmPassword"] = this.confirmPassword;
+        return data;
+    }
+
+    clone(): ResetPasswordTokenDto {
+        const json = this.toJSON();
+        let result = new ResetPasswordTokenDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IResetPasswordTokenDto {
+    email: string | undefined;
+    emailToken: string | undefined;
+    newPassword: string | undefined;
+    confirmPassword: string | undefined;
 }
 
 export class RoleDto implements IRoleDto {

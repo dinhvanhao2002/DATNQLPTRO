@@ -1,4 +1,3 @@
-import { ForgotPasswordComponent } from './login/Forgot-password/Forgot-password.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +17,8 @@ import { AccountFooterComponent } from './layout/account-footer.component';
 // tenants
 import { TenantChangeComponent } from './tenant/tenant-change.component';
 import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.component';
+import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
+import { ResetPasswordTokenComponent } from './reset-password-token/reset-password-token.component';
 
 @NgModule({
     imports: [
@@ -40,7 +41,9 @@ import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.compo
         // tenant
         TenantChangeComponent,
         TenantChangeDialogComponent,
-        ForgotPasswordComponent
+        ForgotPasswordComponent,
+        ResetPasswordTokenComponent
+
     ],
     entryComponents: [
         // tenant

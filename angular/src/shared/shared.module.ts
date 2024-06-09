@@ -34,6 +34,7 @@ import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { AgmCoreModule } from '@agm/core';
 import { GoogleMapsModule  } from '@angular/google-maps';
 import { DropdownModule } from 'primeng/dropdown';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
@@ -55,7 +56,8 @@ import { DropdownModule } from 'primeng/dropdown';
         CalendarModule,
         GoogleMapsModule,
         NgxGalleryModule,
-        DropdownModule
+        DropdownModule,
+        ReactiveFormsModule
 
     ],
 
@@ -90,7 +92,8 @@ import { DropdownModule } from 'primeng/dropdown';
         NgxPaginationModule,
         PaginatorModule,
         NgxGalleryModule,
-        DropdownModule
+        DropdownModule,
+        ReactiveFormsModule 
 
     ]
 })

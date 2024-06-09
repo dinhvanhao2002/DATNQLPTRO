@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AccountComponent } from './account.component';
+import { ResetPasswordTokenComponent } from './reset-password-token/reset-password-token.component';
 
 @NgModule({
     imports: [
@@ -12,9 +13,12 @@ import { AccountComponent } from './account.component';
                 component: AccountComponent,
                 children: [
                     { path: 'login', component: LoginComponent },
-                    { path: 'register', component: RegisterComponent }
+                    { path: 'register', component: RegisterComponent },
+                    {path: 'reset-passwordToken', component: ResetPasswordTokenComponent}
+
                 ]
-            }
+            },
+
         ])
     ],
     exports: [

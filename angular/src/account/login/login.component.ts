@@ -3,7 +3,7 @@ import { AbpSessionService } from 'abp-ng2-module';
 import { AppComponentBase } from '@shared/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppAuthService } from '@shared/auth/app-auth.service';
-import { ForgotPasswordComponent } from './Forgot-password/Forgot-password.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @Component({
   templateUrl: './login.component.html',
@@ -39,6 +39,6 @@ export class LoginComponent extends AppComponentBase {
     this.authService.authenticate(() => (this.submitting = false));
   }
   openForgotPasswordModal(){
-    
+
   }
 }

@@ -50,7 +50,7 @@
           <div class="col-md-9">
             <input type="email" class="form-control" name="emailAddress" id="emailAddress" required maxlength="256"
               pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,})+$" [(ngModel)]="user.emailAddress"
-              #emailAddressModel="ngModel" #emailAddressEl [disabled] = "true"/>
+              #emailAddressModel="ngModel" #emailAddressEl />
             <abp-validation-summary [control]="emailAddressModel" [controlEl]="emailAddressEl"></abp-validation-summary>
           </div>
         </div>

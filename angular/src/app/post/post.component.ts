@@ -129,6 +129,7 @@ export class PostComponent extends AppComponentBase {
       this.message.confirm('', this.l('Bạn có thực sự muốn đăng lại bài viết này ?'), (isConfirme) => {
         if (isConfirme) {
           if (this.statusRepost) {
+            console.log(this.statusPost);
             this.notify.warn("Bài đăng chưa hết hạn");
           } else  {
           this.postRepost.tenantId = this.tenantId;
