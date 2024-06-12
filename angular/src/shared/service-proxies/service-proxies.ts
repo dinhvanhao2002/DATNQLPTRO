@@ -6230,6 +6230,188 @@ export class ViewPostServiceProxy {
     }
 
     /**
+     * @param filterText (optional) 
+     * @param priceCategory (optional) 
+     * @param district (optional) 
+     * @param square (optional) 
+     * @param roomPrice (optional) 
+     * @param sorting (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAllNEW(filterText: string | undefined, priceCategory: string | undefined, district: string | undefined, square: number | undefined, roomPrice: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetPostForViewDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/ViewPost/GetAllNEW?";
+        if (filterText === null)
+            throw new Error("The parameter 'filterText' cannot be null.");
+        else if (filterText !== undefined)
+            url_ += "filterText=" + encodeURIComponent("" + filterText) + "&";
+        if (priceCategory === null)
+            throw new Error("The parameter 'priceCategory' cannot be null.");
+        else if (priceCategory !== undefined)
+            url_ += "PriceCategory=" + encodeURIComponent("" + priceCategory) + "&";
+        if (district === null)
+            throw new Error("The parameter 'district' cannot be null.");
+        else if (district !== undefined)
+            url_ += "District=" + encodeURIComponent("" + district) + "&";
+        if (square === null)
+            throw new Error("The parameter 'square' cannot be null.");
+        else if (square !== undefined)
+            url_ += "Square=" + encodeURIComponent("" + square) + "&";
+        if (roomPrice === null)
+            throw new Error("The parameter 'roomPrice' cannot be null.");
+        else if (roomPrice !== undefined)
+            url_ += "RoomPrice=" + encodeURIComponent("" + roomPrice) + "&";
+        if (sorting === null)
+            throw new Error("The parameter 'sorting' cannot be null.");
+        else if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllNEW(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllNEW(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetPostForViewDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetPostForViewDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetAllNEW(response: HttpResponseBase): Observable<GetPostForViewDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetPostForViewDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPostForViewDtoPagedResultDto>(null as any);
+    }
+
+    /**
+     * @param filterText (optional) 
+     * @param priceCategory (optional) 
+     * @param district (optional) 
+     * @param square (optional) 
+     * @param roomPrice (optional) 
+     * @param sorting (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAllForHostVIPNEW(filterText: string | undefined, priceCategory: string | undefined, district: string | undefined, square: number | undefined, roomPrice: number | undefined, sorting: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<GetPostForViewDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/ViewPost/GetAllForHostVIPNEW?";
+        if (filterText === null)
+            throw new Error("The parameter 'filterText' cannot be null.");
+        else if (filterText !== undefined)
+            url_ += "filterText=" + encodeURIComponent("" + filterText) + "&";
+        if (priceCategory === null)
+            throw new Error("The parameter 'priceCategory' cannot be null.");
+        else if (priceCategory !== undefined)
+            url_ += "PriceCategory=" + encodeURIComponent("" + priceCategory) + "&";
+        if (district === null)
+            throw new Error("The parameter 'district' cannot be null.");
+        else if (district !== undefined)
+            url_ += "District=" + encodeURIComponent("" + district) + "&";
+        if (square === null)
+            throw new Error("The parameter 'square' cannot be null.");
+        else if (square !== undefined)
+            url_ += "Square=" + encodeURIComponent("" + square) + "&";
+        if (roomPrice === null)
+            throw new Error("The parameter 'roomPrice' cannot be null.");
+        else if (roomPrice !== undefined)
+            url_ += "RoomPrice=" + encodeURIComponent("" + roomPrice) + "&";
+        if (sorting === null)
+            throw new Error("The parameter 'sorting' cannot be null.");
+        else if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllForHostVIPNEW(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllForHostVIPNEW(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetPostForViewDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetPostForViewDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetAllForHostVIPNEW(response: HttpResponseBase): Observable<GetPostForViewDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetPostForViewDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPostForViewDtoPagedResultDto>(null as any);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */

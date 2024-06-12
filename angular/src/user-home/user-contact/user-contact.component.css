@@ -1,0 +1,40 @@
+.map-container {
+  height: 400px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.contact-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form .form-group label {
+  font-weight: bold;
+}
+
+.contact-form .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.contact-form .btn-primary:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+
+  agm-map {
+    height: 400px;
+  }

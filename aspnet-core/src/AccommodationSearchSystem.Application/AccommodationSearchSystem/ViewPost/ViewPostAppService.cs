@@ -139,71 +139,6 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
         [AbpAllowAnonymous]
         public async Task<PagedResultDto<GetPostForViewDto>> GetAll(GetPostInputDto input)
         {
-            //var tenantId = AbpSession.TenantId;
-            //var query = from p in _repositoryPost.GetAll()
-            //.Where(e => tenantId == e.TenantId && e.ConfirmAdmin == true)
-            //.Where(e => input.filterText == null || e.Title.Contains(input.filterText)
-            //                    || e.Address.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
-
-            //            join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id into uGroup
-            //            from u in uGroup.DefaultIfEmpty()
-            //            where u.TenantId == p.TenantId 
-
-            //            join pk in _repositoryPackagePost.GetAll().AsNoTracking() on p.CreatorUserId equals pk.CreatorUserId into pkGroup
-            //            from pk in pkGroup.DefaultIfEmpty()
-            //            where pk == null || (pk.Cancel == false && pk.Confirm == true && pk.PackageType == "Gói VIP")
-            //            orderby pk.PackageType == null ? 0 : 1 descending, p.Id descending
-            //            select new { Post = p, User = u, PackagePost = pk, Photos = _repositoryPhotoPost.GetAll().AsNoTracking().Where(ph => ph.PostId == p.Id).ToList() };
-
-            //var totalCount = await query.CountAsync();
-            //var pagedAndFilteredPost = query.PageBy(input);
-
-            //var result = await pagedAndFilteredPost.ToListAsync();
-
-            //var postDtos = result.Select(item => new GetPostForViewDto
-            //{
-            //    Id = item.Post.Id,
-            //    PostCode = item.Post.PostCode,
-            //    Title = item.Post.Title,
-            //    ContentPost = item.Post.ContentPost,
-            //    Photo = item.Post.Photo,
-            //    RoomPrice = item.Post.RoomPrice,
-            //    Address = item.Post.Address,
-            //    District = item.Post.District,
-            //    City = item.Post.City,
-            //    Ward = item.Post.Ward,
-            //    Area = item.Post.Area,
-            //    Square = item.Post.Square,
-            //    PriceCategory = item.Post.PriceCategory,
-            //    Wifi = item.Post.Wifi,
-            //    Parking = item.Post.Parking,
-            //    Conditioner = item.Post.Conditioner,
-            //    RoomStatus = item.Post.RoomStatus,
-            //    PackageType = item.PackagePost != null ? item.PackagePost.PackageType : "Gói thường",
-            //    TenantId = tenantId,
-            //    CreateByName = item.User.FullName,
-            //    EmailAddress = item.User.EmailAddress,
-            //    PhoneNumber = item.User.PhoneNumber,
-            //    Photos = item.Photos.Select(photo => new PhotoDto
-            //    {
-            //        Id = photo.Id,
-            //        Url = photo.Url,
-            //        IsMain = photo.IsMain,
-            //        PostId = photo.PostId
-            //    }).ToList(),
-            //}).ToList();
-
-
-            //// Lấy danh sách lượt thích của mỗi bài viết
-            //var totalLike = await GetTotalLike();
-            //// Gán tổng số  lượt thích cho mỗi bài viết
-            //foreach (var item in postDtos)
-            //{
-            //    var likeInfor = totalLike.FirstOrDefault(l => l.TenantId == tenantId && l.PostId == item.Id);
-            //    item.TotalLike = likeInfor?.Count ?? 0;
-            //}
-
-            //return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
             int? tenantId = AbpSession.TenantId;
 
             var query = from p in _repositoryPost.GetAll()
@@ -340,6 +275,172 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
 
             return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
         }
+
+
+
+
+        //Sửa lại hàm tìm kiếm
+
+        #region GET ALL NEW 
+        [AbpAllowAnonymous]
+        public async Task<PagedResultDto<GetPostForViewDto>> GetAllNEW(GetPostInputNewDto input)
+        {
+            int? tenantId = AbpSession.TenantId;
+
+            var query = from p in _repositoryPost.GetAll()
+                        .Where(e => e.ConfirmAdmin == true && (tenantId == null || tenantId == e.TenantId))
+                         .Where(e => e.PriceCategory == input.PriceCategory || input.PriceCategory == null)
+                         .Where(e => e.District == input.District || input.District == null)
+                         //Check điều kiện diện tích
+                         .Where(e => (input.Square == 1 && e.Square < 20) || (input.Square == 2 && (e.Square >= 20 && e.Square < 30)) || (input.Square == 3 && (e.Square >= 30 && e.Square < 40)) || (input.Square == 4 && e.Square >= 40) || input.Square == null)
+                         // Check điều kiện giá phòng
+                         .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 && e.RoomPrice < 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 && e.RoomPrice < 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
+                        .Where(e => input.filterText == null || e.Title.Contains(input.filterText)
+                                    || e.Address.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
+
+                        join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id into uGroup
+                        from u in uGroup.DefaultIfEmpty()
+                        where tenantId == null || u.TenantId == p.TenantId
+
+                        join pk in _repositoryPackagePost.GetAll().AsNoTracking() on p.CreatorUserId equals pk.CreatorUserId into pkGroup
+                        from pk in pkGroup.DefaultIfEmpty()
+                        where pk == null || (pk.Cancel == false && pk.Confirm == true && pk.PackageType == "Gói VIP")
+                        orderby pk.PackageType == null ? 0 : 1 descending, p.Id descending
+                        select new { Post = p, User = u, PackagePost = pk, Photos = _repositoryPhotoPost.GetAll().AsNoTracking().Where(ph => ph.PostId == p.Id).ToList() };
+
+            var totalCount = await query.CountAsync();
+            var pagedAndFilteredPost = query.PageBy(input);
+
+            var result = await pagedAndFilteredPost.ToListAsync();
+
+            var postDtos = result.Select(item => new GetPostForViewDto
+            {
+                Id = item.Post.Id,
+                PostCode = item.Post.PostCode,
+                Title = item.Post.Title,
+                ContentPost = item.Post.ContentPost,
+                Photo = item.Post.Photo,
+                RoomPrice = item.Post.RoomPrice,
+                Address = item.Post.Address,
+                District = item.Post.District,
+                City = item.Post.City,
+                Ward = item.Post.Ward,
+                Area = item.Post.Area,
+                Square = item.Post.Square,
+                PriceCategory = item.Post.PriceCategory,
+                Wifi = item.Post.Wifi,
+                Parking = item.Post.Parking,
+                Conditioner = item.Post.Conditioner,
+                RoomStatus = item.Post.RoomStatus,
+                PackageType = item.PackagePost != null ? item.PackagePost.PackageType : "Gói thường",
+                TenantId = tenantId,
+                CreateByName = item.User?.FullName,
+                EmailAddress = item.User?.EmailAddress,
+                PhoneNumber = item.User?.PhoneNumber,
+                Photos = item.Photos.Select(photo => new PhotoDto
+                {
+                    Id = photo.Id,
+                    Url = photo.Url,
+                    IsMain = photo.IsMain,
+                    PostId = photo.PostId
+                }).ToList(),
+            }).ToList();
+
+            // Lấy danh sách lượt thích của mỗi bài viết
+            var totalLike = await GetTotalLike();
+            // Gán tổng số lượt thích cho mỗi bài viết
+            foreach (var item in postDtos)
+            {
+                var likeInfor = totalLike.FirstOrDefault(l => l.TenantId == tenantId && l.PostId == item.Id);
+                item.TotalLike = likeInfor?.Count ?? 0;
+            }
+
+            return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
+        }
+        #endregion
+
+
+
+
+        #region Làm lại tìm kiếm tin nổi bật
+        [AbpAllowAnonymous]
+        public async Task<PagedResultDto<GetPostForViewDto>> GetAllForHostVIPNEW(GetPostInputNewDto input)
+        {
+            var tenantId = AbpSession.TenantId;
+            //var UserId = AbpSession.UserId;
+            var query = from p in _repositoryPost.GetAll()
+            .Where(e => tenantId == e.TenantId && e.ConfirmAdmin == true)
+             .Where(e => e.PriceCategory == input.PriceCategory || input.PriceCategory == null)
+            .Where(e => e.District == input.District || input.District == null)
+            //Check điều kiện diện tích
+            .Where(e => (input.Square == 1 && e.Square < 20) || (input.Square == 2 && (e.Square >= 20 || e.Square < 30)) || (input.Square == 3 && (e.Square >= 30 || e.Square < 40)) || (input.Square == 4 && e.Square >= 40) || input.Square == null)
+            // Check điều kiện giá phòng
+            .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 || e.RoomPrice < 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 || e.RoomPrice < 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
+            .Where(e => input.filterText == null || e.Title.Contains(input.filterText)
+                                || e.Address.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
+                        orderby p.Id descending
+
+                        join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id into uGroup
+                        from u in uGroup.DefaultIfEmpty()
+                        where u.TenantId == p.TenantId
+
+                        join pk in _repositoryPackagePost.GetAll().AsNoTracking() on p.CreatorUserId equals pk.CreatorUserId into pkGroup
+                        from pk in pkGroup.DefaultIfEmpty()
+                        where pk.Cancel == false && pk.Confirm == true && pk.PackageType == "Gói VIP pro"
+
+                        select new { Post = p, User = u, PackagePost = pk, Photos = _repositoryPhotoPost.GetAll().AsNoTracking().Where(ph => ph.PostId == p.Id).ToList() };
+
+            var totalCount = await query.CountAsync();
+            var pagedAndFilteredPost = query.PageBy(input);
+
+            var result = await pagedAndFilteredPost.ToListAsync();
+
+            var postDtos = result.Select(item => new GetPostForViewDto
+            {
+                Id = item.Post.Id,
+                PostCode = item.Post.PostCode,
+                Title = item.Post.Title,
+                ContentPost = item.Post.ContentPost,
+                Photo = item.Post.Photo,
+                RoomPrice = item.Post.RoomPrice,
+                Address = item.Post.Address,
+                District = item.Post.District,
+                City = item.Post.City,
+                Ward = item.Post.Ward,
+                Area = item.Post.Area,
+                Square = item.Post.Square,
+                PriceCategory = item.Post.PriceCategory,
+                Wifi = item.Post.Wifi,
+                Parking = item.Post.Parking,
+                Conditioner = item.Post.Conditioner,
+                RoomStatus = item.Post.RoomStatus,
+                TenantId = tenantId,
+                CreateByName = item.User.FullName,
+                EmailAddress = item.User.EmailAddress,
+                PhoneNumber = item.User.PhoneNumber,
+                PackageType = item.PackagePost != null ? item.PackagePost.PackageType : null,
+                Photos = item.Photos.Select(photo => new PhotoDto
+                {
+                    Id = photo.Id,
+                    Url = photo.Url,
+                    IsMain = photo.IsMain,
+                    PostId = photo.PostId
+                }).ToList(),
+            }).ToList();
+
+            // Lấy danh sách lượt thích của mỗi bài viết
+            var totalLike = await GetTotalLike();
+            // Gán tổng số  lượt thích cho mỗi bài viết
+            foreach (var item in postDtos)
+            {
+                var likeInfor = totalLike.FirstOrDefault(l => l.TenantId == tenantId && l.PostId == item.Id);
+                item.TotalLike = likeInfor?.Count ?? 0;
+            }
+
+            return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
+        }
+        #endregion
+
         [AbpAllowAnonymous]
         public async Task<bool> StatusRoom(long Id)
         {

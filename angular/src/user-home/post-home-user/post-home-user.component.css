@@ -1,4 +1,49 @@
 
+/* css slide */
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 500px; /* Chiều cao của carousel */
+    overflow: hidden; /* Ẩn phần dư của ảnh */
+  }
+
+  .carousel img {
+    width: 100%;
+    height: 500px; /* Chiều cao của ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo và phủ kín khung */
+  }
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+
+  .animated {
+    animation-duration: 2s;
+    animation-fill-mode: both;
+  }
+
+  .slideInDown {
+    animation-name: slideInDown;
+  }
+
+  @keyframes slideInDown {
+    from {
+      transform: translate3d(0, -100%, 0);
+      visibility: visible;
+    }
+
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+
+
+
+
 .font__title {
     font-size: 24px;
     font-style: bold;

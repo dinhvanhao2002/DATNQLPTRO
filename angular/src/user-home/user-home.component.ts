@@ -5,7 +5,8 @@ import { AppAuthService } from '@shared/auth/app-auth.service';
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.component.html',
-  styleUrls: ['./user-home.component.css']
+  styleUrls: ['./user-home.component.css'],
+
 })
 export class UserHomeComponent extends AppComponentBase {
 

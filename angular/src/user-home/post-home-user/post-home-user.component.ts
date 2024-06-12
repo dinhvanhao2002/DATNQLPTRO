@@ -30,18 +30,55 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
   filteredData: GetPostForViewDto[] = [];
   filteredDataVip: GetPostForViewDto[] = [];
 
-  dataRoomPrice: string = 'all';
-  dataPriceCategory: string = 'all';
-  dataDistrict: string = 'all';
-  dataSquare: string = 'all';
+
+  dataPriceCategory: string;
+  dataDistrict: string;
+  datasquare: number | undefined;
+  dataroomPrice: number| undefined;
+
 
 
   // Địa chỉ có thể là một mảng chứa danh sách các quận/huyện
-  districts: string[] = [
-    "Ba Đình", "Bắc Từ Liêm", "Cầu Giấy", "Đống Đa", "Hà Đông",
-    "Hai Bà Trưng", "Hoàn Kiếm", "Hoàng Mai", "Long Biên", "Nam Từ Liêm", "Bắc từ Liêm", "Thanh Xuân" ];
-  priceCategoris: string[] = [
-      "Chung cư mini", "Phòng đơn", "Từ 2 người" ];
+  // districts: string[] = [
+  //   "Ba Đình", "Bắc Từ Liêm", "Cầu Giấy", "Đống Đa", "Hà Đông",
+  //   "Hai Bà Trưng", "Hoàn Kiếm", "Hoàng Mai", "Long Biên", "Nam Từ Liêm", "Bắc từ Liêm", "Thanh Xuân" ];
+
+  districts: { value: string, label: string}[] = [
+    { value: "Ba Đình", label: "Ba Đình" },
+    { value: "Bắc Từ Liêm", label: "Bắc Từ Liêm" },
+    { value: "Cầu Giấy", label: "Cầu Giấy" },
+    { value: "Đống Đa", label: "Đống Đa" },
+    { value: "Hà Đông", label: "Hà Đông" },
+    { value: "Hai Bà Trưng", label: "Hai Bà Trưng" },
+    { value: "Hoàn Kiếm", label: "Hoàn Kiếm" },
+    { value: "Hoàng Mai", label: "Hoàng Mai" },
+    { value: "Long Biên", label: "Long Biên" },
+    { value: "Nam Từ Liêm", label: "Nam Từ Liêm" },
+    { value: "Bắc từ Liêm", label: "Bắc từ Liêm" },
+    { value: "Thanh Xuân", label: "Thanh Xuân" }
+  ];
+
+  square: { value: number, label: string}[] = [
+    { value: 1, label: "Dưới 20m2" },
+    { value: 2, label: "Từ 20m2 đến 30m2" },
+    { value: 3, label: "Từ 30m2 đến 40m2" },
+    { value: 4, label: "Trên 40m2" }
+  ];
+  roomPrice: { value: number, label: string}[] = [
+    { value: 1, label: "Dưới 1 triệu đồng" },
+    { value: 2, label: "Từ 1 đến 2 triệu đồng" },
+    { value: 3, label: "Từ 2 đến 3 triệu đồng" },
+    { value: 4, label: "Từ 3 đến 4 triệu đồng" },
+    { value: 5, label: "Trên 4 triệu đồng" }
+  ];
+
+
+  priceCategoris : {value : string, label : string} [] = [
+    {value: "Chung cư mini", label: "Chung cư mini"},
+    {value: "Phòng đơn", label: "Phòng đơn"},
+    {value: "Từ 2 người", label: "Từ 2 người"}
+
+  ]
 
   constructor(
     injector: Injector,
@@ -57,12 +94,17 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     this.onPageChangeVip({ page: this.paginationParamsVip.pageNum - 1, rows: this.paginationParamsVip.pageSize });
   }
 
+  refresh(){
+    this.dataPriceCategory= '';
+    this.dataDistrict = '';
+    this.datasquare = null;
+    this.dataroomPrice = null;
+    //this.data = [];
+    this.updateTable();
+  }
+
   updateTable() {
     this.isLoading = true;
-    this.dataDistrict = 'all';
-    this.dataRoomPrice = 'all';
-    this.dataSquare = 'all';
-
     this.data = [];
     this.paginationParams = { pageNum: 1, pageSize: 8, totalCount: 0 };
     this.getAll(this.paginationParams).subscribe(data => {
@@ -74,7 +116,7 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     });
     this.dataVip = [];
     this.paginationParamsVip = { pageNum: 1, pageSize: 3, totalCount: 0 };
-    this.getAllVip(this.paginationParamsVip).subscribe(data => {
+    this.getAllVipNew(this.paginationParamsVip).subscribe(data => {
       console.log(data.items);
       this.dataVip = data.items;
       this.paginationParamsVip.totalPage = ceil(data.totalCount / this.maxResultCount);
@@ -83,9 +125,38 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     });
   }
 
+  callbackPost(){
+    this.isLoading = true;
+    this.data = [];
+    this.paginationParams = { pageNum: 1, pageSize: 8, totalCount: 0 };
+    this.getAll(this.paginationParams).subscribe(data => {
+      console.log(data.items);
+      this.data = data.items;
+      this.paginationParams.totalPage = ceil(data.totalCount / this.maxResultCount);
+      this.paginationParams.totalCount = data.totalCount;
+      this.isLoading = false;
+    });
+    this.dataVip = [];
+    this.paginationParamsVip = { pageNum: 1, pageSize: 3, totalCount: 0 };
+    this.getAllVipNew(this.paginationParamsVip).subscribe(data => {
+      console.log(data.items);
+      this.dataVip = data.items;
+      this.paginationParamsVip.totalPage = ceil(data.totalCount / this.maxResultCount);
+      this.paginationParamsVip.totalCount = data.totalCount;
+      this.isLoading = false;
+    });
+  }
+
+
+
   getAll(paginationParams: PaginationParamsModel) {
-    return this._postService.getAll(
+    console.log(this.datasquare);
+    return this._postService.getAllNEW(
       this.filterText,
+      this.dataPriceCategory,
+      this.dataDistrict ?? undefined,
+      this.datasquare ?? undefined,
+      this.dataroomPrice ?? undefined,
       this.sorting ?? null,
       (paginationParams.pageNum - 1) * paginationParams.pageSize, // Chuyển đổi số trang thành skipCount
       paginationParams.pageSize
@@ -103,12 +174,26 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     );
   }
 
+  getAllVipNew(paginationParams: PaginationParamsModel) {
+    return this._postService.getAllForHostVIPNEW(
+      this.filterText,
+      this.dataPriceCategory,
+      this.dataDistrict ?? undefined,
+      this.datasquare ?? undefined,
+      this.dataroomPrice ?? undefined,
+      this.sorting ?? null,
+      (paginationParams.pageNum - 1) * paginationParams.pageSize, // Chuyển đổi số trang thành skipCount
+      paginationParams.pageSize
+
+    );
+  }
+
+
   onPageChange(event: any) {
     this.paginationParams.pageNum = event.page + 1;
     this.paginationParams.pageSize = event.rows;
     this.getAll(this.paginationParams).subscribe((data) => {
       this.data = data.items;
-      this.filterData();
       this.paginationParams.totalCount = data.totalCount;
       this.paginationParams.totalPage = Math.ceil(data.totalCount / this.maxResultCount);
     });
@@ -117,58 +202,18 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
   onPageChangeVip(event: any) {
     this.paginationParamsVip.pageNum = event.page + 1;
     this.paginationParamsVip.pageSize = event.rows;
-    this.getAllVip(this.paginationParamsVip).subscribe((data) => {
+    this.getAllVipNew(this.paginationParamsVip).subscribe((data) => {
       this.dataVip = data.items;
-      this.filterDataVip();
       this.paginationParamsVip.totalCount = data.totalCount;
       this.paginationParamsVip.totalPage = Math.ceil(data.totalCount / this.maxResultCount);
     });
   }
 
    // Xử lý tìm kiếm
-   search(): void {
-    if (this.dataRoomPrice === 'all' && this.dataDistrict === 'all' && this.dataSquare === 'all' && this.dataPriceCategory === 'all') {
-      // Nếu cả hai trường đều là 'all', sử dụng dữ liệu gốc
-      this.data = [];
-      this.dataVip = [];
-      this.updateTable();
-    } else {
-      // Nếu một trong hai trường không phải 'all', áp dụng bộ lọc
-      this.filterDataVip();
-      this.filterData();
-    }
+   search() {
+    this.updateTable();
   }
 
-
-  filterDataVip(): void {
-    this.filteredDataVip = this.dataVip.filter(post => {
-      const pCMatch = this.dataPriceCategory === 'all' || post.priceCategory.toLowerCase().includes(this.dataPriceCategory.toLowerCase());
-      const addressMatch = this.dataDistrict === 'all' || post.district.toLowerCase().includes(this.dataDistrict.toLowerCase());
-
-      const priceCategory = this.getPriceCategory(post.roomPrice);
-      const priceMatch = this.dataRoomPrice === 'all' || priceCategory === parseInt(this.dataRoomPrice);
-
-      const squareCategory = this.getSquareCategory(post.square);
-      const squareMatch = this.dataSquare === 'all' || squareCategory === parseInt(this.dataSquare);
-
-      return pCMatch && addressMatch && priceMatch && squareMatch;
-    });
-  }
-
-  filterData(): void {
-    this.filteredData = this.data.filter(post => {
-      const pCMatch = this.dataPriceCategory === 'all' || post.priceCategory.toLowerCase().includes(this.dataPriceCategory.toLowerCase());
-      const addressMatch = this.dataDistrict === 'all' || post.district.toLowerCase().includes(this.dataDistrict.toLowerCase());
-
-      const priceCategory = this.getPriceCategory(post.roomPrice);
-      const priceMatch = this.dataRoomPrice === 'all' || priceCategory === parseInt(this.dataRoomPrice);
-
-      const squareCategory = this.getSquareCategory(post.square);
-      const squareMatch = this.dataSquare === 'all' || squareCategory === parseInt(this.dataSquare);
-
-      return pCMatch && addressMatch && priceMatch && squareMatch;
-    });
-  }
 
   getPriceCategory(price: number): number {
     if (price < 1) {
@@ -184,17 +229,6 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     }
   }
 
-  getSquareCategory(square: number): number {
-    if (square < 20) {
-      return 1;
-    } else if (square >= 20 && square < 30) {
-      return 2;
-    } else if (square >= 30 && square < 40) {
-      return 3;
-    } else  {
-      return 4;
-    }
-  }
 
   hasVipPro(post: GetPostForViewDto): boolean {
     return post.packageType == 'Gói VIP pro';

@@ -23,29 +23,27 @@
                   <a routerLink="/user-home/user-contact" class="nav-item nav-link">Liên hệ</a>
                   <a routerLink="/intro" class="nav-item nav-link">Giới thiệu</a>
                 </div>
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center" style="margin-right: 10px;">
                     <a>
-                        <span *ngIf="showUserId">{{ 'Welcome ' + shownLoginName }}</span>
-
+                        <span *ngIf="showUserId">{{ 'Xin chào' + shownLoginName }}</span>
                     </a>
-                    <a  routerLink="/app/post" *ngIf="this.showRoleId == 3" class="btn btn-outline-secondary me-3">Đăng tin</a>
-                    <a  routerLink="/app" *ngIf="(this.showRoleId == 2) || (this.showRoleId == 3)" class="btn btn-outline-secondary me-3">Quản trị viên</a>
-                    <a href="" routerLink="/account/register" *ngIf="!this.showUserId && this.showRoleId != 3" class="btn btn-outline-secondary me-3">Đăng ký</a>
-                    <a href="" routerLink="/account/login" *ngIf="!this.showUserId && this.showRoleId != 3" class="btn btn-outline-secondary me-3">Đăng nhập</a>
-                    <a  (click)="logout()" *ngIf="this.showUserId" class="btn btn-outline-secondary me-2">Đăng xuất</a>
                 </div>
-                <!-- <div class="dropdown">
-                    <a class="btn btn-outline-secondary dropdown-toggle me-3" href="#" role="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Quản lý tài khoản
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="accountDropdown">
-                        <li *ngIf="this.showRoleId == 3"><a class="dropdown-item" routerLink="/app/post">Đăng tin</a></li>
-                        <li *ngIf="(this.showRoleId == 2) || (this.showRoleId == 3)"><a class="dropdown-item" routerLink="/app">Quản trị viên</a></li>
-                        <li *ngIf="!this.showUserId && this.showRoleId != 3"><a class="dropdown-item" routerLink="/account/register">Đăng ký</a></li>
-                        <li *ngIf="!this.showUserId && this.showRoleId != 3"><a class="dropdown-item" routerLink="/account/login">Đăng nhập</a></li>
-                        <li *ngIf="this.showUserId"><a class="dropdown-item" (click)="logout()">Đăng xuất</a></li>
-                    </ul>
-                </div> -->
+                <div class="dropdown">
+                  <div ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+                      Quản lý tài khoản
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button  ngbDropdownItem *ngIf="this.showRoleId == 3" routerLink="/app/post" >Đăng tin</button>
+                      <button ngbDropdownItem *ngIf="(this.showRoleId == 2) || (this.showRoleId == 3)"  routerLink="/app">Quản lý danh mục</button>
+                      <!-- Quản lý danh mục sẽ dành cho người thuê trọ, trong danh mục này sẽ có danh mục bài đăng yêu thích, danh mục lịch hẹn-->
+                      <button ngbDropdownItem *ngIf="this.showRoleId ==4" routerLink="/user-home/category-user">Quản lý danh mục</button>
+                      <button ngbDropdownItem *ngIf="!this.showUserId && this.showRoleId != 3" routerLink="/account/register">Đăng ký</button>
+                      <button ngbDropdownItem *ngIf="!this.showUserId && this.showRoleId != 3" routerLink="/account/login" >Đăng nhập</button>
+                      <button ngbDropdownItem *ngIf="this.showUserId" (click)="logout()">Đăng xuất</button>
+                    </div>
+                  </div>
+                </div>
               </div>
           </nav>
         </div>
@@ -55,49 +53,7 @@
     <!-- Main Content -->
     <div id="header-carousel" class="carousel slide" data-bs-ride="carousel" style="margin-top: 70px;">
           <router-outlet></router-outlet>
-
    </div>
-<!-- DỊCH VỤ CỦA CHÚNG TÔI -->
-   <!-- <div class="container-xxl py-5">
-    <div class="container">
-        <div class="wow fadeInUp">
-            <h6 class="section-title text-uppercase" style="font-size: 24px; font-weight: 600">DỊCH VỤ CỦA CHÚNG TÔI</h6>
-        </div>
-        <div class="row g-4">
-          <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="rounded shadow overflow-hidden">
-                <div class="text-center p-4 mt-3">
-                    <h5 class="fw-bold mb-0">An Toàn</h5>
-                    <small>Designation</small>
-                </div>
-            </div>
-        </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp">
-                <div class="rounded shadow overflow-hidden">
-                    <div class="text-center p-4 mt-3">
-                        <h5 class="fw-bold mb-0">Lãi 0%</h5>
-                        <small>Designation</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" >
-                <div class="rounded shadow overflow-hidden">
-                    <div class="text-center p-4 mt-3">
-                        <h5 class="fw-bold mb-0">Nhanh</h5>
-                        <small>Designation</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-   </div> -->
-
-   <!-- THÔNG TIN HIỂN THỊ NGƯỜI THUÊ TRỌ -->
-
-
-
-
-
 <!-- Team End -->
 
     <!-- Footer Start -->

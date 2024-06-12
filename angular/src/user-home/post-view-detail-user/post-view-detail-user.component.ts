@@ -94,7 +94,6 @@ export class PostViewDetailUserComponent extends AppComponentBase implements OnI
     ];
     this.getCurrentLocation();
     this.getStatus();
-    // this.getStatusRoom();
     this.getComments();
     this.getTotalComments();
     // Kết nối tới SignalR Hub

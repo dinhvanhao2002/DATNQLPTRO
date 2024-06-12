@@ -35,6 +35,9 @@ import { AgmCoreModule } from '@agm/core';
 import { GoogleMapsModule  } from '@angular/google-maps';
 import { DropdownModule } from 'primeng/dropdown';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
+
 
 @NgModule({
     imports: [
@@ -45,6 +48,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         TimepickerModule.forRoot(),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyDLAhuls4jE1NxgFb6tj5Bd3D81UHJlY-0'
+            //apiKey: 'AIzaSyB1DZjSEXEP3HHtlOwniT0WIoHQ5yLHfYE'
+
         }),
         ButtonModule,
         FileUploadModule,
@@ -57,8 +62,9 @@ import { ReactiveFormsModule } from '@angular/forms';
         GoogleMapsModule,
         NgxGalleryModule,
         DropdownModule,
-        ReactiveFormsModule
-
+        ReactiveFormsModule,
+        NgbDropdownModule,
+        CarouselModule
     ],
 
     declarations: [
@@ -93,8 +99,9 @@ import { ReactiveFormsModule } from '@angular/forms';
         PaginatorModule,
         NgxGalleryModule,
         DropdownModule,
-        ReactiveFormsModule 
-
+        ReactiveFormsModule,
+        NgbDropdownModule,
+        CarouselModule
     ]
 })
 export class SharedModule {
