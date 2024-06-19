@@ -1,0 +1,83 @@
+.custom-link {
+    color: white !important;
+    border: 1px solid white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+  }
+
+  .custom-link:hover {
+    background-color: white;
+    color: black !important;
+  }
+
+  .no-caret::after {
+    display: none !important; /* Hide the default dropdown caret */
+  }
+
+
+
+
+  /* FOOTER */
+  /* Footer Styling */
+.footer {
+  padding-top: 80px;
+  padding-bottom: 40px;
+}
+
+.footer h5 {
+  font-size: 20px;
+}
+
+.footer p {
+  font-size: 14px;
+}
+
+.footer-menu a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.footer-menu a:hover {
+  text-decoration: underline;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  z-index: 999;
+}
+
+.back-to-top i {
+  font-size: 24px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for footer */
+.footer .wow {
+  visibility: hidden;
+}
+
+.footer .wow.animated {
+  visibility: visible;
+  animation-name: fadeIn;
+  animation-duration: 1s;
+}
+

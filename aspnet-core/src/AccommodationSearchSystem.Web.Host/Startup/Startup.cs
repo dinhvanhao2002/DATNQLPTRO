@@ -30,6 +30,7 @@ using AccommodationSearchSystem.Email;
 using AccommodationSearchSystem.Email.Dto;
 using AccommodationSearchSystem.Authorization.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace AccommodationSearchSystem.Web.Host.Startup
 {
@@ -66,7 +67,6 @@ namespace AccommodationSearchSystem.Web.Host.Startup
             AuthConfigurer.Configure(services, _appConfiguration);
 
             services.AddSignalR();
-
             // Configure CORS for angular2 UI
             services.AddCors(
                 options => options.AddPolicy(
@@ -98,7 +98,7 @@ namespace AccommodationSearchSystem.Web.Host.Startup
                     )
                 )
             );
-            services.AddHttpContextAccessor();
+            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<CloudinarySettings>(_config.GetSection("CloudinarySettings"));
             services.AddSingleton<IVnPayService, VnPayService>();
             services.AddScoped<IPhotoService, PhotoService>();
@@ -120,6 +120,7 @@ namespace AccommodationSearchSystem.Web.Host.Startup
             app.UseAuthentication();
 
             app.UseAbpRequestLocalization();
+        
 
 
             app.UseEndpoints(endpoints =>

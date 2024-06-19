@@ -9,7 +9,7 @@
                             <!-- <h1>Quản lý lịch hẹn</h1> -->
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn bg-blue mr-2" [disabled]="!selectedRow" *ngIf="isHost" (click)="confirmSchedules()" >
+                            <button class="btn bg-blue mr-2" [disabled]="!selectedRow" *ngIf="this.shownLogin ==3" (click)="confirmSchedules()" >
                                 <i class="fa fa-plus-square"></i>
                                 Xác nhận
                             </button>

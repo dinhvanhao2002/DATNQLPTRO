@@ -1,4 +1,6 @@
 /********** Template CSS **********/
+/* css chatboot */
+
 :root {
     --primary: #FEA116;
     --light: #F1F8FF;
@@ -125,7 +127,7 @@
         position: relative;
         min-height: 450px;
     }
-    
+
     #header-carousel .carousel-item img {
         position: absolute;
         width: 100%;

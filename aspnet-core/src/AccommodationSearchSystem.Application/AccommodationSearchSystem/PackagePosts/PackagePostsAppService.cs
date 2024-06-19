@@ -5,20 +5,22 @@ using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
-using AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto;
 using AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts.Dto;
 using AccommodationSearchSystem.Authorization;
 using AccommodationSearchSystem.Authorization.Users;
 using AccommodationSearchSystem.Entity;
 using AccommodationSearchSystem.Services;
 using AccommodationSearchSystem.VnPayment.Dto;
-using IdentityModel.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,13 +34,17 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts
         private readonly IRepository<PackagePost, long> _repositoryPackagePost;
         private readonly IVnPayService _vnPayService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextFactory _httpContext;
+        private readonly IConfiguration _config;
 
         public PackagePostsAppService(
            IRepository<Post, long> repositoryPost,
            IRepository<PackagePost, long> repositoryPackagePost,
            IVnPayService vnPayService,
            IRepository<User, long> repositoryUser,
-           IHttpContextAccessor httpContextAccessor)
+           IHttpContextAccessor httpContextAccessor,
+           IHttpContextFactory httpContext,
+           IConfiguration config)
 
         {
             _repositoryUser = repositoryUser;
@@ -46,8 +52,117 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts
             _repositoryPackagePost = repositoryPackagePost;
             _vnPayService = vnPayService;
             _httpContextAccessor = httpContextAccessor;
-
+            _httpContext = httpContext;
+            _config = config;
         }
+
+        #region Làm lại phần thanh toán 
+        [HttpPost]
+        public string PaymentResult(PackagePostDto input)
+        {
+            var tenantId = AbpSession.TenantId;
+            var hostId = AbpSession.UserId;
+
+            var user = _repositoryUser.GetAll().Where(e => e.TenantId == tenantId && e.Id == hostId).FirstOrDefault();
+
+            // Tạo thanh toán VNPay
+            var vnPayRequestModel = new VnPaymentRequestDto
+            {
+                OrderId = new Random().Next(1000, 100000),
+                FullName = user.FullName,
+                Description = input.Description,
+                Amount = input.Amount,
+                CreatedDate = DateTime.Now
+            };
+            // Lấy HttpContext từ IHttpContextAccessor
+            var httpContext = _httpContextAccessor.HttpContext;
+            return _vnPayService.CreatePaymentUrl(_httpContextAccessor.HttpContext, vnPayRequestModel);
+        }
+
+        public async Task<IActionResult> CallBack(PackagePostDto input)
+        {
+            var tenantId = AbpSession.TenantId;
+            var hostId = AbpSession.UserId;
+
+            var user = _repositoryUser.GetAll().Where(e => e.TenantId == tenantId && e.Id == hostId).FirstOrDefault();
+            var package = new PackagePost
+            {
+                TenantId = tenantId,
+                HostId = (int)hostId,
+                Confirm = false,
+                HostName = user.FullName,
+                PackageType = input.PackageType,
+                HostPhoneNumber = user.PhoneNumber,
+                ExpirationDate = DateTime.Now.Date
+            };
+            await _repositoryPackagePost.InsertAsync(package);
+            return new ObjectResult(new PackagePostDto { PaymentUrl = input.PaymentUrl })
+            {
+                StatusCode = 200 // OK status
+            };
+        }
+
+
+
+
+        public async Task<IActionResult> CreatePackageNew(PackagePostDto input)
+        {
+            var tenantId = AbpSession.TenantId;
+            var hostId = AbpSession.UserId;
+
+            var user = _repositoryUser.GetAll().Where(e => e.TenantId == tenantId && e.Id == hostId).FirstOrDefault();
+            var paymentUrl = PaymentResult(input);
+
+            var uri = new Uri(paymentUrl);
+            var queryParameters = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+            if (!queryParameters.TryGetValue("vnp_SecureHash", out var vnpSecureHash))
+            {
+                throw new UserFriendlyException(400, "vnp_SecureHash not found in payment URL");
+            }
+
+            //Tạo thanh toán VNPay
+
+            var formData = new Dictionary<string, StringValues>
+            {
+                { "vnp_TxnRef", new StringValues(new Random().Next(1000, 100000).ToString()) },
+                { "vnp_TransactionNo", new StringValues(input.Amount.ToString())},
+                { "vnp_ResponseCode", new StringValues("00") }, // mã code
+                { "vnp_OrderInfo", new StringValues(input.Description ?? "") }, // Kiểm tra null ở đây và thêm ?? ""
+                { "vnp_SecureHash",vnpSecureHash }
+            };
+
+            var queryCollection = new QueryCollection(formData);
+
+            var paymentResult = _vnPayService.PaymentExcute(queryCollection);
+
+            if (paymentResult != null && paymentResult.VnPayResponseCode == "00")
+            {
+                // var package = ObjectMapper.Map<PackagePost>(input);
+                var package = new PackagePost {
+                    TenantId = tenantId,
+                    HostId = (int)hostId,
+                    Confirm = false,
+                    HostName = user.FullName,
+                    HostPhoneNumber = user.PhoneNumber,
+                    ExpirationDate = DateTime.Now.Date
+                };
+                await _repositoryPackagePost.InsertAsync(package);
+
+                return new ObjectResult(new PackagePostDto { PaymentUrl = input.PaymentUrl })
+                {
+                    StatusCode = 200 // OK status
+                };
+            }
+            else
+            {
+                throw new UserFriendlyException(400, "Thanh toán không thành công");
+            }
+        }
+
+
+
+        #endregion
         public async Task CancelPackage(CancelPostDto input)
         {
             var tenantId = AbpSession.TenantId;
@@ -144,9 +259,10 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts
                 await _repositoryPackagePost.InsertAsync(package);
                 //}
                 return new PackagePostDto { PaymentUrl = input.PaymentUrl };
-            } else
+            } else if(paymentResult == null)
             {
-                
+
+                throw new Exception("Thanh toán không thành công");
             }
             return new PackagePostDto { PaymentUrl = input.PaymentUrl };
         }
@@ -190,6 +306,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts
         public async Task<PagedResultDto<GetPackageViewDto>> GetAll(GetPackageInputDto input)
         {
             var tenantId = AbpSession.TenantId;
+            // lấy ra gói chưa bị hủy
             var query = from p in _repositoryPackagePost.GetAll()
                         .Where(e => tenantId == e.TenantId && e.Cancel == false)
                         .Where(e => input.filterText == null || e.PackageType.Equals(input.filterText))

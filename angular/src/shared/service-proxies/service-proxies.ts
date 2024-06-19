@@ -2764,6 +2764,167 @@ export class PackagePostsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    paymentResult(body: PackagePostDto | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/app/PackagePosts/PaymentResult";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPaymentResult(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPaymentResult(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processPaymentResult(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    callBack(body: PackagePostDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/PackagePosts/CallBack";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCallBack(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCallBack(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCallBack(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    createPackageNew(body: PackagePostDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/PackagePosts/CreatePackageNew";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreatePackageNew(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreatePackageNew(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreatePackageNew(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     cancelPackage(body: CancelPostDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/PackagePosts/CancelPackage";
         url_ = url_.replace(/[?&]$/, "");
@@ -5774,6 +5935,132 @@ export class UserCommentServiceProxy {
     }
 
     protected processGetAllComment(response: HttpResponseBase): Observable<UserCommentViewDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(UserCommentViewDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentViewDto[]>(null as any);
+    }
+
+    /**
+     * @param userID (optional) 
+     * @return Success
+     */
+    getAllCommentNoReadHost(userID: number | undefined): Observable<UserCommentViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/GetAllCommentNoReadHost?";
+        if (userID === null)
+            throw new Error("The parameter 'userID' cannot be null.");
+        else if (userID !== undefined)
+            url_ += "userID=" + encodeURIComponent("" + userID) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCommentNoReadHost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCommentNoReadHost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentViewDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentViewDto[]>;
+        }));
+    }
+
+    protected processGetAllCommentNoReadHost(response: HttpResponseBase): Observable<UserCommentViewDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(UserCommentViewDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentViewDto[]>(null as any);
+    }
+
+    /**
+     * @param userID (optional) 
+     * @return Success
+     */
+    getAllCommentNoReadRenter(userID: number | undefined): Observable<UserCommentViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/GetAllCommentNoReadRenter?";
+        if (userID === null)
+            throw new Error("The parameter 'userID' cannot be null.");
+        else if (userID !== undefined)
+            url_ += "userID=" + encodeURIComponent("" + userID) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCommentNoReadRenter(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCommentNoReadRenter(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentViewDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentViewDto[]>;
+        }));
+    }
+
+    protected processGetAllCommentNoReadRenter(response: HttpResponseBase): Observable<UserCommentViewDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -9959,7 +10246,7 @@ export class PostLikeDto implements IPostLikeDto {
     id: number | undefined;
     tenantId: number | undefined;
     hostId: number;
-    postId: number;
+    postId: number | undefined;
     like: boolean;
     count: number;
 
@@ -10013,7 +10300,7 @@ export interface IPostLikeDto {
     id: number | undefined;
     tenantId: number | undefined;
     hostId: number;
-    postId: number;
+    postId: number | undefined;
     like: boolean;
     count: number;
 }
@@ -10883,6 +11170,8 @@ export class UserCommentDto implements IUserCommentDto {
     userId: number;
     postId: number;
     commentContent: string | undefined;
+    parentCommentId: number | undefined;
+    dataRead: moment.Moment | undefined;
 
     constructor(data?: IUserCommentDto) {
         if (data) {
@@ -10900,6 +11189,8 @@ export class UserCommentDto implements IUserCommentDto {
             this.userId = _data["userId"];
             this.postId = _data["postId"];
             this.commentContent = _data["commentContent"];
+            this.parentCommentId = _data["parentCommentId"];
+            this.dataRead = _data["dataRead"] ? moment(_data["dataRead"].toString()) : <any>undefined;
         }
     }
 
@@ -10917,6 +11208,8 @@ export class UserCommentDto implements IUserCommentDto {
         data["userId"] = this.userId;
         data["postId"] = this.postId;
         data["commentContent"] = this.commentContent;
+        data["parentCommentId"] = this.parentCommentId;
+        data["dataRead"] = this.dataRead ? this.dataRead.toISOString() : <any>undefined;
         return data;
     }
 
@@ -10934,6 +11227,8 @@ export interface IUserCommentDto {
     userId: number;
     postId: number;
     commentContent: string | undefined;
+    parentCommentId: number | undefined;
+    dataRead: moment.Moment | undefined;
 }
 
 export class UserCommentViewDto implements IUserCommentViewDto {

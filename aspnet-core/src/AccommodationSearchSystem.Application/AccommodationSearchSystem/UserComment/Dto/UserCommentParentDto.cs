@@ -1,22 +1,18 @@
-﻿using Abp.Domain.Entities.Auditing;
-using Abp.Domain.Entities;
+﻿using Abp.Application.Services.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AccommodationSearchSystem.Entity
+namespace AccommodationSearchSystem.AccommodationSearchSystem.UserComment.Dto
 {
-    [Table("UserComment")]
-    public class UserComments : FullAuditedEntity<long>, IEntity<long>
+    public class UserCommentParentDto : EntityDto<long?>
     {
         public int? TenantId { get; set; }
         public long UserId { get; set; }
         public long PostId { get; set; }
         public string CommentContent { get; set; }
         public long? ParentCommentId { get; set; }
-        public DateTime? DataRead {  get; set; }
     }
 }

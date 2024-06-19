@@ -64,7 +64,8 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
         DropdownModule,
         ReactiveFormsModule,
         NgbDropdownModule,
-        CarouselModule
+        CarouselModule,
+        TimepickerModule
     ],
 
     declarations: [
@@ -101,7 +102,8 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
         DropdownModule,
         ReactiveFormsModule,
         NgbDropdownModule,
-        CarouselModule
+        CarouselModule,
+        TimepickerModule
     ]
 })
 export class SharedModule {

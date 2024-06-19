@@ -177,12 +177,13 @@ namespace AccommodationSearchSystem.Controllers
 
         private string GetTenancyNameOrNull()
         {
-            if (!AbpSession.TenantId.HasValue)
-            {
-                return null;
-            }
+            //if (!AbpSession.TenantId.HasValue)
+            //{
+            //    return null;
+            //}
 
-            return _tenantCache.GetOrNull(AbpSession.TenantId.Value)?.TenancyName;
+            var tenantId = 1;
+            return _tenantCache.GetOrNull(tenantId)?.TenancyName;
         }
 
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultAsync(string usernameOrEmailAddress, string password, string tenancyName)

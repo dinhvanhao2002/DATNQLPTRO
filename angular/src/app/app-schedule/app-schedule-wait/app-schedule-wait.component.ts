@@ -54,7 +54,7 @@ export class AppScheduleWaitComponent extends AppComponentBase implements OnInit
     // } else {
     //   this.isHost = false;
     // }
-    if (this.shownLogin == 4 || this.shownLogin == 3) {
+    if (this.shownLogin == 3) {
       this.isHost = true;
     } else {
       this.isHost = false;

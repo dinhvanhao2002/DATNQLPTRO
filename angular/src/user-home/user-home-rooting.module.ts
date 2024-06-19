@@ -1,3 +1,4 @@
+import { PostIntroUserComponent } from './post-intro-user/post-intro-user.component';
 import { PostViewDetailUserComponent } from './post-view-detail-user/post-view-detail-user.component';
 import { UserContactComponent } from './user-contact/user-contact.component';
 import { RouterModule } from '@angular/router';
@@ -22,9 +23,7 @@ import { PostHomeUserComponent } from './post-home-user/post-home-user.component
                     { path: 'user-contact', component: UserContactComponent },  // Trang chủ Liên hệ
                     { path: 'post-view-detail/:id', component: PostViewDetailUserComponent },  // Trang chi tiết phòng trọ click từ trang home
                     { path: 'post-vew-user/post-view-detail/:id', component: PostViewDetailUserComponent },  // Trang chi tiết phòng trọ click từ trang nha cho thuê
-                    { path: '', component: PostViewUserComponent , children:[
-
-                    ]},     
+                    { path: 'post-intro-user', component: PostIntroUserComponent },
                 ]
 
             }

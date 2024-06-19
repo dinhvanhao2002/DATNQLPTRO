@@ -5,6 +5,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { AppScheduleWaitComponent } from '../app-schedule-wait.component';
 import { finalize } from 'rxjs/operators';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
 @Component({
   selector: 'AppScheduleWaitUpdate',
@@ -29,13 +30,15 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
     public _scheduleService: ManageAppointmentSchedulesServiceProxy,
     public _scheduleWaitComponent: AppScheduleWaitComponent,
     private bsDatepickerConfig: BsDatepickerConfig,
-    private _sessionService: SessionServiceProxy
+    private _sessionService: SessionServiceProxy,
+    private timepickerConfig: TimepickerConfig,
   ) {
     super(injector);
     this.bsDatepickerConfig.dateInputFormat = 'DD/MM/YYYY';
     this.scheduleWaitComponent = _scheduleWaitComponent;
     this.minDate = new Date();
     this.minDate.getDate();
+    this.timepickerConfig.showMeridian = true;
   }
 
   ngOnInit(): void {

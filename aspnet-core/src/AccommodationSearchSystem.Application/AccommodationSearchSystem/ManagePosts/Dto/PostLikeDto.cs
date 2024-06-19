@@ -11,7 +11,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
     {
         public int? TenantId { get; set; }
         public int HostId { get; set; } // Id Người tìm trọ
-        public int PostId { get; set; } // Id bài đăng
+        public int? PostId { get; set; } // Id bài đăng
         public bool Like { get; set; }
 
         public int Count { get; set; }

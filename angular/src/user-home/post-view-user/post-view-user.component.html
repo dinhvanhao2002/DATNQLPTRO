@@ -209,7 +209,7 @@
           <div *ngIf="data">
             <div class="row">
               <!-- Loop through rowData and display each item as a card -->
-              <div class="col-md-3 mb-3" *ngFor="let post of data">
+              <div class="col-md-4 mb-3" *ngFor="let post of data">
                 <div class="card">
                   <div class="card-body">
                     <div class="header-posts">
@@ -308,42 +308,54 @@
   </section>
 </div>
 
-<!-- DỊCH VỤ CỦA CHÚNG TÔI -->
-<div class="container-xxl py-5">
-  <div class="container">
-    <div class="wow fadeInUp">
-      <h6
-        class="section-title text-uppercase"
-        style="font-size: 24px; font-weight: 600"
-      >
-        DỊCH VỤ CỦA CHÚNG TÔI
-      </h6>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 text-center">
+      <img
+        src="/assets/bannerlienhe.jpg"
+        alt="Image"
+        class="img-fluid"
+        style="max-height: 300px; max-width: 500px;"
+      />
     </div>
-    <div class="row g-4">
-      <div class="col-lg-4 col-md-6 wow fadeInUp">
-        <div class="rounded shadow overflow-hidden">
-          <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">An Toàn</h5>
-            <small>Designation</small>
-          </div>
+    <h5 class="col-12 text-center">Liên hệ với chúng tôi nếu bạn cần hỗ trợ:</h5>
+  </div>
+  <div class="row g-4 align-items-stretch">
+    <!-- Thay đổi align-items thành align-items-stretch -->
+    <div class="col-lg-4 col-md-6 wow fadeInUp">
+      <div class="service-box rounded shadow overflow-hidden h-100">
+        <!-- Thêm class h-100 -->
+        <div class="text-center p-4 mt-3">
+          <h5 class="fw-bold mb-0">HỖ TRỢ ĐĂNG TIN</h5>
+          <small
+            >Điện thoại: 0373939716</small
+          >
         </div>
       </div>
-      <div class="col-lg-4 col-md-6 wow fadeInUp">
-        <div class="rounded shadow overflow-hidden">
-          <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">Lãi 0%</h5>
-            <small>Designation</small>
-          </div>
+    </div>
+    <div class="col-lg-4 col-md-6 wow fadeInUp">
+      <div class="service-box rounded shadow overflow-hidden h-100">
+        <!-- Thêm class h-100 -->
+        <div class="text-center p-4 mt-3">
+          <h5 class="fw-bold mb-0">HỖ TRỢ THANH TOÁN</h5>
+          <small
+          >Điện thoại: 0373939716</small
+        >
         </div>
       </div>
-      <div class="col-lg-4 col-md-6 wow fadeInUp">
-        <div class="rounded shadow overflow-hidden">
-          <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">Nhanh</h5>
-            <small>Designation</small>
-          </div>
+    </div>
+    <div class="col-lg-4 col-md-6 wow fadeInUp">
+      <div class="service-box rounded shadow overflow-hidden h-100">
+        <!-- Thêm class h-100 -->
+        <div class="text-center p-4 mt-3">
+          <h5 class="fw-bold mb-0">PHẢN ÁNH/KHIẾU NẠI</h5>
+          <small
+            >Điện thoại: 0373939716</small
+          >
         </div>
       </div>
     </div>
   </div>
 </div>
+

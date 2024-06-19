@@ -13,6 +13,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.UserComment.Dto
         public long UserId { get; set; }
         public long PostId { get; set; }
         public string CommentContent { get; set; }
+        public long? ParentCommentId { get; set; }
+        public DateTime? DataRead { get; set; }
     }
 
     public class UserCommentViewDto : EntityDto<long?>

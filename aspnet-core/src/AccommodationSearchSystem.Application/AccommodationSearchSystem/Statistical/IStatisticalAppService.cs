@@ -19,5 +19,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
         Task<List<ScheduleCountByMonthDto>> GetScheduleCountByMonth();
         Task<UserPostCountDto> GetUserWithMostPosts();
         Task<UserScheduleCountDto> GetUserWithMostSchedules();
+
+
     }
 }
