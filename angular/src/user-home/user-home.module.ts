@@ -1,3 +1,4 @@
+import { HeaderUserHomeComponent } from './header-user-home/header-user-home.component';
 import { PostHomeUserComponent } from "./post-home-user/post-home-user.component";
 import { PostViewDetailUserComponent } from "./post-view-detail-user/post-view-detail-user.component";
 import { UserContactComponent } from "./user-contact/user-contact.component";
@@ -17,6 +18,7 @@ import { TabsModule } from "ngx-bootstrap/tabs";
     PostHomeUserComponent,
     UserContactComponent,
     PostViewDetailUserComponent, // Chi tiết phòng trọ
+    HeaderUserHomeComponent
   ],
   imports: [
     CommonModule,

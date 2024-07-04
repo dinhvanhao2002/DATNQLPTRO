@@ -358,7 +358,7 @@
                     <td style="min-width: 10rem">
                       {{ rowData.expirationDate | date : "dd/MM/YYYY" }}
                     </td>
-                    <td class="text-center" style="min-width: 10rem">
+                    <!-- <td class="text-center" style="min-width: 10rem">
                       <i
                         class="pi"
                         [ngClass]="{
@@ -368,7 +368,15 @@
                             rowData.confirm === false
                         }"
                       ></i>
-                    </td>
+                    </td> -->
+                    <td class="text-center" style="min-width:10rem">
+                      <ng-container *ngIf="rowData.confirm; else notConfirmed">
+                          <span class="text-green-500 font-bold">Đã xác nhận</span>
+                      </ng-container>
+                      <ng-template #notConfirmed>
+                          <span class="text-yellow-500 font-bold">Chưa xác nhận</span>
+                      </ng-template>
+                  </td>
                     <td class="text-center" style="min-width: 10rem">
                       <i
                         class="pi"

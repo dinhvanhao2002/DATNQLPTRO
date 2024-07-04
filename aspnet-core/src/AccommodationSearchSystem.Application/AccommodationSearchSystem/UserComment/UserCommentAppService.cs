@@ -60,7 +60,32 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.UserComment
         }
         #endregion
 
-        #region Trả lời bình luận con 
+        #region Lấy thông báo bình luận đối với chủ trọ 
+        [AbpAllowAnonymous]
+        public async Task<List<UserCommentViewDto>> GetCommentForRent()
+        {
+            // sẽ lọc ra những bài đăng chưa được đọc bình luận và có trạng thái DataRead == null
+            var userId = AbpSession.UserId;
+            var data = await (from c in _repositoryComment.GetAll()
+                              join u in _repositoryUser.GetAll() on c.UserId equals u.Id
+                              join p in _repositoryPost.GetAll() on c.PostId equals p.Id
+                              where p.CreatorUserId == userId && p.CreatorUserId != c.CreatorUserId 
+                              orderby c.Id descending
+                              select new UserCommentViewDto
+                              {
+                                  Id = c.Id,
+                                  TenantId = c.TenantId,
+                                  PostId = p.Id,
+                                  UserId = u.Id,
+                                  CommentContent = c.CommentContent,
+                                  CreateByName = u.FullName,
+                                  CreationTime = c.CreationTime,
+                              }).ToListAsync();
+            // Gửi danh sách bình luận về client thông qua SignalR Hub
+            await _hubContext.Clients.All.SendAsync("GetCommentForRent", data);
+            return data;
+
+        }
 
 
         #endregion

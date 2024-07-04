@@ -1,87 +1,6 @@
 
-<!-- Slider -->
-<!-- <div class="container">
-  <carousel>
-    <slide>
-      <img
-        src="/assets/banner11.jpg"
-        alt="Image"
-        class="w-100"
-        style="height: 500px"
-      />
-      <div
-        class="carousel-caption d-flex flex-column align-items-center justify-content-center"
-      >
-        <div class="p-3" style="max-width: 700px">
-          <h6
-            class="section-title text-white text-uppercase mb-3 animated slideInDown"
-            style="font-size: 50px"
-          >
-            Rent24H
-          </h6>
-          <h1
-            class="display-4 text-white mb-4 animated slideInDown"
-            style="font-size: 37px"
-          >
-            NHÀ TRỌ THÔNG MINH - TÌM KIẾM DỄ DÀNG!
-          </h1>
-        </div>
-      </div>
-    </slide>
-    <slide>
-      <img
-        src="/assets/banner12.jpg"
-        alt="Image"
-        class="w-100"
-        style="height: 500px"
-      />
-      <div
-        class="carousel-caption d-flex flex-column align-items-center justify-content-center"
-      >
-        <div class="p-3" style="max-width: 700px">
-          <h6
-            class="section-title text-white text-uppercase mb-3 animated slideInDown"
-            style="font-size: 50px"
-          >
-            RENT24H
-          </h6>
-          <h1
-            class="display-3 text-white mb-4 animated slideInDown"
-            style="font-size: 37px"
-          >
-            NHÀ TRỌ THÔNG MINH - TÌM KIẾM DỄ DÀNG!
-          </h1>
-        </div>
-      </div>
-    </slide>
-    <slide>
-      <img
-        src="/assets/banner13.jpg"
-        alt="Image"
-        class="w-100"
-        style="height: 500px"
-      />
-      <div
-        class="carousel-caption d-flex flex-column align-items-center justify-content-center"
-      >
-        <div class="p-3" style="max-width: 700px">
-          <h6
-            class="section-title text-white text-uppercase mb-3 animated slideInDown"
-            style="font-size: 50px"
-          >
-            RENT24H
-          </h6>
-          <h1
-            class="display-3 text-white mb-4 animated slideInDown"
-            style="font-size: 37px"
-          >
-            NHÀ TRỌ THÔNG MINH - TÌM KIẾM DỄ DÀNG!
-          </h1>
-        </div>
-      </div>
-    </slide>
-  </carousel>
-</div> -->
+<app-header-user-home></app-header-user-home>
+
 <!-- Khối hiển thị chi tiết phòng trọ  -->
 <div class="container" style="margin-top: 100px">
 <div class="row">
@@ -129,7 +48,7 @@
   <div class="col-7">
     <!-- dùng 1 tham chiếu mẫu ở đây đang giải quyết vấn đề API: #memberTabs -->
     <tabset>
-      <tab class="" [heading]="'Nội dung'">
+      <tab class="" [heading]="'Nội dung'" >
         <h4>{{l("ContentPost")}}</h4>
         <div class="preserve-line-breaks">{{post.contentPost}}</div>
       </tab>
@@ -185,7 +104,7 @@
   </div>
 </div>
 
-<!-- <div class="content px-4 mt-6">
+ <div class="content px-4 mt-6">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -234,10 +153,10 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 <!-- Bình luận cấp 2 -->
-<div class="content px-4 mt-6">
+<!-- <div class="content px-4 mt-6">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -279,7 +198,7 @@
                   </div>
                 </div>
 
-                <!-- Hiển thị các bình luận trả lời -->
+
                 <ul *ngIf="comment.replies && comment.replies.length">
                   <li *ngFor="let reply of comment.replies">
                     <div class="message-content">
@@ -318,6 +237,6 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 </div>

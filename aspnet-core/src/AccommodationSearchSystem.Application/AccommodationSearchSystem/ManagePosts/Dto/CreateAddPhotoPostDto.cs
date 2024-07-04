@@ -1,6 +1,4 @@
-﻿using Abp.Application.Services.Dto;
-using Abp.Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
 {
-    public class CreateOrEditIPostDto : EntityDto<long?>
+    public class CreateAddPhotoPostDto
     {
-        public string? PostCode { get; set; }
-        public int? TenantId { get; set; }
-        [StringLength(4000)]
+     
         public string Title { get; set; }
         [StringLength(4000)]
         public string ContentPost { get; set; }
@@ -30,13 +26,13 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
         [StringLength(4000)]
         public string Area { get; set; }
         public decimal Square { get; set; }
-        public bool RoomStatus { get; set; }
-        public string PriceCategory { get; set; } // Loại phòng
-        public bool Wifi { get; set; } // Có wifi hay không
-        public bool Parking { get; set; } // Có chỗ để xe hay không
-        public bool Conditioner { get; set; } // Có điều hóa hay không
+        public bool? RoomStatus { get; set; }
+        public string? PriceCategory { get; set; } // Loại phòng
+        public bool? Wifi { get; set; } // Có wifi hay không
+        public bool? Parking { get; set; } // Có chỗ để xe hay không
+        public bool? Conditioner { get; set; } // Có điều hóa hay không
         public ICollection<PhotoDto> Photos { get; set; }
-        public bool ConfirmAdmin { get; set; }
-
+        public bool? ConfirmAdmin { get; set; }
+        public ICollection<IFormFile> formFiles { get; set; }
     }
 }

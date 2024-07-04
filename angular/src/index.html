@@ -26,45 +26,12 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-    <style>
-      /* Tùy chỉnh toàn bộ khối df-messenger */
-      df-messenger {
-        --df-messenger-bot-message: #f1f1f1;
-        --df-messenger-user-message: #f39c12;
-        --df-messenger-button-titlebar-color: #3498db;
-        --df-messenger-chat-background-color: #ffffff;
-      }
-
-      /* Tùy chỉnh khối chat cụ thể */
-      .chat-boot {
-        width: 100%;
-        max-width: 400px;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 9999;
-      }
-
-      /* Các tuỳ chỉnh CSS bổ sung */
-      df-messenger chat-wrapper[opened] {
-        height: 477px; /* Chiều cao của khung chat khi mở */
-      }
-
-      div.chat-wrapper[opened="true"]{
-        height: 477px;
-      }
-
-      df-messenger .df-titlebar {
-        background-color: #3498db; /* Màu nền của thanh tiêu đề */
-      }
-
-      df-messenger .df-chatbox {
-        background-color: #ffffff; /* Màu nền của hộp chat */
-      }
-    </style>
   </head>
   <body class="hold-transition">
     <app-root></app-root>
+    <div class="location">
+
+    </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -81,15 +48,10 @@
   <script src="js/main.js"></script>
 
   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-
   <df-messenger
-  class="chat-boot"
-  intent="WELCOME"
-  chat-title="Rent24h"
-  agent-id="0cd81c52-8cf3-4d69-b720-59c859ed5fb8"
-  language-code="vi"
-></df-messenger>
-
-
-
+    intent="WELCOME"
+    chat-title="Rent24h"
+    agent-id="0cd81c52-8cf3-4d69-b720-59c859ed5fb8"
+    language-code="vi"
+  ></df-messenger>
 </html>

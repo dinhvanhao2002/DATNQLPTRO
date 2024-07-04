@@ -39,6 +39,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 
 
+
 @NgModule({
     imports: [
         CommonModule,
@@ -65,7 +66,8 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
         ReactiveFormsModule,
         NgbDropdownModule,
         CarouselModule,
-        TimepickerModule
+        TimepickerModule,
+
     ],
 
     declarations: [
@@ -103,7 +105,8 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
         ReactiveFormsModule,
         NgbDropdownModule,
         CarouselModule,
-        TimepickerModule
+        TimepickerModule,
+
     ]
 })
 export class SharedModule {

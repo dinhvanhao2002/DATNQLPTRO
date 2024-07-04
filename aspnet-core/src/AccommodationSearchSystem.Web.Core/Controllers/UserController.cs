@@ -117,5 +117,22 @@ namespace AccommodationSearchSystem.Controllers
                 Message = "Password reset successful!"
             });
         }
+
+        [HttpPost("send-contact-email")]
+        public async Task<IActionResult> SendContactEmail([FromBody] ContactFormModel contactForm)
+        {
+            if (contactForm == null || !ModelState.IsValid)
+            {
+                return BadRequest(new { StatusCode = 400, Message = "Invalid form data" });
+            }
+
+            var emailModel = new EmailModel(
+                _configuration["EmailSettings:From"],
+                contactForm.Subject,
+                $"Name: {contactForm.Name}<br>Email: {contactForm.Email}<br>Message: {contactForm.Message}"
+            );
+             _emailService.SendEmail(emailModel);
+            return Ok(new { StatusCode = 200, Message = "Email sent!" });
+        }
     }
 }

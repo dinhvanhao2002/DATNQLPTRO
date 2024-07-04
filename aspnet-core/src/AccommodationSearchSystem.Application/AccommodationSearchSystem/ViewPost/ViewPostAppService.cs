@@ -15,6 +15,7 @@ using AccommodationSearchSystem.EntityFrameworkCore;
 using AccommodationSearchSystem.Interfaces;
 using AccommodationSearchSystem.Migrations;
 using AccommodationSearchSystem.MultiTenancy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
 
         }
 
-        public Task CreateOrEdit(CreateOrEditIPostDto input)
+        public Task<long> CreateOrEdit(CreateOrEditIPostDto input)
         {
             throw new NotImplementedException();
         }
@@ -671,5 +672,6 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
             await _repositoryUserLikePost.DeleteAsync(likePost.Id);
         }
         #endregion
+
     }
 }

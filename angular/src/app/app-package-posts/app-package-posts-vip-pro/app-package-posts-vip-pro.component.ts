@@ -24,6 +24,8 @@ export class AppPackagePostsVipProComponent extends AppComponentBase implements 
   showQR: boolean = false;
   vnp_TransactionStatus: string = "";
 
+  url: string = "";
+
 
   constructor(
     injector: Injector,
@@ -78,7 +80,8 @@ export class AppPackagePostsVipProComponent extends AppComponentBase implements 
           this._packageService
             .paymentResult(this.packages)
             .subscribe((response) => {
-              window.open(response, '_blank');
+              this.url = response;
+             // window.open(response, '_blank');
               // this.notify.info(this.l("SavedSuccessfully"));
               this.modalSave.emit();
             });

@@ -324,6 +324,8 @@ export class PostViewDetailUserComponent
     });
   }
 
+
+
   getTransit() {
     if (!this.map) {
       console.error("Map is not initialized yet");
@@ -600,6 +602,10 @@ export class PostViewDetailUserComponent
     }
 
     return timeAgo;
+  }
+
+  showChangeDataRead(){
+    
   }
 
 

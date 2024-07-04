@@ -6,6 +6,7 @@ import { AppScheduleWaitComponent } from '../app-schedule-wait.component';
 import { finalize } from 'rxjs/operators';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
+import * as moment from 'moment';
 
 @Component({
   selector: 'AppScheduleWaitUpdate',
@@ -24,6 +25,7 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
   tenantId: number;
   scheduleWaitComponent: AppScheduleWaitComponent;
   minDate: Date;
+  timeString: string;
 
   constructor(
     injector: Injector,
@@ -38,9 +40,50 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
     this.scheduleWaitComponent = _scheduleWaitComponent;
     this.minDate = new Date();
     this.minDate.getDate();
-    this.timepickerConfig.showMeridian = true;
+
   }
 
+  // ngOnInit(): void {
+  //   this._sessionService.getCurrentLoginInformations().subscribe((res) => {
+  //     this.tenantId = res.tenant.id;
+  //   });
+  // }
+
+  // show(ScheduleId?: number): void {
+  //   this._scheduleService
+  //       .getScheduleForEdit(ScheduleId)
+  //       .subscribe((result) => {
+  //         this.schedules = result.createOrEditSchedulesDtos;
+  //         this.active = true
+  //         this.modal.show();
+  //       });
+  // }
+
+  // save(): void {
+  //   this.saving = true;
+  //   this.schedules.tenantId = this.tenantId;
+  //   this._scheduleService
+  //     .updateSchedule(this.schedules)
+  //     .pipe(
+  //       finalize(() => {
+  //         this.saving = false;
+  //       })
+  //     )
+  //     .subscribe(() => {
+  //       this.notify.info(this.l("SavedSuccessfully"));
+  //       this.scheduleWaitComponent.updateTable();
+  //       this.close();
+
+  //       this.modalSave.emit();
+  //       this.schedules = null;
+  //       this.saving = false;
+  //     });
+  // }
+
+  // close(): void {
+  //   this.active = false;
+  //   this.modal.hide();
+  // }
   ngOnInit(): void {
     this._sessionService.getCurrentLoginInformations().subscribe((res) => {
       this.tenantId = res.tenant.id;
@@ -49,16 +92,19 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
 
   show(ScheduleId?: number): void {
     this._scheduleService
-        .getScheduleForEdit(ScheduleId)
-        .subscribe((result) => {
-          this.schedules = result.createOrEditSchedulesDtos;
-          this.active = true
-          this.modal.show();
-        });
+      .getScheduleForEdit(ScheduleId)
+      .subscribe((result) => {
+        this.schedules = result.createOrEditSchedulesDtos;
+        this.timeString = moment(this.schedules.hour).format('HH:mm');
+        this.active = true;
+        this.modal.show();
+      });
   }
 
   save(): void {
     this.saving = true;
+    // Combine the selected date with the time string to create a datetime
+    this.schedules.hour = this.combineDateTime(this.schedules.day, this.timeString);
     this.schedules.tenantId = this.tenantId;
     this._scheduleService
       .updateSchedule(this.schedules)
@@ -69,12 +115,11 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
       )
       .subscribe(() => {
         this.notify.info(this.l("SavedSuccessfully"));
-        this.scheduleWaitComponent.updateTable();
-        this.close();
+        this.scheduleWaitComponent.updateTable(); // Assuming this method exists in AppScheduleWaitComponent
+        this.close(); // Close the modal
 
-        this.modalSave.emit();
-        this.schedules = null;
-        this.saving = false;
+        this.modalSave.emit(); // Emit event to parent component
+        this.schedules = new CreateOrEditSchedulesDto(); // Reset schedules object
       });
   }
 
@@ -83,6 +128,18 @@ export class AppScheduleWaitUpdateComponent extends AppComponentBase implements 
     this.modal.hide();
   }
 
+  combineDateTime(date: any, time: string): moment.Moment {
+    if (!date || !time) return null;
 
+    const [hours, minutes] = time.split(':').map(Number);
 
+    let combinedDateTime: moment.Moment;
+    if (moment.isMoment(date)) {
+      combinedDateTime = (date as moment.Moment).clone().hours(hours).minutes(minutes).seconds(0).milliseconds(0);
+    } else {
+      combinedDateTime = moment(date).hours(hours).minutes(minutes).seconds(0).milliseconds(0);
+    }
+
+    return combinedDateTime;
+  }
 }

@@ -109,7 +109,7 @@
                     <div
                       class="col-md-5 cursor-pointer"
                       style="margin-top: 5px"
-                      [routerLink]="['./', post.id]"
+                      [routerLink]="['./post-view-detail', post.id]"
                     >
                       <!-- You can customize the header here -->
                       <img
@@ -125,7 +125,7 @@
                       />
                     </div>
                     <div class="col-md-7 content-posts">
-                      <a class="post__title" [routerLink]="['./', post.id]">{{
+                      <a class="post__title" [routerLink]="['./post-view-detail', post.id]">{{
                         post.title
                       }}</a>
                       <p>
@@ -213,7 +213,7 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="header-posts">
-                      <a class="post__title" [routerLink]="['./', post.id]">
+                      <a class="post__title" [routerLink]="['./post-view-detail', post.id]">
                         {{ post.title }}
                         <span class="tooltip">{{ post.title }}</span>
                       </a>

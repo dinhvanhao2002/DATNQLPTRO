@@ -65,6 +65,6 @@ export class AppPackagePostsPaymentSuccessComponent extends AppComponentBase imp
 
 
   returnToPackagePosts(): void {
-    this._router.navigate(['../app-package-posts']);
+    this._router.navigate(['/app/app-package-posts']);
   }
 }

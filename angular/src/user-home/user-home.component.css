@@ -81,3 +81,17 @@
   animation-duration: 1s;
 }
 
+
+
+.back-to-top {
+  position: fixed;
+  bottom: 89px;
+  right: 24px;
+  display: none; /* Ẩn nút ban đầu */
+  z-index: 99; /* Layer trên cùng */
+  font-size: 18px;
+}
+
+.back-to-top.show {
+  display: block; /* Hiển thị nút khi cần */
+}

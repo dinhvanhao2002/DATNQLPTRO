@@ -93,7 +93,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts
                 HostName = user.FullName,
                 PackageType = input.PackageType,
                 HostPhoneNumber = user.PhoneNumber,
-                ExpirationDate = DateTime.Now.Date
+                CreationTime = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMonths(6)  // hạn
             };
             await _repositoryPackagePost.InsertAsync(package);
             return new ObjectResult(new PackagePostDto { PaymentUrl = input.PaymentUrl })

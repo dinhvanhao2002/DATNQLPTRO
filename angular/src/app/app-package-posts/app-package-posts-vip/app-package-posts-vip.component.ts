@@ -65,27 +65,55 @@ export class AppPackagePostsVipComponent extends AppComponentBase implements OnI
     this.packages.amount = 199000;
     this.packages.description = "XNGVIP" + this.packages.hostPhoneNumber;
     this.getStatus();
-    this.message.confirm('', 'Bạn muốn đăng ký gói đăng bài này ?', (isConfirme) => {
-      if (isConfirme) {
+    this.getStatus();
+    this.message.confirm('', 'Bạn muốn đăng ký gói đăng bài này ?', (isConfirmed) => {
+      if (isConfirmed) {
         if (this.statusPackage) {
           this.notify.warn("Bạn đã đăng ký gói đăng bài trước đó");
           this.close();
         } else {
           this._packageService
-            .createPackage(this.packages)
+            .paymentResult(this.packages)
             .subscribe((response) => {
-              this.close();
-              window.open(response.paymentUrl, '_blank');
-              this.notify.info(this.l("SavedSuccessfully"));
-              console.log(response.paymentUrl);
+              window.open(response, '_blank');
+              // this.notify.info(this.l("SavedSuccessfully"));
               this.modalSave.emit();
-              this.packages = null;
-
             });
         }
+      } else {
+        // Xử lý trường hợp người dùng không xác nhận
+        this.saving = false; // Đặt lại trạng thái saving về false
       }
-    })
+    });
   }
+
+  // save(): void {
+  //   this.saving = true;
+  //   this.packages.tenantId = this.tenantId;
+  //   this.packages.amount = 199000;
+  //   this.packages.description = "XNGVIP" + this.packages.hostPhoneNumber;
+  //   this.getStatus();
+  //   this.message.confirm('', 'Bạn muốn đăng ký gói đăng bài này ?', (isConfirme) => {
+  //     if (isConfirme) {
+  //       if (this.statusPackage) {
+  //         this.notify.warn("Bạn đã đăng ký gói đăng bài trước đó");
+  //         this.close();
+  //       } else {
+  //         this._packageService
+  //           .createPackage(this.packages)
+  //           .subscribe((response) => {
+  //             this.close();
+  //             window.open(response.paymentUrl, '_blank');
+  //             this.notify.info(this.l("SavedSuccessfully"));
+  //             console.log(response.paymentUrl);
+  //             this.modalSave.emit();
+  //             this.packages = null;
+
+  //           });
+  //       }
+  //     }
+  //   })
+  // }
 
   close(): void {
     this.active = false;

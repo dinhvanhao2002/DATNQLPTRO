@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentSchedules.Dto;
 using AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 {
     public interface IManagePostsAppService : IApplicationService
     {
-        Task CreateOrEdit(CreateOrEditIPostDto input);
+        Task<long> CreateOrEdit(CreateOrEditIPostDto input);
         Task ConfirmPostAD(ConfirmPostByAdminDto input);
         Task<PagedResultDto<GetPostForViewDto>> GetAll(GetPostInputDto input);
         Task<PagedResultDto<GetPostForViewDto>> GetAllForHost(GetPostInputDto input);

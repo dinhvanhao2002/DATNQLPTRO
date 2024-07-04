@@ -1,13 +1,10 @@
-<div bsModal #createOrEditModal="bs-modal" class="modal fade" aria-labelledby="createOrEditModal" aria-hidden="true"
+<div bsModal #CreateAddPhoto="bs-modal" class="modal fade" aria-labelledby="CreateAddPhoto" aria-hidden="true"
   [config]="{backdrop: 'static'}">
   <div class="modal-dialog modal-md modal-lg">
     <div class="modal-content">
       <form class="form-horizontal" autocomplete="off" #createpostsModal="ngForm" (ngSubmit)="save()" *ngIf="active">
-
-        <abp-modal-header *ngIf="posts.id" [title]="'EditPosts' | localize"
+        <abp-modal-header *ngIf="!posts.id" [title]="'CreateNewPost' | localize"
           (onCloseClick)="modal.hide()"></abp-modal-header>
-        <!-- <abp-modal-header *ngIf="!posts.id" [title]="'CreateNewPost' | localize"
-          (onCloseClick)="modal.hide()"></abp-modal-header> -->
 
         <div class="modal-body">
           <tabset>
@@ -173,35 +170,7 @@
                   </div>
                 </div>
               </div>
-            </tab>
-            <!-- Thêm ảnh -->
-            <tab *ngIf="posts.id" [heading]="'PhotosDetails' | localize" class="pt-3 px-2">
-              <div class="row">
-                <div class="col-2" *ngFor="let photo of postPhotos">
-                  <img src="{{photo.url}}" alt="{{photo.url}}" class="img-thumbnail p-1">
-                  <div class="text-center">
-                    <!-- <input type="checkbox" [(ngModel)]="photo.selected"> -->
-                    <button
-                      [disabled]="photo.isMain"
-                      (click)="setMainPhotos(posts.id, photo.id)"
-                      [ngClass]='photo.isMain ? "btn-success active" : "btn-outline-success"'
-                      class="btn btn-sm">
-                       Chính
-                    </button>
-                    <button
-                      [disabled]="photo.isMain"
-                      (click)="deletePhoto(posts.id, photo.id)"
-                      class="btn btn-sm btn-danger">
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </div>
-              </div>
-              </div>
-              <!-- <div class="row mt-2">
-                <div class="col-12 text-center">
-                  <button class="btn btn-danger" (click)="deleteSelectedPhotos()">Xóa ảnh đã chọn</button>
-                </div>
-              </div> -->
+              <!-- Thêm ảnh -->
               <div class="row mt-4">
 
                 <div class="col-md-3">

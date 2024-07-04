@@ -894,6 +894,134 @@ export class InforUserServiceProxy {
 }
 
 @Injectable()
+export class ManageAddPhotoServiceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    createAndAddPhoto(body: CreateOrEditIPostDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/ManageAddPhotoService/CreateAndAddPhoto";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateAndAddPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateAndAddPhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateAndAddPhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @param file (optional) 
+     * @return Success
+     */
+    addPhoto(id: number | undefined, file: FileParameter | undefined): Observable<PhotoDto> {
+        let url_ = this.baseUrl + "/api/services/app/ManageAddPhotoService/AddPhoto?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file === null || file === undefined)
+            throw new Error("The parameter 'file' cannot be null.");
+        else
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddPhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PhotoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PhotoDto>;
+        }));
+    }
+
+    protected processAddPhoto(response: HttpResponseBase): Observable<PhotoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PhotoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PhotoDto>(null as any);
+    }
+}
+
+@Injectable()
 export class ManageAppointmentSchedulesServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -1742,7 +1870,7 @@ export class ManagePostsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrEdit(body: CreateOrEditIPostDto | undefined): Observable<void> {
+    createOrEdit(body: CreateOrEditIPostDto | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/app/ManagePosts/CreateOrEdit";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1754,6 +1882,7 @@ export class ManagePostsServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
             })
         };
 
@@ -1764,14 +1893,14 @@ export class ManagePostsServiceProxy {
                 try {
                     return this.processCreateOrEdit(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<number>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<number>;
         }));
     }
 
-    protected processCreateOrEdit(response: HttpResponseBase): Observable<void> {
+    protected processCreateOrEdit(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1780,14 +1909,18 @@ export class ManagePostsServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(null as any);
+        return _observableOf<number>(null as any);
     }
 
     /**
@@ -2238,6 +2371,63 @@ export class ManagePostsServiceProxy {
     }
 
     protected processDeletePhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @param photoIds (optional) 
+     * @return Success
+     */
+    deletePhotos(id: number | undefined, photoIds: number[] | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/DeletePhotos?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        if (photoIds === null)
+            throw new Error("The parameter 'photoIds' cannot be null.");
+        else if (photoIds !== undefined)
+            photoIds && photoIds.forEach(item => { url_ += "photoIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeletePhotos(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeletePhotos(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeletePhotos(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2746,6 +2936,66 @@ export class ManagePostsServiceProxy {
             }));
         }
         return _observableOf<PostLikeDto>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @param formFile (optional) 
+     * @return Success
+     */
+    createAndAddPhoto(id: number | undefined, formFile: FileParameter[] | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/CreateAndAddPhoto?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (formFile === null || formFile === undefined)
+            throw new Error("The parameter 'formFile' cannot be null.");
+        else
+            formFile.forEach(item_ => content_.append("formFile", item_.data, item_.fileName ? item_.fileName : "formFile") );
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateAndAddPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateAndAddPhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateAndAddPhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
     }
 }
 
@@ -3490,6 +3740,237 @@ export class PackagePostsServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
+export class PostServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param postCode (optional) 
+     * @param tenantId (optional) 
+     * @param title (optional) 
+     * @param contentPost (optional) 
+     * @param photo (optional) 
+     * @param roomPrice (optional) 
+     * @param address (optional) 
+     * @param district (optional) 
+     * @param city (optional) 
+     * @param ward (optional) 
+     * @param area (optional) 
+     * @param square (optional) 
+     * @param roomStatus (optional) 
+     * @param priceCategory (optional) 
+     * @param wifi (optional) 
+     * @param parking (optional) 
+     * @param conditioner (optional) 
+     * @param photos (optional) 
+     * @param confirmAdmin (optional) 
+     * @param id (optional) 
+     * @param formFiles (optional) 
+     * @return Success
+     */
+    createAddPhoto(postCode: string | undefined, tenantId: number | undefined, title: string | undefined, contentPost: string | undefined, photo: string | undefined, roomPrice: number | undefined, address: string | undefined, district: string | undefined, city: string | undefined, ward: string | undefined, area: string | undefined, square: number | undefined, roomStatus: boolean | undefined, priceCategory: string | undefined, wifi: boolean | undefined, parking: boolean | undefined, conditioner: boolean | undefined, photos: PhotoDto[] | undefined, confirmAdmin: boolean | undefined, id: number | undefined, formFiles: FileParameter[] | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Post/CreateAddPhoto";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (postCode === null || postCode === undefined)
+            throw new Error("The parameter 'postCode' cannot be null.");
+        else
+            content_.append("PostCode", postCode.toString());
+        if (tenantId === null || tenantId === undefined)
+            throw new Error("The parameter 'tenantId' cannot be null.");
+        else
+            content_.append("TenantId", tenantId.toString());
+        if (title === null || title === undefined)
+            throw new Error("The parameter 'title' cannot be null.");
+        else
+            content_.append("Title", title.toString());
+        if (contentPost === null || contentPost === undefined)
+            throw new Error("The parameter 'contentPost' cannot be null.");
+        else
+            content_.append("ContentPost", contentPost.toString());
+        if (photo === null || photo === undefined)
+            throw new Error("The parameter 'photo' cannot be null.");
+        else
+            content_.append("Photo", photo.toString());
+        if (roomPrice === null || roomPrice === undefined)
+            throw new Error("The parameter 'roomPrice' cannot be null.");
+        else
+            content_.append("RoomPrice", roomPrice.toString());
+        if (address === null || address === undefined)
+            throw new Error("The parameter 'address' cannot be null.");
+        else
+            content_.append("Address", address.toString());
+        if (district === null || district === undefined)
+            throw new Error("The parameter 'district' cannot be null.");
+        else
+            content_.append("District", district.toString());
+        if (city === null || city === undefined)
+            throw new Error("The parameter 'city' cannot be null.");
+        else
+            content_.append("City", city.toString());
+        if (ward === null || ward === undefined)
+            throw new Error("The parameter 'ward' cannot be null.");
+        else
+            content_.append("Ward", ward.toString());
+        if (area === null || area === undefined)
+            throw new Error("The parameter 'area' cannot be null.");
+        else
+            content_.append("Area", area.toString());
+        if (square === null || square === undefined)
+            throw new Error("The parameter 'square' cannot be null.");
+        else
+            content_.append("Square", square.toString());
+        if (roomStatus === null || roomStatus === undefined)
+            throw new Error("The parameter 'roomStatus' cannot be null.");
+        else
+            content_.append("RoomStatus", roomStatus.toString());
+        if (priceCategory === null || priceCategory === undefined)
+            throw new Error("The parameter 'priceCategory' cannot be null.");
+        else
+            content_.append("PriceCategory", priceCategory.toString());
+        if (wifi === null || wifi === undefined)
+            throw new Error("The parameter 'wifi' cannot be null.");
+        else
+            content_.append("Wifi", wifi.toString());
+        if (parking === null || parking === undefined)
+            throw new Error("The parameter 'parking' cannot be null.");
+        else
+            content_.append("Parking", parking.toString());
+        if (conditioner === null || conditioner === undefined)
+            throw new Error("The parameter 'conditioner' cannot be null.");
+        else
+            content_.append("Conditioner", conditioner.toString());
+        if (photos === null || photos === undefined)
+            throw new Error("The parameter 'photos' cannot be null.");
+        else
+            photos.forEach(item_ => content_.append("Photos", item_.toString()));
+        if (confirmAdmin === null || confirmAdmin === undefined)
+            throw new Error("The parameter 'confirmAdmin' cannot be null.");
+        else
+            content_.append("ConfirmAdmin", confirmAdmin.toString());
+        if (id === null || id === undefined)
+            throw new Error("The parameter 'id' cannot be null.");
+        else
+            content_.append("Id", id.toString());
+        if (formFiles === null || formFiles === undefined)
+            throw new Error("The parameter 'formFiles' cannot be null.");
+        else
+            formFiles.forEach(item_ => content_.append("formFiles", item_.data, item_.fileName ? item_.fileName : "formFiles") );
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateAddPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateAddPhoto(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateAddPhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @param file (optional) 
+     * @return Success
+     */
+    createAddPhotos(id: number | undefined, file: FileParameter | undefined): Observable<PhotoDto> {
+        let url_ = this.baseUrl + "/api/Post/create-add-photos?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file === null || file === undefined)
+            throw new Error("The parameter 'file' cannot be null.");
+        else
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateAddPhotos(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateAddPhotos(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PhotoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PhotoDto>;
+        }));
+    }
+
+    protected processCreateAddPhotos(response: HttpResponseBase): Observable<PhotoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PhotoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PhotoDto>(null as any);
     }
 }
 
@@ -5111,6 +5592,58 @@ export class UserServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    sendContactEmail(body: ContactFormModel | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/User/send-contact-email";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendContactEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendContactEmail(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSendContactEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     create(body: CreateUserDto | undefined): Observable<UserDto> {
         let url_ = this.baseUrl + "/api/services/app/User/Create";
         url_ = url_.replace(/[?&]$/, "");
@@ -5793,6 +6326,64 @@ export class UserCommentServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getCommentForRent(): Observable<UserCommentViewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/GetCommentForRent";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCommentForRent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCommentForRent(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentViewDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentViewDto[]>;
+        }));
+    }
+
+    protected processGetCommentForRent(response: HttpResponseBase): Observable<UserCommentViewDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(UserCommentViewDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentViewDto[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -6218,7 +6809,7 @@ export class ViewPostServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrEdit(body: CreateOrEditIPostDto | undefined): Observable<void> {
+    createOrEdit(body: CreateOrEditIPostDto | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/app/ViewPost/CreateOrEdit";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6230,6 +6821,7 @@ export class ViewPostServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
             })
         };
 
@@ -6240,14 +6832,14 @@ export class ViewPostServiceProxy {
                 try {
                     return this.processCreateOrEdit(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<number>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<number>;
         }));
     }
 
-    protected processCreateOrEdit(response: HttpResponseBase): Observable<void> {
+    protected processCreateOrEdit(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -6256,14 +6848,18 @@ export class ViewPostServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(null as any);
+        return _observableOf<number>(null as any);
     }
 
     /**
@@ -7899,6 +8495,61 @@ export interface IConfirmSchedulesDto {
     hostId: number;
     creatorUserId: number;
     confirm: boolean;
+}
+
+export class ContactFormModel implements IContactFormModel {
+    name: string | undefined;
+    email: string | undefined;
+    subject: string | undefined;
+    message: string | undefined;
+
+    constructor(data?: IContactFormModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.email = _data["email"];
+            this.subject = _data["subject"];
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): ContactFormModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactFormModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["email"] = this.email;
+        data["subject"] = this.subject;
+        data["message"] = this.message;
+        return data;
+    }
+
+    clone(): ContactFormModel {
+        const json = this.toJSON();
+        let result = new ContactFormModel();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IContactFormModel {
+    name: string | undefined;
+    email: string | undefined;
+    subject: string | undefined;
+    message: string | undefined;
 }
 
 export class CreateOrEditIPostDto implements ICreateOrEditIPostDto {
@@ -10090,6 +10741,7 @@ export class PhotoDto implements IPhotoDto {
     url: string | undefined;
     isMain: boolean;
     postId: number;
+    selected: boolean;
 
     constructor(data?: IPhotoDto) {
         if (data) {
@@ -10106,6 +10758,7 @@ export class PhotoDto implements IPhotoDto {
             this.url = _data["url"];
             this.isMain = _data["isMain"];
             this.postId = _data["postId"];
+            this.selected = _data["selected"];
         }
     }
 
@@ -10122,6 +10775,7 @@ export class PhotoDto implements IPhotoDto {
         data["url"] = this.url;
         data["isMain"] = this.isMain;
         data["postId"] = this.postId;
+        data["selected"] = this.selected;
         return data;
     }
 
@@ -10138,6 +10792,7 @@ export interface IPhotoDto {
     url: string | undefined;
     isMain: boolean;
     postId: number;
+    selected: boolean;
 }
 
 export class PostCategoryDto implements IPostCategoryDto {

@@ -15,6 +15,7 @@ import { CreateUserDialogComponent } from './create-user/create-user-dialog.comp
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
 import { ResetPasswordDialogComponent } from './reset-password/reset-password.component';
 
+
 class PagedUsersRequestDto extends PagedRequestDto {
   keyword: string;
   isActive: boolean | null;
@@ -29,6 +30,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | null;
   advancedFiltersVisible = false;
+  shownLoginRoleId: number;
 
   constructor(
     injector: Injector,
@@ -37,6 +39,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   ) {
     super(injector);
   }
+
 
   createUser(): void {
     this.showCreateOrEditUserDialog();
@@ -82,14 +85,15 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       });
   }
 
+  // this.message.confirm('', 'Bạn có chắc sẽ hủy ?', (isConfirme) => {
+
   protected delete(user: UserDto): void {
-    abp.message.confirm(
-      this.l('UserDeleteWarningMessage', user.fullName),
-      undefined,
+    this.message.confirm(
+     '','Bạn có chắc sẽ hủy ?',
       (result: boolean) => {
         if (result) {
           this._userService.delete(user.id).subscribe(() => {
-            abp.notify.success(this.l('SuccessfullyDeleted'));
+            this.notify.success(this.l('SuccessfullyDeleted'));
             this.refresh();
           });
         }

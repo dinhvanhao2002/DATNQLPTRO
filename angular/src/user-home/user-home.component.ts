@@ -1,5 +1,5 @@
-import { SignalRService } from './../shared/helpers/signalr.service';
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, HostListener, Injector, OnInit } from '@angular/core';
+import { CommentsService } from '@app/_services/comments.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import { AppAuthService } from '@shared/auth/app-auth.service';
 import { UserCommentServiceProxy, UserCommentViewDto } from '@shared/service-proxies/service-proxies';
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './user-home.component.html',
   styleUrls: ['./user-home.component.css'],
   providers: [
-    UserCommentServiceProxy,SignalRService
+    UserCommentServiceProxy
   ],
 
 })
@@ -22,15 +22,37 @@ export class UserHomeComponent extends AppComponentBase {
   shownLoginRoleId: number;
   shownLoginNameRole = '';
   unreadComments: UserCommentViewDto[] = [];
-  private signalRSubscription: Subscription;
+
   constructor(
     injector: Injector,
     private _authService: AppAuthService,
     private _service: UserCommentServiceProxy,
-    private signalRService: SignalRService // Inject SignalRService
+    private _comment: CommentsService
+
   ) {
     super(injector);
   }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.checkScroll();
+  }
+
+  checkScroll() {
+    const button = document.getElementById('back-to-top');
+    if (button) {
+      if (window.pageYOffset > 300) {
+        button.style.display = 'block';
+      } else {
+        button.style.display = 'none';
+      }
+    }
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
 
   ngOnInit() {
     this.showRoleId = this.appSession.getShownLoginRoleId();
@@ -40,15 +62,14 @@ export class UserHomeComponent extends AppComponentBase {
     this.shownLoginRoleId = this.appSession.getShownLoginRoleId();
     this.updateLoginRoleName();
 
-    this.getUnreadComments();
+    //this.getUnreadComments();S
+    this._comment.startConnection();
 
-    this.subscribeToReceiveComment();
-  }
+    this._comment.getCommentsForRent.subscribe((comment) => {
+      this.unreadComments.push(comment);
+      this.showNotification(comment);
+    });
 
-  ngOnDestroy(): void {
-    if (this.signalRSubscription) {
-      this.signalRSubscription.unsubscribe();
-    }
   }
 
   logout(): void {
@@ -69,21 +90,10 @@ export class UserHomeComponent extends AppComponentBase {
     }
   }
 
-  getUnreadComments(): void {
-    this._service.getAllComment(this.showUserId).subscribe(
-      (result: UserCommentViewDto[]) => {
-        this.unreadComments = result;
-      },
-      (error) => {
-        this.notify.error('Có lỗi xảy ra khi lấy bình luận chưa đọc');
-      }
-    );
+  showNotification(comment) {
+    // Thêm logic để hiển thị thông báo cho người dùng
+    alert(`New comment from ${comment.userId}: ${comment.commentContent}`);
   }
 
-  private subscribeToReceiveComment(): void {
-    this.signalRSubscription = this.signalRService.receiveComment().subscribe((comment: UserCommentViewDto) => {
-      // Add the new comment to the unreadComments list
-      this.unreadComments.unshift(comment); // Add to the beginning of the list
-    });
-  }
+
 }

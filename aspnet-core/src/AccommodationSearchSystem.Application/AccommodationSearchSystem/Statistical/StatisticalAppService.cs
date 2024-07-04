@@ -67,6 +67,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
             return data;
         }
 
+        #region Lấy ra số lượng bài đăng theo tháng
         public async Task<List<PostCountByMonthDto>> GetPostCountByMonth()
         {
             var tenantId = AbpSession.TenantId;
@@ -100,7 +101,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
+        #endregion
 
+        #region Lấy ra lịch hẹn theo tháng, lịch hẹn thành công, lịch hủy 
         public async Task<List<ScheduleCountByMonthDto>> GetScheduleCountByMonth()
         {
             var successfulCounts = await GetSuccessfulScheduleCountByMonth();
@@ -142,6 +145,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
+        #endregion
 
         private async Task<List<ScheduleCountByMonthDto>> GetSuccessfulScheduleCountByMonth()
         {
@@ -185,7 +189,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
                 .ToListAsync();
         }
 
-
+        #region Lấy ra số lượng đặt phòng
         public async Task<DashBoardTotalBooking> GetTotalBooking()
         {
             var tenantId = AbpSession.TenantId;
@@ -197,7 +201,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
-
+        #endregion
         public async Task<DashBoardTotalPost> GetTotalPost()
         {
             var tenantId = AbpSession.TenantId;
@@ -232,7 +236,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
-
+        #region Lấy ra số lượng người đăng tin nhiều nhất 
         public async Task<UserPostCountDto> GetUserWithMostPosts()
         {
             var tenantId = AbpSession.TenantId;
@@ -260,7 +264,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
-
+        #endregion
         public async Task<UserScheduleCountDto> GetUserWithMostSchedules()
         {
             var userWithMostSchedules = await _repositorySchedule.GetAll()

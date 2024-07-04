@@ -28,14 +28,11 @@
                                     Giờ hẹn
                                 </label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="hour" id="hour"
-                                        [(ngModel)]="schedules.hour" #hourModel="ngModel" />
+                                    <input type="time" class="form-control" name="hour" id="hour"
+                                        [(ngModel)]="schedules.hour" #hourModel="ngModel" required/>
                                 </div>
                             </div>
-
-
                         </tab>
-
                     </tabset>
                 </div>
                 <div class="modal-footer">

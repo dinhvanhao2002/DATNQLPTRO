@@ -1,17 +1,10 @@
 ﻿using Abp.Domain.Repositories;
 using AccommodationSearchSystem.Authorization.Users;
 using AccommodationSearchSystem.Email.Dto;
-using AccommodationSearchSystem.Services;
 using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static IdentityServer4.Models.IdentityResources;
 
 namespace AccommodationSearchSystem.Email
 {

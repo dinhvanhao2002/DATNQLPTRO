@@ -192,4 +192,9 @@ export class StatisticalComponent extends AppComponentBase implements OnInit {
       }
     });
   }
+
+  // Xuất báo cáo
+  btnReport(){
+
+  }
 }

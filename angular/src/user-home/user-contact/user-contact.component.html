@@ -10,24 +10,24 @@
   <div class="row mt-4">
     <div class="col-md-8">
       <div class="contact-form p-4 bg-light rounded">
-        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="name">Họ Và Tên</label>
-              <input type="text" class="form-control" id="name" formControlName="name" placeholder="Họ Và Tên">
+              <input type="text" class="form-control" id="name" [(ngModel)]="contactEmail.name" name="name" placeholder="Họ Và Tên" required>
             </div>
             <div class="form-group col-md-6">
               <label for="email">Email Của Bạn</label>
-              <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email Của Bạn">
+              <input type="email" class="form-control" id="email" [(ngModel)]="contactEmail.email" name="email" placeholder="Email Của Bạn" required>
             </div>
           </div>
           <div class="form-group">
             <label for="subject">Tiêu đề</label>
-            <input type="text" class="form-control" id="subject" formControlName="subject" placeholder="Tiêu đề">
+            <input type="text" class="form-control" id="subject" [(ngModel)]="contactEmail.subject" name="subject" placeholder="Tiêu đề" required>
           </div>
           <div class="form-group">
             <label for="message">Lời nhắn</label>
-            <textarea class="form-control" id="message" formControlName="message" rows="5" placeholder="Lời nhắn"></textarea>
+            <textarea class="form-control" id="message" [(ngModel)]="contactEmail.message" name="message" rows="5" placeholder="Lời nhắn" required></textarea>
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="!contactForm.valid">Gửi</button>
         </form>

@@ -1,19 +1,31 @@
-import { PhotoDto } from './../../../shared/service-proxies/service-proxies';
-import { Post } from './../../../shared/commom/models/post.model';
+import { PhotoDto } from "./../../../shared/service-proxies/service-proxies";
+import { Post } from "./../../../shared/commom/models/post.model";
 
-import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/app-component-base';
-import { CreateOrEditIPostDto, ManagePostsServiceProxy, SessionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap/modal';
-import { PostComponent } from '../post.component';
-import { finalize } from 'rxjs/operators';
-import { environment } from 'environments/environment';
-import { FileItem, FileUploader, FileUploaderOptions } from 'ng2-file-upload';
+import {
+  Component,
+  EventEmitter,
+  Injector,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
+import { AppComponentBase } from "@shared/app-component-base";
+import {
+  CreateOrEditIPostDto,
+  ManagePostsServiceProxy,
+  SessionServiceProxy,
+} from "@shared/service-proxies/service-proxies";
+import { ModalDirective } from "ngx-bootstrap/modal";
+import { PostComponent } from "../post.component";
+import { finalize } from "rxjs/operators";
+import { environment } from "environments/environment";
+import { FileItem, FileUploader, FileUploaderOptions } from "ng2-file-upload";
 
 @Component({
-  selector: 'CreateOrEditPost',
-  templateUrl: './create-or-edit-post.component.html',
-  styleUrls: ['./create-or-edit-post.component.css'],
+  selector: "CreateOrEditPost",
+  templateUrl: "./create-or-edit-post.component.html",
+  styleUrls: ["./create-or-edit-post.component.css"],
   providers: [ManagePostsServiceProxy],
 })
 export class CreateOrEditPostComponent extends AppComponentBase {
@@ -44,7 +56,6 @@ export class CreateOrEditPostComponent extends AppComponentBase {
     this.postComponent = _postComponent;
   }
 
-
   ngOnInit() {
     this._sessionService.getCurrentLoginInformations().subscribe((res) => {
       this.tenantId = res.tenant.id;
@@ -64,7 +75,7 @@ export class CreateOrEditPostComponent extends AppComponentBase {
         .subscribe((result) => {
           this.posts = result.createOrEditPost;
           this.postPhotos = result.photos;
-          this.active = true
+          this.active = true;
           this.modal.show();
         });
       this.initializeUploader(PostId);
@@ -103,12 +114,12 @@ export class CreateOrEditPostComponent extends AppComponentBase {
     this.uploader = new FileUploader({
       url: urlWithPostId, // Sử dụng url với postId
       isHTML5: true,
-      authToken: 'Bearer ' + abp.auth.getToken(),
-      authTokenHeader: 'Authorization',
-      allowedFileType: ['image'],
+      authToken: "Bearer " + abp.auth.getToken(),
+      authTokenHeader: "Authorization",
+      allowedFileType: ["image"],
       removeAfterUpload: true,
       autoUpload: false,
-      maxFileSize: 10 * 1024 * 1024
+      maxFileSize: 10 * 1024 * 1024,
     });
 
     console.log(this.uploader);
@@ -116,7 +127,7 @@ export class CreateOrEditPostComponent extends AppComponentBase {
     this.uploader.onAfterAddingFile = (file) => {
       file.withCredentials = false;
       this._postComponent.updateTable();
-    }
+    };
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
       if (response) {
@@ -126,8 +137,7 @@ export class CreateOrEditPostComponent extends AppComponentBase {
           this.posts.photos = photo.url;
         }
       }
-    }
-
+    };
 
     // this.uploader.onAfterAddingFile = (file) => {
     //   file.withCredentials = false;
@@ -153,21 +163,38 @@ export class CreateOrEditPostComponent extends AppComponentBase {
   setMainPhotos(postId: number, photoId: number) {
     this._postService.setMainPhoto(postId, photoId).subscribe(() => {
       // this.post.photoUrl = photo.url;
-      this.posts.photos.forEach(p => {
+      this.posts.photos.forEach((p) => {
         if (p.isMain) p.isMain = false;
         if (p.id === photoId) p.isMain = true;
-      })
-    })
+      });
+    });
   }
 
   deletePhoto(postId: number, photoId: number) {
     this._postService.deletePhoto(postId, photoId).subscribe(() => {
-      this.posts.photos = this.posts.photos.filter(x => x.id === postId);
-    })
+      this.posts.photos = this.posts.photos.filter((x) => x.id === postId);
+    });
   }
 
   fileOverBase(e: any) {
     this.hasBaseDropzoneOver = e;
   }
-}
 
+  deleteSelectedPhotos() {
+    const selectedPhotoIds = this.posts.photos
+      .filter((photo) => photo.selected)
+      .map((photo) => photo.id);
+
+    if (selectedPhotoIds.length > 0) {
+      this._postService
+        .deletePhotos(this.posts.id, selectedPhotoIds)
+        .subscribe(() => {
+          this.posts.photos = this.posts.photos.filter(
+            (photo) => !photo.selected
+          );
+        });
+    } else {
+      alert("No photos selected for deletion.");
+    }
+  }
+}

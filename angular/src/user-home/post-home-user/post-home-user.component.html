@@ -84,6 +84,8 @@
 </div>
  </div> -->
 
+<app-header-user-home></app-header-user-home>
+
 <!-- DỊCH VỤ CỦA CHÚNG TÔI -->
 <div class="container-xxl py-5">
   <div class="container">
@@ -244,7 +246,7 @@
                     <div
                       class="col-md-5 cursor-pointer"
                       style="margin-top: 5px"
-                      [routerLink]="['./', post.id]"
+                      [routerLink]="['./post-view-detail', post.id]"
                     >
                       <!-- You can customize the header here -->
                       <img
@@ -260,7 +262,7 @@
                       />
                     </div>
                     <div class="col-md-7 content-posts">
-                      <a class="post__title" [routerLink]="['./', post.id]">{{
+                      <a class="post__title" [routerLink]="['./post-view-detail', post.id]">{{
                         post.title
                       }}</a>
                       <p>
@@ -348,7 +350,7 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="header-posts">
-                      <a class="post__title" [routerLink]="['./', post.id]">
+                      <a class="post__title" [routerLink]="['./post-view-detail', post.id]">
                         {{ post.title }}
                         <span class="tooltip">{{ post.title }}</span>
                       </a>
@@ -442,43 +444,7 @@
   </section>
 </div>
 
-<!-- Giowis thieu ve chung toi -->
-<!-- <div class="container-xxl py-5">
-  <div class="container">
-    <div class="bg-light rounded p-3">
-      <div
-        class="bg-white rounded p-4"
-        style="border: 1px dashed rgba(0, 185, 142, 0.3)"
-      >
-        <div class="row g-5 align-items-center">
-          <div class="col-lg-6">
-            <img
-              class="img-fluid rounded w-100"
-              src="/assets/banner11.jpg"
-              alt=""
-            />
-          </div>
-          <div class="col-lg-6">
-            <div class="mb-4">
-              <h1 class="mb-3 animate__animated animate__fadeInLeft d-block">
-                Chào mừng bạn đến với Nền tảng Tìm phòng trọ của chúng tôi
-              </h1>
-              <p class="animate__animated animate__fadeInLeft d-block">
-                Tìm phòng trọ hoặc người thuê phòng hoàn hảo của bạn một cách dễ
-                dàng!
-              </p>
-            </div>
-            <a
-              href=""
-              class="btn btn-dark py-3 px-4 animate__animated animate__fadeInLeft"
-              ><i class="fa fa-plus-circle me-2"></i> Đăng Tin</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
+
 
  <!-- About Start -->
  <div class="container-xxl py-5">
@@ -495,7 +461,7 @@
                           <div class="border rounded text-center p-4">
                               <i class="fa fa-hotel fa-2x text-primary mb-2"></i>
                               <h2 class="mb-1" data-toggle="counter-up">1234</h2>
-                              <p class="mb-0">Số lượng người thuê</p>
+                              <p class="mb-0">Số lượng bài đăng</p>
                           </div>
                       </div>
                   </div>
@@ -503,8 +469,8 @@
                       <div class="border rounded p-1">
                           <div class="border rounded text-center p-4">
                               <i class="fa fa-users-cog fa-2x text-primary mb-2"></i>
-                              <h2 class="mb-1" data-toggle="counter-up">1234</h2>
-                              <p class="mb-0">Số lượng bài đăng</p>
+                              <h2 class="mb-1" data-toggle="counter-up">2305</h2>
+                              <p class="mb-0">Số lượng người truy cập</p>
                           </div>
                       </div>
                   </div>
@@ -512,8 +478,8 @@
                       <div class="border rounded p-1">
                           <div class="border rounded text-center p-4">
                               <i class="fa fa-users fa-2x text-primary mb-2"></i>
-                              <h2 class="mb-1" data-toggle="counter-up">1234</h2>
-                              <p class="mb-0">Người thuê trọ</p>
+                              <h2 class="mb-1" data-toggle="counter-up">987</h2>
+                              <p class="mb-0">Số lượng người thuê trọ</p>
                           </div>
                       </div>
                   </div>
@@ -526,13 +492,13 @@
                       <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.1s"  src="/assets/banner11.jpg" style="margin-top: 25%;">
                   </div>
                   <div class="col-6 text-start">
-                      <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.3s" src="/assets/banner11.jpg">
+                      <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.3s" src="/assets/banner12.jpg">
                   </div>
                   <div class="col-6 text-end">
-                      <img class="img-fluid rounded w-50 wow zoomIn" data-wow-delay="0.5s"  src="/assets/banner11.jpg">
+                      <img class="img-fluid rounded w-50 wow zoomIn" data-wow-delay="0.5s"  src="/assets/banner4.jpg">
                   </div>
                   <div class="col-6 text-start">
-                      <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.7s"  src="/assets/banner11.jpg">
+                      <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.7s"  src="/assets/banner2.jpg">
                   </div>
               </div>
           </div>

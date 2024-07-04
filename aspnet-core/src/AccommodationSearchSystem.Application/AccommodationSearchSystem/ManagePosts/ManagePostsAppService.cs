@@ -58,23 +58,23 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             _repositoryUserLikePost = repositoryUserLikePost;
 
         }
-        public async Task CreateOrEdit(CreateOrEditIPostDto input)
+        public async Task<long> CreateOrEdit(CreateOrEditIPostDto input)
         {
             if (input.Id == null)
             {
-                await Create(input);
-            } 
+               return await Create(input);
+            }
             else
             {
-                await Update(input);
+               return await Update(input);
             }
         }
 
-        protected virtual async Task Create(CreateOrEditIPostDto input)
+        protected virtual async Task<long> Create(CreateOrEditIPostDto input)
         {
             var tenantId = AbpSession.TenantId;
             // Kiểm tra xem bài đăng đã tồn tại hay chưa
-            var postCount =  _repositoryPost.GetAll().Where(e => e.Id == input.Id && e.TenantId == tenantId).Count();
+            var postCount = _repositoryPost.GetAll().Where(e => e.Id == input.Id && e.TenantId == tenantId).Count();
             if (postCount >= 1)
             {
                 throw new UserFriendlyException(00, L("ThisItemAlreadyExists"));
@@ -84,15 +84,18 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 post.TenantId = tenantId;
                 post.ConfirmAdmin = false;
                 await _repositoryPost.InsertAsync(post);
+                var postId = await _repositoryPost.InsertAndGetIdAsync(post); // Insert the post and get the post ID
+                return postId;
             }
         }
 
-        protected virtual async Task Update(CreateOrEditIPostDto input)
+        protected virtual async Task<long> Update(CreateOrEditIPostDto input)
         {
             var post = await _repositoryPost.FirstOrDefaultAsync((long)input.Id);
-                // Cập nhật các trường dữ liệu của bài đăng từ input
-                ObjectMapper.Map(input, post);
-         
+            // Cập nhật các trường dữ liệu của bài đăng từ input
+            ObjectMapper.Map(input, post);
+            return post.Id;
+
         }
 
         public async Task DeletePost(EntityDto<long> input)
@@ -163,7 +166,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 Address = item.Post.Address,
                 District = item.Post.District,
                 City = item.Post.City,
-                Ward= item.Post.Ward,
+                Ward = item.Post.Ward,
                 Area = item.Post.Area,
                 Square = item.Post.Square,
                 PriceCategory = item.Post.PriceCategory,
@@ -208,14 +211,14 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
             var datapostView = from p in _repositoryPost.GetAll()
                        .Where(e => tenantId == e.TenantId && e.Id == input.Id)
-                        orderby p.Id descending
-                        join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id
-                        where u.TenantId == p.TenantId
-                        select new
-                        {
-                            Post = p,
-                            User = u
-                        };
+                               orderby p.Id descending
+                               join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id
+                               where u.TenantId == p.TenantId
+                               select new
+                               {
+                                   Post = p,
+                                   User = u
+                               };
 
             var result = await datapostView.FirstOrDefaultAsync();
 
@@ -335,8 +338,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             post.PhotoPosts.Add(photo);
 
             // Lưu cấc thay đổi
-            return new CreatedAtRouteResult( new { id = post.Id }, ObjectMapper.Map<PhotoDto>(photo));
-  
+            return new CreatedAtRouteResult(new { id = post.Id }, ObjectMapper.Map<PhotoDto>(photo));
+
         }
 
         public async Task<ActionResult> SetMainPhoto(long Id, int photoId)
@@ -458,17 +461,17 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             {
                 throw new UserFriendlyException("Không tìm thấy hình ảnh nào");
             }
-            
+
             if (photo.IsMain)
             {
                 throw new UserFriendlyException("Bạn không thể xóa hình ảnh chính");
             }
-            
+
             if (photo.PublicId != null)
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
             }
-             
+
             post.PhotoPosts.Remove(photo);
             photo.IsDeleted = true;
             photo.DeleterUserId = post.CreatorUserId;
@@ -476,6 +479,84 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
             return new CreatedAtRouteResult(new { id = post.Id }, ObjectMapper.Map<PhotoDto>(photo));
         }
+
+        #region Xóa nhiều ảnh 
+        public async Task<ActionResult> DeletePhotos(long Id, List<int> photoIds)
+        {
+            var tenantId = AbpSession.TenantId;
+            var query = from p in _repositoryPost.GetAll()
+                        .Where(e => tenantId == e.TenantId && e.Id == Id)
+                        select new
+                        {
+                            Post = p
+                        };
+
+            var posts = await query.FirstOrDefaultAsync();
+
+            if (posts == null)
+            {
+                throw new UserFriendlyException("Bài đăng không tồn tại hoặc bạn không có quyền truy cập.");
+            }
+
+            var post = posts.Post;
+            var photoData = await _repositoryPhotoPost.GetAllListAsync(e => e.PostId == Id);
+            var photosToDelete = photoData.Where(photo => photoIds.Contains((int)photo.Id)).ToList();
+
+            if (!photosToDelete.Any())
+            {
+                throw new UserFriendlyException("Không tìm thấy hình ảnh nào để xóa.");
+            }
+
+            var mainPhotoExists = photosToDelete.Any(photo => photo.IsMain);
+            if (mainPhotoExists)
+            {
+                throw new UserFriendlyException("Bạn không thể xóa hình ảnh chính.");
+            }
+
+            foreach (var photo in photosToDelete)
+            {
+                if (photo.PublicId != null)
+                {
+                    var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+                }
+
+                post.PhotoPosts.Remove(photo);
+                photo.IsDeleted = true;
+                photo.DeleterUserId = post.CreatorUserId;
+                photo.DeletionTime = DateTime.Now;
+            }
+
+            await _repositoryPost.UpdateAsync(post);
+
+            var output = new GetPostForViewDto
+            {
+                Id = post.Id,
+                PostCode = post.PostCode,
+                Title = post.Title,
+                ContentPost = post.ContentPost,
+                Photo = post.Photo,
+                RoomPrice = post.RoomPrice,
+                Address = post.Address,
+                Area = post.Area,
+                Square = post.Square,
+                PriceCategory = post.PriceCategory,
+                Wifi = post.Wifi,
+                Parking = post.Parking,
+                Conditioner = post.Conditioner,
+                RoomStatus = post.RoomStatus,
+                TenantId = tenantId,
+                Photos = photoData.Where(photo => !photoIds.Contains((int)photo.Id)).Select(photo => new PhotoDto
+                {
+                    Url = photo.Url,
+                    IsMain = photo.IsMain,
+                    PostId = photo.PostId,
+                    Id = photo.Id,
+                }).ToList()
+            };
+
+            return new CreatedAtRouteResult(new { id = post.Id }, output);
+        }
+        #endregion
 
         public async Task<GetPostForViewDto> GetForEdit(EntityDto<long> input)
         {
@@ -695,7 +776,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
                         join pk in _repositoryPackagePost.GetAll() on u.Id equals pk.HostId into pkGroup
                         from pk in pkGroup.DefaultIfEmpty()
-                        where pk == null || (pk.IsDeleted == false && pk.Cancel == false && ( pk.PackageType == "Gói VIP pro" || pk.PackageType == "Gói VIP"))
+                        where pk == null || (pk.IsDeleted == false && pk.Cancel == false && (pk.PackageType == "Gói VIP pro" || pk.PackageType == "Gói VIP"))
                         //join s in _repositorySchedule.GetAll().AsNoTracking() on p.Id equals s.PostId into sGroup
                         //from s in sGroup.DefaultIfEmpty()
                         //where s == null || (s.TenantId == tenantId && (s.Confirm == null || s.Confirm == false))
@@ -780,5 +861,177 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
         {
             throw new System.NotImplementedException();
         }
+
+        #region Hàm thêm mới bài đăng và ảnh bài đăng cùng lúc 
+        //[HttpPost]
+        //public async Task CreateAndAddPhoto(CreateOrEditIPostDto input, ICollection<IFormFile> formFiles)
+        //{
+        //    var tenantId = AbpSession.TenantId;
+        //    // Kiểm tra xem bài đăng đã tồn tại hay chưa
+        //    var postCount = _repositoryPost.GetAll().Where(e => e.Id == input.Id && e.TenantId == tenantId).Count();
+        //    if (postCount >= 1)
+        //    {
+        //        throw new UserFriendlyException(00, L("ThisItemAlreadyExists"));
+        //    }
+
+        //    // Tạo bài đăng mới
+        //    var post = ObjectMapper.Map<Post>(input);
+        //    post.TenantId = tenantId;
+        //    post.ConfirmAdmin = false;
+        //    await _repositoryPost.InsertAsync(post);
+        //    await CurrentUnitOfWork.SaveChangesAsync(); // Lưu thay đổi để đảm bảo ID được tạo
+
+        //    // Thêm ảnh cho bài đăng vừa tạo
+        //    var photoData = await _repositoryPhotoPost.GetAllListAsync(e => e.PostId == post.Id);
+
+        //    var output = new GetPostForViewDto
+        //    {
+        //        Id = post.Id,
+        //        PostCode = post.PostCode,
+        //        Title = post.Title,
+        //        ContentPost = post.ContentPost,
+        //        Photo = post.Photo,
+        //        RoomPrice = post.RoomPrice,
+        //        Address = post.Address,
+        //        Area = post.Area,
+        //        Square = post.Square,
+        //        PriceCategory = post.PriceCategory,
+        //        Wifi = post.Wifi,
+        //        Parking = post.Parking,
+        //        Conditioner = post.Conditioner,
+        //        RoomStatus = post.RoomStatus,
+        //        TenantId = tenantId,
+        //        Photos = photoData.Select(photo => new PhotoDto
+        //        {
+        //            Url = photo.Url,
+        //            IsMain = photo.IsMain,
+        //            PostId = photo.PostId,
+        //            Id = photo.Id,
+        //        }).ToList()
+        //    };
+
+        //    foreach (var file in formFiles)
+        //    {
+        //        var result = await _photoService.AddPhotoAsync(file);
+        //        // Kiểm tra lỗi
+        //        if (result.Error != null)
+        //        {
+        //            throw new UserFriendlyException(result.Error.Message);
+        //        }
+
+        //        //up anh len 
+        //        if (post.PhotoPosts == null)
+        //        {
+        //            post.PhotoPosts = new List<PhotoPost>();
+        //        }
+
+        //        var photo = new PhotoPost
+        //        {
+        //            Url = result.SecureUrl.AbsoluteUri,
+        //            PublicId = result.PublicId,
+        //            PostId = (int)post.Id
+        //        };
+
+        //        if (post.PhotoPosts != null && post.PhotoPosts.Any())
+        //        {
+        //            photo.IsMain = false;
+        //        }
+        //        else
+        //        {
+        //            photo.IsMain = true;
+        //        }
+        //        post.PhotoPosts.Add(photo);
+
+        //        await _repositoryPost.UpdateAsync(post); // Lưu thay đổi vào CSDL
+        //    }
+
+        //}
+        #endregion
+
+        #region Hàm thêm mới bài đăng và ảnh bài đăng cùng lúc 
+        public async Task CreateAndAddPhoto(long Id,ICollection<IFormFile> formFile)
+        {
+            var tenantId = AbpSession.TenantId;
+            var query = from p in _repositoryPost.GetAll()
+                        .Where(e => tenantId == e.TenantId && e.Id == Id)
+                        select new
+                        {
+                            Post = p
+                        };
+
+            var posts = await query.FirstOrDefaultAsync();
+
+            if (posts == null)
+            {
+                throw new UserFriendlyException("Bài đăng không tồn tại hoặc bạn không có quyền truy cập.");
+            }
+
+            var post = posts.Post;
+
+            var photoData = await _repositoryPhotoPost.GetAllListAsync(e => e.PostId == Id);
+
+            var output = new GetPostForViewDto
+            {
+                Id = post.Id,
+                PostCode = post.PostCode,
+                Title = post.Title,
+                ContentPost = post.ContentPost,
+                Photo = post.Photo,
+                RoomPrice = post.RoomPrice,
+                Address = post.Address,
+                Area = post.Area,
+                Square = post.Square,
+                PriceCategory = post.PriceCategory,
+                Wifi = post.Wifi,
+                Parking = post.Parking,
+                Conditioner = post.Conditioner,
+                RoomStatus = post.RoomStatus,
+                TenantId = tenantId,
+                Photos = photoData.Select(photo => new PhotoDto
+                {
+                    Url = photo.Url,
+                    IsMain = photo.IsMain,
+                    PostId = photo.PostId,
+                    Id = photo.Id,
+                }).ToList()
+            };
+
+            foreach (var file in formFile)
+            {
+                var result = await _photoService.AddPhotoAsync(file);
+                // Kiểm tra lỗi
+                if (result.Error != null)
+                {
+                    throw new UserFriendlyException(result.Error.Message);
+                }
+
+                //up anh len 
+                if (post.PhotoPosts == null)
+                {
+                    post.PhotoPosts = new List<PhotoPost>();
+                }
+
+                var photo = new PhotoPost
+                {
+                    Url = result.SecureUrl.AbsoluteUri,
+                    PublicId = result.PublicId,
+                    PostId = (int)post.Id
+                };
+
+                if (post.PhotoPosts != null && post.PhotoPosts.Any())
+                {
+                    photo.IsMain = false;
+                }
+                else
+                {
+                    photo.IsMain = true;
+                }
+                post.PhotoPosts.Add(photo);
+
+                await _repositoryPost.UpdateAsync(post); // Lưu thay đổi vào CSDL
+            }
+        }
+        #endregion
     }
+
 }

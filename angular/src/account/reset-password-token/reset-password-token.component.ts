@@ -70,7 +70,7 @@ export class ResetPasswordTokenComponent
       this.resetPasswordObj.email = this.emailToReset;
       this.resetPasswordObj.newPassword = this.resetPasswordForm.value.password;
       this.resetPasswordObj.confirmPassword =
-        this.resetPasswordForm.value.confirmPassword;
+      this.resetPasswordForm.value.confirmPassword;
       this.resetPasswordObj.emailToken = this.emailToken;
       this._http
         .post(

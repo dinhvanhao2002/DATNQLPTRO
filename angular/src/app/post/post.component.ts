@@ -6,6 +6,7 @@ import { ceil } from 'lodash-es';
 import { Table } from 'primeng/table';
 import { CreateOrEditPostComponent } from './create-or-edit-post/create-or-edit-post.component';
 import { PostAdminViewComponent } from './post-admin-view/post-admin-view.component';
+import { CreatAddPhotoPostComponent } from './creat-add-photo-post/creat-add-photo-post.component';
 
 @Component({
   selector: 'app-post',
@@ -17,8 +18,10 @@ export class PostComponent extends AppComponentBase {
   // currentNameRole = abp.session.tenantId;
   // isHost: boolean = false;
 
-  @ViewChild('CreateOrEditPost') CreateOrEditPost: CreateOrEditPostComponent;
+  @ViewChild('CreateOrEditPost') CreateOrEditPost: CreateOrEditPostComponent;  // edit bài đăng
   @ViewChild('PostAdminView') PostAdminView: PostAdminViewComponent;
+
+  @ViewChild('CreateAddPhoto') CreateAddPhoto: CreatAddPhotoPostComponent;
 
   filterText;
   sorting: string = "";
@@ -42,7 +45,7 @@ export class PostComponent extends AppComponentBase {
 
   constructor(
     injector: Injector,
-    public _postService: ManagePostsServiceProxy
+    public _postService: ManagePostsServiceProxy,
   ) {
     super(injector);
     // if (abp.session.tenantId == null) {
@@ -101,7 +104,8 @@ export class PostComponent extends AppComponentBase {
   }
 
   createPost() {
-    this.CreateOrEditPost.show();
+   // this.CreateOrEditPost.show();
+   this.CreateAddPhoto.show();
 
   }
   editPost() {
@@ -145,7 +149,7 @@ export class PostComponent extends AppComponentBase {
 
 
   deletePost() {
-    this.message.confirm('', this.l('AreYouSureWantToDelete'), (isConfirme) => {
+    this.message.confirm('', this.l('Bạn có thực sự muốn xóa bài đăng này không ?'), (isConfirme) => {
       if (isConfirme) {
         this._postService.deletePost(this.selectedRow.id)
           .subscribe(() => {
@@ -153,6 +157,9 @@ export class PostComponent extends AppComponentBase {
             this.updateTable();
           })
       }
+    }, {
+      yesText: 'Có',
+      cancelText: 'Hủy bỏ'
     })
   }
 

@@ -106,7 +106,7 @@ export class PostViewUserComponent   extends AppComponentBase implements OnInit 
   updateTable() {
     this.isLoading = true;
     this.data = [];
-    this.paginationParams = { pageNum: 1, pageSize: 8, totalCount: 0 };
+    this.paginationParams = { pageNum: 1, pageSize: 9, totalCount: 0 };
     this.getAll(this.paginationParams).subscribe(data => {
       console.log(data.items);
       this.data = data.items;
@@ -128,7 +128,7 @@ export class PostViewUserComponent   extends AppComponentBase implements OnInit 
   callbackPost(){
     this.isLoading = true;
     this.data = [];
-    this.paginationParams = { pageNum: 1, pageSize: 8, totalCount: 0 };
+    this.paginationParams = { pageNum: 1, pageSize: 9, totalCount: 0 };
     this.getAll(this.paginationParams).subscribe(data => {
       console.log(data.items);
       this.data = data.items;

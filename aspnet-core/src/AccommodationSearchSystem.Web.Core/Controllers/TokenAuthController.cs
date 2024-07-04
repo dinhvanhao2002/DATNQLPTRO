@@ -184,6 +184,8 @@ namespace AccommodationSearchSystem.Controllers
 
             var tenantId = 1;
             return _tenantCache.GetOrNull(tenantId)?.TenancyName;
+
+          //  return _tenantCache.GetOrNull(AbpSession.TenantId.Value)?.TenancyName;
         }
 
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultAsync(string usernameOrEmailAddress, string password, string tenancyName)
