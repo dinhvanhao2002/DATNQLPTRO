@@ -40,5 +40,6 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
         public bool ConfirmAdmin { get; set; }
         public string PackageType { get; set; }
         public int TotalLike { get; set; }
+        public bool IsShowCancel { get; set; }
     }
 }

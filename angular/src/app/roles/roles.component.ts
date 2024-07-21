@@ -13,6 +13,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CreateRoleDialogComponent } from './create-role/create-role-dialog.component';
 import { EditRoleDialogComponent } from './edit-role/edit-role-dialog.component';
+import Swal from 'sweetalert2';
 
 class PagedRolesRequestDto extends PagedRequestDto {
   keyword: string;
@@ -54,24 +55,46 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
       });
   }
 
+  // delete(role: RoleDto): void {
+  //   abp.message.confirm(
+  //     '',this.l('Bạn có thực sự muốn xóa vai trò này không?', role.displayName),
+  //     undefined,
+  //     (result: boolean) => {
+  //       if (result) {
+  //         this._rolesService
+  //           .delete(role.id)
+  //           .pipe(
+  //             finalize(() => {
+  //               abp.notify.success(this.l('SuccessfullyDeleted'));
+  //               this.refresh();
+  //             })
+  //           )
+  //           .subscribe(() => {});
+  //       }
+  //     }
+  //   );
+  // }
   delete(role: RoleDto): void {
-    abp.message.confirm(
-      this.l('RoleDeleteWarningMessage', role.displayName),
-      undefined,
-      (result: boolean) => {
-        if (result) {
-          this._rolesService
-            .delete(role.id)
-            .pipe(
-              finalize(() => {
-                abp.notify.success(this.l('SuccessfullyDeleted'));
-                this.refresh();
-              })
-            )
-            .subscribe(() => {});
-        }
+    Swal.fire({
+     // title: 'Xác nhận',
+      text: `Bạn có thực sự muốn xóa vai trò này không? ${role.displayName}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Có',
+      cancelButtonText: 'Không',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._rolesService
+          .delete(role.id)
+          .pipe(
+            finalize(() => {
+              Swal.fire('Thành công!', 'Vai trò đã được xóa thành công.', 'success');
+              this.refresh();
+            })
+          )
+          .subscribe(() => {});
       }
-    );
+    });
   }
 
   createRole(): void {

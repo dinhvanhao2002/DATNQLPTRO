@@ -180,21 +180,21 @@ export class CreateOrEditPostComponent extends AppComponentBase {
     this.hasBaseDropzoneOver = e;
   }
 
-  deleteSelectedPhotos() {
-    const selectedPhotoIds = this.posts.photos
-      .filter((photo) => photo.selected)
-      .map((photo) => photo.id);
+  // deleteSelectedPhotos() {
+  //   const selectedPhotoIds = this.posts.photos
+  //     .filter((photo) => photo.selected)
+  //     .map((photo) => photo.id);
 
-    if (selectedPhotoIds.length > 0) {
-      this._postService
-        .deletePhotos(this.posts.id, selectedPhotoIds)
-        .subscribe(() => {
-          this.posts.photos = this.posts.photos.filter(
-            (photo) => !photo.selected
-          );
-        });
-    } else {
-      alert("No photos selected for deletion.");
-    }
-  }
+  //   if (selectedPhotoIds.length > 0) {
+  //     this._postService
+  //       .deletePhotos(this.posts.id, selectedPhotoIds)
+  //       .subscribe(() => {
+  //         this.posts.photos = this.posts.photos.filter(
+  //           (photo) => !photo.selected
+  //         );
+  //       });
+  //   } else {
+  //     alert("No photos selected for deletion.");
+  //   }
+  // }
 }

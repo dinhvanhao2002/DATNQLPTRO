@@ -46,7 +46,10 @@ export class AppScheduleSuccessComponent extends AppComponentBase implements OnI
     // } else {
     //   this.isHost = false;
     // }
-    if (this.shownLogin == 4 || this.shownLogin == 3) {
+
+    // ở nút xác nhận thuê, thì nên để cho mối chủ trọ xác nhận thôi
+
+    if ( this.shownLogin == 3) {
       this.isHost = true;
     } else {
       this.isHost = false;

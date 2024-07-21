@@ -127,7 +127,7 @@
                                             <i class="fas fa-pencil-alt"></i>
                                             {{ "Edit" | localize }}
                                         </button>
-                                        <button type="button" class="btn btn-sm bg-danger mx-2"   (click)="delete(user)">
+                                        <button type="button" class="btn btn-sm bg-danger mx-2"  [disabled]="user.userName == 'admin'"  (click)="delete(user)">
                                             <i class="fas fa-trash"></i>
                                             {{ "Delete" | localize }}
                                         </button>

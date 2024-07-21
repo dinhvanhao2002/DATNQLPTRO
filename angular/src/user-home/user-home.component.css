@@ -95,3 +95,126 @@
 .back-to-top.show {
   display: block; /* Hiển thị nút khi cần */
 }
+
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure it stays above other elements */
+  width: 100%;
+}
+
+
+/* CSS DROPDOW THÔNG BÁO */
+
+.custom-dropdown-menu {
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-header {
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  text-align: center;
+}
+
+.dropdown-body {
+  padding: 10px;
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.notification-item.read {
+  font-weight: normal;
+  color: #aaa;
+}
+
+.notification-item:hover {
+  background-color: #f1f1f1;
+}
+
+.no-notifications {
+  text-align: center;
+  padding: 20px;
+}
+
+.no-notifications p {
+  margin: 0;
+  color: #777;
+}
+
+.badge {
+  background-color: red;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 50%;
+  font-size: 12px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+@media (max-width: 768px) {
+  .custom-dropdown-menu {
+    width: 100%;
+    max-height: 300px;
+  }
+
+  .notification-icon .badge {
+    top: -10px;
+    right: -5px;
+  }
+
+  .notification-item {
+    padding: 8px;
+  }
+
+  .dropdown-header {
+    padding: 8px 10px;
+  }
+
+  .dropdown-body {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-dropdown-menu {
+    width: 100%;
+    max-height: 200px;
+  }
+
+  .notification-icon .badge {
+    top: -12px;
+    right: -3px;
+  }
+
+  .notification-item {
+    padding: 6px;
+  }
+
+  .dropdown-header {
+    padding: 6px 8px;
+  }
+
+  .dropdown-body {
+    padding: 6px;
+  }
+}
+

@@ -46,6 +46,8 @@ namespace AccommodationSearchSystem.Helpers
             configuration.CreateMap<UserComments, UserCommentViewDto>().ReverseMap();
 
             configuration.CreateMap<VnPayments, VnPaymentRequestDto>().ReverseMap();
+            configuration.CreateMap<Notification, NotificationDto>().ReverseMap();
+
 
 
 

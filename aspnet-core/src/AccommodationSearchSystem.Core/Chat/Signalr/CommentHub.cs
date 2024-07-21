@@ -37,5 +37,29 @@ namespace AccommodationSearchSystem.Chat.Signalr
             // Gửi danh sách tổng số lượng bình luận tới tất cả client
             await Clients.All.SendAsync("GetTotalComments", comments);
         }
+
+        // Gửi thông báo đăng bài thành công tới Admin 
+        public async Task SendPost(int comments)
+        {
+            // Gửi thông báo đến admin 
+            await Clients.All.SendAsync("ReceiveNotification", comments);
+        }
+
+        // Gửi thông báo tới cho chủ trọ 
+        public async Task SendPostForRent(int comments)
+        {
+            // Gửi thông báo đến admin 
+            await Clients.All.SendAsync("ReceiveNotificationForRent", comments);
+        }
+
+
+        // Gửi thông báo tới cho chủ trọ bài đăng bị hủy 
+        public async Task SendPostCancelForRent(int comments)
+        {
+            // Gửi thông báo đến admin 
+            await Clients.All.SendAsync("ReceiveNotificationCancelForRent", comments);
+        }
+
+
     }
 }

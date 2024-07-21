@@ -1,4 +1,4 @@
-﻿using Abp.Application.Services;
+﻿﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
@@ -15,7 +15,6 @@ using AccommodationSearchSystem.EntityFrameworkCore;
 using AccommodationSearchSystem.Interfaces;
 using AccommodationSearchSystem.Migrations;
 using AccommodationSearchSystem.MultiTenancy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -672,6 +671,5 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
             await _repositoryUserLikePost.DeleteAsync(likePost.Id);
         }
         #endregion
-
     }
 }

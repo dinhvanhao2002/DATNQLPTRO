@@ -5,6 +5,7 @@ import { PackagePostDto, PackagePostsServiceProxy, SessionServiceProxy } from '@
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
 import * as QRCode from 'qrcode-generator';
+import { Router } from '@angular/router';
 // import { VNPay  } from 'vn-payments';
 
 @Component({
@@ -29,7 +30,8 @@ export class AppPackagePostsVipComponent extends AppComponentBase implements OnI
   constructor(
     injector: Injector,
     public _packageService: PackagePostsServiceProxy,
-    private _sessionService: SessionServiceProxy
+    private _sessionService: SessionServiceProxy,
+    private _router: Router
   ) {
     super(injector);
   }
@@ -75,8 +77,9 @@ export class AppPackagePostsVipComponent extends AppComponentBase implements OnI
           this._packageService
             .paymentResult(this.packages)
             .subscribe((response) => {
-              window.open(response, '_blank');
+              //window.open(response, '_blank');
               // this.notify.info(this.l("SavedSuccessfully"));
+              window.location.href = response;
               this.modalSave.emit();
             });
         }

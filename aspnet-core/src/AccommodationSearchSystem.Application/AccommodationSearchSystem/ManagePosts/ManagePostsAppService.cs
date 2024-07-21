@@ -3,17 +3,20 @@ using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.Notifications;
 using Abp.UI;
 using AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto;
 using AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts.Dto;
 using AccommodationSearchSystem.Authorization;
 using AccommodationSearchSystem.Authorization.Users;
+using AccommodationSearchSystem.Chat.Signalr;
 using AccommodationSearchSystem.Entity;
 using AccommodationSearchSystem.EntityFrameworkCore;
 using AccommodationSearchSystem.Interfaces;
 using AccommodationSearchSystem.MultiTenancy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -34,6 +37,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
         private readonly IRepository<User, long> _repositoryUser;
         private readonly IRepository<PackagePost, long> _repositoryPackagePost;
         private readonly IRepository<UserLikePost, long> _repositoryUserLikePost;
+        private readonly IHubContext<CommentHub> _hubContext;
+        private readonly IRepository<Notification, long> _notification;
         private readonly AccommodationSearchSystemDbContext _dbContext;
         private readonly IPhotoService _photoService;
 
@@ -45,6 +50,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             IRepository<PackagePost, long> repositoryPackagePost,
             IPhotoService photoService,
             IRepository<UserLikePost, long> repositoryUserLikePost,
+            IHubContext<CommentHub> hubContext,
+            IRepository<Notification, long> notification,
             AccommodationSearchSystemDbContext dbContext)
 
         {
@@ -56,13 +63,14 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             _repositoryPhotoPost = repositoryPhotoPost;
             _repositoryPackagePost = repositoryPackagePost;
             _repositoryUserLikePost = repositoryUserLikePost;
-
+            _hubContext = hubContext;
+            _notification = notification;
         }
         public async Task<long> CreateOrEdit(CreateOrEditIPostDto input)
         {
             if (input.Id == null)
             {
-               return await Create(input);
+                return await Create(input);
             }
             else
             {
@@ -70,7 +78,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             }
         }
 
-        protected virtual async Task<long> Create(CreateOrEditIPostDto input)
+        protected virtual async Task<long>  Create(CreateOrEditIPostDto input)
         {
             var tenantId = AbpSession.TenantId;
             // Kiểm tra xem bài đăng đã tồn tại hay chưa
@@ -78,13 +86,37 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             if (postCount >= 1)
             {
                 throw new UserFriendlyException(00, L("ThisItemAlreadyExists"));
-            } else
-            {
+            } 
+            else{
                 var post = ObjectMapper.Map<Post>(input);
                 post.TenantId = tenantId;
                 post.ConfirmAdmin = false;
                 await _repositoryPost.InsertAsync(post);
                 var postId = await _repositoryPost.InsertAndGetIdAsync(post); // Insert the post and get the post ID
+
+                var user = await _repositoryUser.FirstOrDefaultAsync((int)post.CreatorUserId);
+                if (user == null)
+                {
+                    throw new UserFriendlyException(00, L("UserNotFound"));
+                }
+
+
+
+                // Sau khi tạo bài đăng xong thì tạo singalr để tạo thông báo cho admin với roid = 2
+                var notification = new Notification
+                {
+                    NotificationName = $"Người dùng {user.Name} đã thêm mới bài đăng!",
+                    PostId = (int)postId,
+                    CreationTime = DateTime.Now,
+                    IsSending = false,  // như này sẽ là chưa đọc,
+                    CreatorUserId = post.CreatorUserId
+                };
+                // làm sao lấy name trong bảng abpuser , tức là lấy ra chủ trọ nào đăng bài , để gán vào name 
+                await _notification.InsertAsync(notification);
+
+                // Send notification to admin
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", new { Message = notification.NotificationName, PostId = postId });
+
                 return postId;
             }
         }
@@ -95,7 +127,6 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             // Cập nhật các trường dữ liệu của bài đăng từ input
             ObjectMapper.Map(input, post);
             return post.Id;
-
         }
 
         public async Task DeletePost(EntityDto<long> input)
@@ -710,7 +741,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
             return data;
         }
-
+        [AbpAllowAnonymous]
         public async Task<PagedResultDto<GetPostForViewDto>> GetAllForHost(GetPostInputDto input)
         {
             var tenantId = AbpSession.TenantId;
@@ -752,6 +783,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 Conditioner = item.Post.Conditioner,
                 RoomStatus = item.Post.RoomStatus,
                 TenantId = tenantId,
+                ConfirmAdmin = item.Post.ConfirmAdmin,
+                IsShowCancel = item.Post.IsShowCancel,
                 Photos = item.Photos.Select(photo => new PhotoDto
                 {
                     Id = photo.Id,
@@ -763,7 +796,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
             return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
         }
-
+        [AbpAllowAnonymous]
         public async Task<PagedResultDto<GetPostForViewDto>> GetAllForAdmin(GetPostInputDto input)
         {
             var tenantId = AbpSession.TenantId;
@@ -777,11 +810,11 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                         join pk in _repositoryPackagePost.GetAll() on u.Id equals pk.HostId into pkGroup
                         from pk in pkGroup.DefaultIfEmpty()
                         where pk == null || (pk.IsDeleted == false && pk.Cancel == false && (pk.PackageType == "Gói VIP pro" || pk.PackageType == "Gói VIP"))
-                        //join s in _repositorySchedule.GetAll().AsNoTracking() on p.Id equals s.PostId into sGroup
-                        //from s in sGroup.DefaultIfEmpty()
-                        //where s == null || (s.TenantId == tenantId && (s.Confirm == null || s.Confirm == false))
-
+                  
                         select new { Post = p, User = u, PackagePost = pk, Photos = _repositoryPhotoPost.GetAll().AsNoTracking().Where(ph => ph.PostId == p.Id).ToList() };
+
+            // sắp xếp theo ConfirmAdmin == false
+            query = query.OrderBy(x => x.Post.ConfirmAdmin == true).ThenByDescending(x => x.Post.Id);
 
             var totalCount = await query.CountAsync();
             var pagedAndFilteredPost = query.PageBy(input);
@@ -812,6 +845,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 PhoneNumber = item.User.PhoneNumber,
                 EmailAddress = item.User.EmailAddress,
                 ConfirmAdmin = item.Post.ConfirmAdmin,
+                IsShowCancel = item.Post.IsShowCancel,
                 PackageType = item.PackagePost != null ? item.PackagePost.PackageType : "Gói thường",
                 Photos = item.Photos.Select(photo => new PhotoDto
                 {
@@ -825,8 +859,50 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             return new PagedResultDto<GetPostForViewDto>(totalCount, postDtos);
 
         }
-
+        // Khi tôi phê duyệt bài đăng này sẽ thông báo cho các chủ trọ có bài đăng mà tôi vừa phê duyêt
+        // Khi đó chủ trọ sẽ nhận được thông báo với nội dung , bài đăng có PostId =... được phê duyệt
+        // TH: Bài đăng mà đang trạng thại hủy rồi, 
         public async Task ConfirmPostAD(ConfirmPostByAdminDto input)
+        {
+            var tenantId = AbpSession.TenantId;
+            var UserId = AbpSession.UserId;
+            var dataCheck = await _repositoryPost.FirstOrDefaultAsync(e => e.ConfirmAdmin == true 
+                                    && e.Id == input.Id && tenantId == e.TenantId);
+            if (dataCheck != null)
+            {
+                throw new UserFriendlyException(400, "Bài đăng đã được phê duyệt");
+            }
+            else
+            {
+                //var post = await _repositoryPost.FirstOrDefaultAsync(e => e.Id == input.Id);
+                //post.ConfirmAdmin = true;
+                //await _repositoryPost.UpdateAsync(post);
+                var post = await _repositoryPost.FirstOrDefaultAsync(e => e.Id == input.Id);
+                post.ConfirmAdmin = true;
+                await _repositoryPost.UpdateAsync(post);
+
+                // Tao thông báo từ admin 
+                var notification = new Notification
+                {
+                    NotificationName = $"Bài đăng có PostId = {input.Id} được phê duyệt",
+                    IsSending = false, // Initially set to false (unread)
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    TenantId = tenantId,
+                    CreationTime = DateTime.Now,
+                    CreatorUserId = UserId,  // chính là người tạo ra thông báo là admin
+                    PostId = (int)input.Id
+                };
+
+                await _notification.InsertAsync(notification);
+                await _hubContext.Clients.All.SendAsync("ReceiveNotificationForRent", new { Message = notification.NotificationName, PostId = post.Id });
+            }
+        }
+
+        // Admin xác nhận hủy bài đăng và sẽ cập nhật lại trạng thái bài đăng thành Bài đăng đã bị hủy
+        // 
+        // Trường hợp nếu như bài đăng đó bị hủy rồi, thì lại click lại xác nhận 
+        public async Task ConfirmCancelPostAD(ConfirmPostByAdminDto input)
         {
             var tenantId = AbpSession.TenantId;
             var UserId = AbpSession.UserId;
@@ -839,8 +915,24 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             else
             {
                 var post = await _repositoryPost.FirstOrDefaultAsync(e => e.Id == input.Id);
-                post.ConfirmAdmin = true;
+                post.IsShowCancel = true;  // Trạng thái bài đăng sẽ như này 
                 await _repositoryPost.UpdateAsync(post);
+
+                // Tao thông báo từ admin 
+                var notification = new Notification
+                {
+                    NotificationName = $"Bài đăng có mã:{input.Id} đã bị quản trị viên hủy!",
+                    IsSending = false, // Initially set to false (unread)
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    TenantId = tenantId,
+                    CreationTime = DateTime.Now,
+                    CreatorUserId = UserId,  // chính là người tạo ra thông báo là admin
+                    PostId = (int)input.Id
+                };
+
+                await _notification.InsertAsync(notification);
+                await _hubContext.Clients.All.SendAsync("ReceiveNotificationCancelForRent", new { Message = notification.NotificationName, PostId = post.Id });
             }
         }
 
@@ -862,94 +954,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             throw new System.NotImplementedException();
         }
 
-        #region Hàm thêm mới bài đăng và ảnh bài đăng cùng lúc 
-        //[HttpPost]
-        //public async Task CreateAndAddPhoto(CreateOrEditIPostDto input, ICollection<IFormFile> formFiles)
-        //{
-        //    var tenantId = AbpSession.TenantId;
-        //    // Kiểm tra xem bài đăng đã tồn tại hay chưa
-        //    var postCount = _repositoryPost.GetAll().Where(e => e.Id == input.Id && e.TenantId == tenantId).Count();
-        //    if (postCount >= 1)
-        //    {
-        //        throw new UserFriendlyException(00, L("ThisItemAlreadyExists"));
-        //    }
-
-        //    // Tạo bài đăng mới
-        //    var post = ObjectMapper.Map<Post>(input);
-        //    post.TenantId = tenantId;
-        //    post.ConfirmAdmin = false;
-        //    await _repositoryPost.InsertAsync(post);
-        //    await CurrentUnitOfWork.SaveChangesAsync(); // Lưu thay đổi để đảm bảo ID được tạo
-
-        //    // Thêm ảnh cho bài đăng vừa tạo
-        //    var photoData = await _repositoryPhotoPost.GetAllListAsync(e => e.PostId == post.Id);
-
-        //    var output = new GetPostForViewDto
-        //    {
-        //        Id = post.Id,
-        //        PostCode = post.PostCode,
-        //        Title = post.Title,
-        //        ContentPost = post.ContentPost,
-        //        Photo = post.Photo,
-        //        RoomPrice = post.RoomPrice,
-        //        Address = post.Address,
-        //        Area = post.Area,
-        //        Square = post.Square,
-        //        PriceCategory = post.PriceCategory,
-        //        Wifi = post.Wifi,
-        //        Parking = post.Parking,
-        //        Conditioner = post.Conditioner,
-        //        RoomStatus = post.RoomStatus,
-        //        TenantId = tenantId,
-        //        Photos = photoData.Select(photo => new PhotoDto
-        //        {
-        //            Url = photo.Url,
-        //            IsMain = photo.IsMain,
-        //            PostId = photo.PostId,
-        //            Id = photo.Id,
-        //        }).ToList()
-        //    };
-
-        //    foreach (var file in formFiles)
-        //    {
-        //        var result = await _photoService.AddPhotoAsync(file);
-        //        // Kiểm tra lỗi
-        //        if (result.Error != null)
-        //        {
-        //            throw new UserFriendlyException(result.Error.Message);
-        //        }
-
-        //        //up anh len 
-        //        if (post.PhotoPosts == null)
-        //        {
-        //            post.PhotoPosts = new List<PhotoPost>();
-        //        }
-
-        //        var photo = new PhotoPost
-        //        {
-        //            Url = result.SecureUrl.AbsoluteUri,
-        //            PublicId = result.PublicId,
-        //            PostId = (int)post.Id
-        //        };
-
-        //        if (post.PhotoPosts != null && post.PhotoPosts.Any())
-        //        {
-        //            photo.IsMain = false;
-        //        }
-        //        else
-        //        {
-        //            photo.IsMain = true;
-        //        }
-        //        post.PhotoPosts.Add(photo);
-
-        //        await _repositoryPost.UpdateAsync(post); // Lưu thay đổi vào CSDL
-        //    }
-
-        //}
-        #endregion
 
         #region Hàm thêm mới bài đăng và ảnh bài đăng cùng lúc 
-        public async Task CreateAndAddPhoto(long Id,ICollection<IFormFile> formFile)
+        public async Task CreateAndAddPhoto(long Id, ICollection<IFormFile> formFile)
         {
             var tenantId = AbpSession.TenantId;
             var query = from p in _repositoryPost.GetAll()
@@ -1032,6 +1039,58 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
             }
         }
         #endregion
+
+        //Cập nhật lại thông báo 
+        // Hàm này cần sửa, khi mà người dùng click vào thì sẽ thay đổi trạng thái thành true, 
+        // ở fe cần sửa những thằng đã đọc thì chữ mờ đi, còn những thông báo chưa đọc thì màu đen đậm 
+        public async Task MarkNotificationAsRead(long notificationId)
+        {
+            var notification = await _notification.FirstOrDefaultAsync(notificationId);
+            if (notification != null)
+            {
+                notification.IsSending = true;
+                await _notification.UpdateAsync(notification);
+            }
+        }
+
+        [HttpGet]
+
+        //Admin lấy thông báo với tất cả chủ trọ đăng bài 
+        public async Task<List<NotificationDto>> GetNotifications()
+        {
+            var tenantId = AbpSession.TenantId;
+            var notifications = await _notification.GetAll().Where( e => e.CreatorUserId!= 2)
+                .OrderByDescending(n => n.CreationTime)
+                .ToListAsync();
+            return ObjectMapper.Map<List<NotificationDto>>(notifications);
+        }
+
+        // Chủ trọ lấy thông báo từ admin 
+        // Lấy ra thông báo của admin có CreatorUserId = 2, nhưng phải là bài đăng của mình( tức là của chủ trọ) 
+        // Cần phải join với bảng bài đăng để lấy đúng bài đăng của mình, và bài đăng đó chính là chủ trọ tạo ra
+        public async Task<List<NotificationDto>> GetLandlordNotificationsForApprovedPosts()
+        {
+            var tenantId = AbpSession.TenantId;
+            var userId = AbpSession.UserId;
+
+          
+            var approvedPosts = await _repositoryPost.GetAll()
+                .Where(p => p.ConfirmAdmin == true && p.CreatorUserId == userId)
+                .ToListAsync();
+
+            var notifications = await _notification.GetAll()
+                .Where(n => approvedPosts.Select(p => p.Id).Contains(n.PostId)
+                             && n.CreatorUserId == 2)
+                
+                .OrderByDescending(n => n.CreationTime)
+                .ToListAsync();
+
+            // Map notifications to DTOs
+            var notificationDtos = ObjectMapper.Map<List<NotificationDto>>(notifications);
+
+            return notificationDtos;
+        }
+
     }
 
 }

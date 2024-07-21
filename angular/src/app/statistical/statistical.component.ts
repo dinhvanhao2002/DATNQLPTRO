@@ -2,6 +2,7 @@ import { Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/cor
 import { AppComponentBase } from '@shared/app-component-base';
 import { PostCategoryDto, StatisticalServiceProxy, UserPostCountDto, UserScheduleCountDto } from '@shared/service-proxies/service-proxies';
 import { Chart } from 'chart.js';
+import { ExportStatisticalModalComponent } from './export-statistical-modal/export-statistical-modal.component';
 
 @Component({
   selector: 'app-statistical',
@@ -14,6 +15,8 @@ export class StatisticalComponent extends AppComponentBase implements OnInit {
   @ViewChild('lineChart') lineChart: ElementRef;
   @ViewChild('barChart') barChart: ElementRef;
   chart: any;
+
+  @ViewChild("ExportStatistical") ExportStatistical: ExportStatisticalModalComponent;
 
   countUser: number;
   countPost: number;
@@ -194,7 +197,9 @@ export class StatisticalComponent extends AppComponentBase implements OnInit {
   }
 
   // Xuất báo cáo
+  // khi click vào thì tạo modal để
   btnReport(){
+    this.ExportStatistical.show();
 
   }
 }

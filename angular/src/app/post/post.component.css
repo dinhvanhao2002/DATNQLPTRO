@@ -8,3 +8,26 @@
         }
     }
 }
+
+
+.fa-pencil-alt {
+    color: #007bff; /* Blue color for the edit icon */
+  }
+
+  .fa-trash-alt {
+    color: #dc3545; /* Red color for the delete icon */
+  }
+
+  .fa-ban {
+    color: #ffc107; /* Yellow color for the cancel icon */
+  }
+
+  .fa-check {
+    color: #28a745; /* Green color for the confirm icon */
+  }
+
+  /* Optional: Styling for disabled state */
+  i[disabled] {
+    color: #6c757d; /* Gray color for disabled icons */
+    pointer-events: none; /* Disable interaction */
+  }

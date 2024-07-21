@@ -190,7 +190,7 @@
                   <input type="file" ng2FileSelect [uploader]="uploader" />
                 </div>
 
-                <div class="col-md-9" style="margin-bottom: 40px">
+                <div class="col-md-9" style="margin-bottom: 40px; padding-left: 30px;">
 
                   <h3 class="Add_photos">Chờ tải lên</h3>
                   <p>Kích thước: {{ uploader?.queue?.length }}</p>
@@ -220,10 +220,10 @@
                         </div>
                       </div>
                     </div>
-                    <button class="btn btn-success btn-s" (click)="uploader.uploadAll()"
+                    <!-- <button class="btn btn-success btn-s" (click)="uploader.uploadAll()"
                       [disabled]="!uploader.getNotUploadedItems().length">
                       <span class="fa fa-upload"></span> Tải lên
-                    </button>
+                    </button> -->
                     <button class="btn btn-warning btn-s" (click)="uploader.cancelAll()"
                       [disabled]="!uploader.isUploading">
                       <span class="fa fa-ban"></span> Hủy bỏ

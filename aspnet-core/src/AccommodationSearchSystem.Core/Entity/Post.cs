@@ -45,5 +45,6 @@ namespace AccommodationSearchSystem.Entity
         public ICollection<PackagePost> PackagePosts { get; set; }
         public bool ConfirmAdmin { get; set; }
         public ICollection<UserComments> UserCommentes { get; set; }
+        public bool IsShowCancel { get; set; }
     }
 }

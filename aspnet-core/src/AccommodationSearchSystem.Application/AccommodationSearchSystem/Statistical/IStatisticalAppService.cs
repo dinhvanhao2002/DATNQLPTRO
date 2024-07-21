@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using AccommodationSearchSystem.AccommodationSearchSystem.Statistical.Dto;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
         Task<List<ScheduleCountByMonthDto>> GetScheduleCountByMonth();
         Task<UserPostCountDto> GetUserWithMostPosts();
         Task<UserScheduleCountDto> GetUserWithMostSchedules();
+
+        Task<byte[]> GetBpByDateForReport([FromBody]ReportInput input);
 
 
     }

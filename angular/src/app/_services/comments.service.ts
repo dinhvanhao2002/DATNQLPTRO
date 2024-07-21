@@ -16,6 +16,12 @@ export class CommentsService {
   getCommentsForRent = new Subject<any>();
   getTotalComments = new BehaviorSubject<number>(0);
 
+  // lấy ra thông báo thêm mới bài đăng của chủ trọ cho admin
+  receiveNotification = new Subject<any>();
+
+  // Lấy thông báo phê duyệt từ chủ trọ
+  receiveNotificationForRent = new Subject<any>();
+
   baseUrl = environment.apiUrl;
 
   constructor() {
@@ -60,6 +66,13 @@ export class CommentsService {
 
     this.hubConnection.on('GetCommentForRent', (data: number) => {  // chủ trọ
       this.getCommentsForRent.next(data);;
+    });
+    this.hubConnection.on('ReceiveNotification', (data) => {  // tới admin
+      this.receiveNotification.next(data);;
+    });
+
+    this.hubConnection.on('ReceiveNotificationForRent', (data) => {  // tới chủ trọ
+      this.receiveNotificationForRent.next(data);;
     });
   }
 }

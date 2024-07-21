@@ -4,12 +4,13 @@ import { PostViewDetailUserComponent } from "./post-view-detail-user/post-view-d
 import { UserContactComponent } from "./user-contact/user-contact.component";
 import { PostViewUserComponent } from "./post-view-user/post-view-user.component";
 import { UserHomeRootingModule } from "./user-home-rooting.module";
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { UserHomeComponent } from "./user-home.component";
 import { AppModule } from "@app/app.module";
 import { SharedModule } from "../shared/shared.module";
 import { TabsModule } from "ngx-bootstrap/tabs";
+
 
 @NgModule({
   declarations: [
@@ -27,5 +28,6 @@ import { TabsModule } from "ngx-bootstrap/tabs";
     SharedModule,
     TabsModule,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UserHomeModule {}

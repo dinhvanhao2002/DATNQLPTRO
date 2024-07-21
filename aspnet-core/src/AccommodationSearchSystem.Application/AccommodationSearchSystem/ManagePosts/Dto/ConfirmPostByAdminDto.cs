@@ -12,5 +12,6 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
         public int? TenantId { get; set; }
         public int CreatorUserId { get; set; }
         public bool ConfirmAdmin { get; set; }
+        public bool IsShowCancel { get; set; }
     }
 }

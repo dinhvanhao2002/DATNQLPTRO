@@ -85,6 +85,17 @@ namespace AccommodationSearchSystem.Web.Host.Startup
                 )
             );
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
             // Swagger - Enable this line and the related lines in Configure method to enable swagger UI
             ConfigureSwagger(services);
 
@@ -120,7 +131,8 @@ namespace AccommodationSearchSystem.Web.Host.Startup
             app.UseAuthentication();
 
             app.UseAbpRequestLocalization();
-        
+            app.UseCors("AllowAll");
+
 
 
             app.UseEndpoints(endpoints =>

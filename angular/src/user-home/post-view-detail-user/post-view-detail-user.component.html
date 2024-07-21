@@ -37,8 +37,8 @@
           </button>
           <!-- Check nếu là chủ trọ thì disable cái nut đặt phòng roid = 3 là chủ trọ thì disable -->
           <button class="btn bg-primary" (click)="booking(post.id)" [disabled]="this.buttonDisabled || this.showRoleId ==3">
-            <i class="fas fa-trash-alt"></i>
-            Đặt phòng
+            <!-- <i class="fas fa-trash-alt"></i> -->
+            ✅ Đặt lịch hẹn
           </button>
         </div>
       </div>
@@ -96,6 +96,14 @@
                   </tr>
                 </tbody>
               </table>
+              <div>
+                <button
+                class="btn btn-sm btn-outline-primary"
+                (click)="openZalo(post.phoneNumber)"
+                >
+                Liên hệ Zalo
+                </button>
+              </div>
             </div>
           </div>
         </div>

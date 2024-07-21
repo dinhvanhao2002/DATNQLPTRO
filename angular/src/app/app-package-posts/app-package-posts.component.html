@@ -60,21 +60,10 @@
               <div>
                 <div class="row">
                   <div class="col-md-6">
-                    <!-- <button class="btn btn-outline-info" (click)="updateTable()">
-                                            <i class="pi pi-undo"></i>
-                                            {{ "Reset" | localize }}
-                                        </button> -->
                   </div>
                   <div class="col-md-6">
                     <div class="form-outline mb-2" data-mdb-input-init>
-                      <!-- <input pInputText class="form-control" type="search"
-                                                (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                                                placeholder="Search keyword" /> -->
                     </div>
-                    <!-- <span class="p-input-icon-left ml-5">
-                                          <i class="pi pi-search"></i>
-                                          <input pInputText class="form-control" type="search" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" />
-                                      </span> -->
                   </div>
                 </div>
               </div>
@@ -99,9 +88,9 @@
                 <th style="min-width: 10rem">
                   <div class="flex align-items-center">Xác nhận</div>
                 </th>
-                <th style="min-width: 10rem">
+                <!-- <th style="min-width: 10rem">
                   <div class="flex align-items-center">Hủy</div>
-                </th>
+                </th> -->
               </tr>
             </ng-template>
             <ng-template
@@ -130,10 +119,6 @@
                 <td style="min-width: 10rem">
                   {{ rowDataPackage.expirationDate | date : "dd/MM/YYYY" }}
                 </td>
-                <!-- <td class="text-center" style="min-width:10rem">
-                                    <i class="pi"
-                                        [ngClass]="{ 'text-green-500 pi-check-circle': rowDataPackage.confirm === true, 'text-red-500 pi-times-circle': rowDataPackage.confirm === false } "></i>
-                                </td> -->
                 <td class="text-center" style="min-width: 10rem">
                   <ng-container
                     *ngIf="rowDataPackage.confirm; else notConfirmed"
@@ -144,19 +129,14 @@
                     <span class="text-yellow-500 font-bold">Chưa xác nhận</span>
                   </ng-template>
                 </td>
-                <!--
-                                <td class="text-center" style="min-width:10rem">
-                                    <i class="pi"
-                                        [ngClass]="{ 'text-green-500 pi-check-circle': rowDataPackage.cancel === true, 'text-red-500 pi-times-circle': rowDataPackage.cancel === false } "></i>
-                                </td> -->
-                <td class="text-center" style="min-width: 10rem">
+                <!-- <td class="text-center" style="min-width: 10rem">
                   <ng-container *ngIf="!rowDataPackage.cancel; else Confirmed">
                     <span class="text-green-500 font-bold">Chưa hủy</span>
                   </ng-container>
                   <ng-template #Confirmed>
                     <span class="text-red-500 font-bold">Đã hủy</span>
                   </ng-template>
-                </td>
+                </td> -->
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
@@ -172,19 +152,8 @@
   <AppPackagePostsEdit #AppPackagePostsEdit> </AppPackagePostsEdit>
 </div>
 <div *ngIf="!isAdmin">
-  <tabset>
+  <tabset  #tabset>
     <tab [heading]="'Các gói đăng bài'" class="pt-3 px-2">
-      <!-- <section class="content-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-6">
-                            <h1>Các gói đăng bài</h1>
-                        </div>
-                        <div class="col-6 text-right">
-                        </div>
-                    </div>
-                </div>
-            </section> -->
       <section class="content px-2">
         <div class="container-fluid">
           <div class="card">
@@ -333,9 +302,9 @@
                     <th style="min-width: 10rem">
                       <div class="flex align-items-center">Trạng thái</div>
                     </th>
-                    <th style="min-width: 10rem">
+                    <!-- <th style="min-width: 10rem">
                       <div class="flex align-items-center">Trạng thái hủy</div>
-                    </th>
+                    </th> -->
                   </tr>
                 </ng-template>
                 <ng-template
@@ -377,7 +346,7 @@
                           <span class="text-yellow-500 font-bold">Chưa xác nhận</span>
                       </ng-template>
                   </td>
-                    <td class="text-center" style="min-width: 10rem">
+                    <!-- <td class="text-center" style="min-width: 10rem">
                       <i
                         class="pi"
                         [ngClass]="{
@@ -387,7 +356,7 @@
                             rowData.cancel === false
                         }"
                       ></i>
-                    </td>
+                    </td> -->
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">

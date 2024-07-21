@@ -1,3 +1,4 @@
+import { ExportStatisticalModalComponent } from './statistical/export-statistical-modal/export-statistical-modal.component';
 import { ChangeProfilePictureModalComponent } from './layout/change-profile-picture-modal/change-profile-picture-modal.component';
 
 import { NgModule } from '@angular/core';
@@ -131,7 +132,9 @@ import { CreatAddPhotoPostComponent } from './post/creat-add-photo-post/creat-ad
     // statistics
     StatisticalComponent,
       AppPackagePostsPaymentSuccessComponent,
-      CreatAddPhotoPostComponent
+      CreatAddPhotoPostComponent,
+      ExportStatisticalModalComponent
+
    ],
   imports: [
     CommonModule,

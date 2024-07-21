@@ -1,0 +1,28 @@
+.header {
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    color: white;
+    padding: 50px 0;
+    text-align: center;
+  }
+
+  .section {
+    padding: 50px 0;
+  }
+
+  .feature-box, .testimonial {
+    transition: transform 0.3s;
+  }
+
+  .feature-box:hover, .testimonial:hover {
+    transform: scale(1.05);
+  }
+
+  .img-fluid {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .service-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+  }

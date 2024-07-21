@@ -36,6 +36,9 @@
     <PackageReference Include="Abp.ZeroCore.IdentityServer4.EntityFrameworkCore" Version="5.6.0" />
     <PackageReference Include="Az.Storage.Core.TempFile" Version="1.0.1.203" />
     <PackageReference Include="CloudinaryDotNet" Version="1.20.0" />
+    <PackageReference Include="EPPlus" Version="7.2.1" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+    <PackageReference Include="GemBox.Spreadsheet" Version="43.0.0.1140" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
@@ -48,5 +51,8 @@
     <EmbeddedResource Include="wwwroot\swagger\ui\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\Excel_Template\" />
   </ItemGroup>
 </Project>

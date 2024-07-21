@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Authorization;
+using Abp.Authorization.Users;
 using Abp.Domain.Repositories;
 using AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts;
 using AccommodationSearchSystem.AccommodationSearchSystem.Statistical.Dto;
@@ -8,12 +9,18 @@ using AccommodationSearchSystem.Authorization.Users;
 using AccommodationSearchSystem.Entity;
 using AccommodationSearchSystem.EntityFrameworkCore;
 using AccommodationSearchSystem.Interfaces;
+using GemBox.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 {
@@ -289,5 +296,72 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             return data;
         }
+
+        #region Xuất báo cáo 
+        public async Task<byte[]> GetBpByDateForReport([FromBody] ReportInput input)
+        {
+            try
+            {
+                var tenantId = AbpSession.TenantId;
+
+                // Retrieve data from repositories
+                var users = await _repositoryUser.GetAll()
+                    .Where(u => u.CreationTime >= input.FromDate && u.CreationTime <= input.ToDate && u.TenantId == tenantId && !u.IsDeleted)
+                    .ToListAsync();
+
+                var posts = await _repositoryPost.GetAll()
+                    .Where(p => p.CreationTime >= input.FromDate && p.CreationTime <= input.ToDate && p.TenantId == tenantId && !p.IsDeleted && p.ConfirmAdmin)
+                    .ToListAsync();
+
+                var schedules = await _repositorySchedule.GetAll()
+                    .Where(s => s.CreationTime >= input.FromDate && s.CreationTime <= input.ToDate && s.TenantId == tenantId && !s.IsDeleted)
+                    .ToListAsync();
+
+                var postLikes = await _repositoryUserLikePost.GetAll()
+                    .Where(ul => ul.CreationTime >= input.FromDate && ul.CreationTime <= input.ToDate && ul.TenantId == tenantId && !ul.IsDeleted)
+                    .ToListAsync();
+
+                // Excel template handling
+                string template = "wwwroot/Excel_Template"; // Đường dẫn tới thư mục chứa template Excel
+                string templateFileName = "Bao_Cao_Thong_Ke.xlsx"; // Tên file template Excel
+
+                string templatePath = Path.Combine(Directory.GetCurrentDirectory(), template, templateFileName);
+
+                // Load template file
+                FileInfo templateFile = new FileInfo(templatePath);
+
+                using (var package = new ExcelPackage(templateFile))
+                {
+                    var worksheet = package.Workbook.Worksheets.First();
+
+                    // Assuming the template has headers at row 1 and data starts from row 2
+                    worksheet.Cells["A2"].Value = users.Count;
+                    worksheet.Cells["B2"].Value = posts.Count;
+                    worksheet.Cells["C2"].Value = schedules.Count;
+                    worksheet.Cells["D2"].Value = postLikes.Count;
+
+                    // Apply borders to cells
+                    var cells = worksheet.Cells["A2:D2"];
+                    cells.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    cells.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    cells.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    cells.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                    // Save to a memory stream
+                    var stream = new MemoryStream();
+                    package.SaveAs(stream);
+
+                    return stream.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error in GetBpByDateForReport: {ex.Message}");
+                throw; // Rethrow the exception to propagate it up
+            }
+        }
+        #endregion Xuất báo cáo 
+
     }
 }

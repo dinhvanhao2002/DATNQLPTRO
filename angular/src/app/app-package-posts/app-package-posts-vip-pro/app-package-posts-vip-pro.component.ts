@@ -81,8 +81,9 @@ export class AppPackagePostsVipProComponent extends AppComponentBase implements 
             .paymentResult(this.packages)
             .subscribe((response) => {
               this.url = response;
-             // window.open(response, '_blank');
-              // this.notify.info(this.l("SavedSuccessfully"));
+              console.log(this.url);
+              window.location.href = response;
+             // this.notify.info(this.l("SavedSuccessfully"));
               this.modalSave.emit();
             });
         }

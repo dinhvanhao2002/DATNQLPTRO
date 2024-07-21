@@ -18,7 +18,7 @@ namespace AccommodationSearchSystem.Entity
     {
         public string NotificationName { get; set; }
 
-        public bool IsSending { get; set; }
+        public bool IsSending { get; set; }  //đã đọc hay chưa
 
         public DateTime CreatedAt { get; set; }
 

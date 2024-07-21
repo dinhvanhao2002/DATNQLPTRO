@@ -605,7 +605,13 @@ export class PostViewDetailUserComponent
   }
 
   showChangeDataRead(){
-    
+
+  }
+
+  openZalo(phoneNumber: string) {
+    if (phoneNumber) {
+      window.open('https://zalo.me/' + phoneNumber);
+    }
   }
 
 

@@ -894,134 +894,6 @@ export class InforUserServiceProxy {
 }
 
 @Injectable()
-export class ManageAddPhotoServiceServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    createAndAddPhoto(body: CreateOrEditIPostDto | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/ManageAddPhotoService/CreateAndAddPhoto";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateAndAddPhoto(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateAndAddPhoto(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processCreateAndAddPhoto(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-
-    /**
-     * @param id (optional) 
-     * @param file (optional) 
-     * @return Success
-     */
-    addPhoto(id: number | undefined, file: FileParameter | undefined): Observable<PhotoDto> {
-        let url_ = this.baseUrl + "/api/services/app/ManageAddPhotoService/AddPhoto?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = new FormData();
-        if (file === null || file === undefined)
-            throw new Error("The parameter 'file' cannot be null.");
-        else
-            content_.append("file", file.data, file.fileName ? file.fileName : "file");
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddPhoto(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAddPhoto(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PhotoDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PhotoDto>;
-        }));
-    }
-
-    protected processAddPhoto(response: HttpResponseBase): Observable<PhotoDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PhotoDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PhotoDto>(null as any);
-    }
-}
-
-@Injectable()
 export class ManageAppointmentSchedulesServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -2829,6 +2701,58 @@ export class ManagePostsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    confirmCancelPostAD(body: ConfirmPostByAdminDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/ConfirmCancelPostAD";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processConfirmCancelPostAD(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processConfirmCancelPostAD(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processConfirmCancelPostAD(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     statusConfirmAD(body: ConfirmPostByAdminDto | undefined): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/app/ManagePosts/StatusConfirmAD";
         url_ = url_.replace(/[?&]$/, "");
@@ -2996,6 +2920,174 @@ export class ManagePostsServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param notificationId (optional) 
+     * @return Success
+     */
+    markNotificationAsRead(notificationId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/MarkNotificationAsRead?";
+        if (notificationId === null)
+            throw new Error("The parameter 'notificationId' cannot be null.");
+        else if (notificationId !== undefined)
+            url_ += "notificationId=" + encodeURIComponent("" + notificationId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarkNotificationAsRead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarkNotificationAsRead(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processMarkNotificationAsRead(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getNotifications(): Observable<NotificationDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/GetNotifications";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetNotifications(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNotifications(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<NotificationDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<NotificationDto[]>;
+        }));
+    }
+
+    protected processGetNotifications(response: HttpResponseBase): Observable<NotificationDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(NotificationDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<NotificationDto[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getLandlordNotificationsForApprovedPosts(): Observable<NotificationDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/ManagePosts/GetLandlordNotificationsForApprovedPosts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLandlordNotificationsForApprovedPosts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLandlordNotificationsForApprovedPosts(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<NotificationDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<NotificationDto[]>;
+        }));
+    }
+
+    protected processGetLandlordNotificationsForApprovedPosts(response: HttpResponseBase): Observable<NotificationDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(NotificationDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<NotificationDto[]>(null as any);
     }
 }
 
@@ -3740,237 +3832,6 @@ export class PackagePostsServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
-    }
-}
-
-@Injectable()
-export class PostServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    /**
-     * @param postCode (optional) 
-     * @param tenantId (optional) 
-     * @param title (optional) 
-     * @param contentPost (optional) 
-     * @param photo (optional) 
-     * @param roomPrice (optional) 
-     * @param address (optional) 
-     * @param district (optional) 
-     * @param city (optional) 
-     * @param ward (optional) 
-     * @param area (optional) 
-     * @param square (optional) 
-     * @param roomStatus (optional) 
-     * @param priceCategory (optional) 
-     * @param wifi (optional) 
-     * @param parking (optional) 
-     * @param conditioner (optional) 
-     * @param photos (optional) 
-     * @param confirmAdmin (optional) 
-     * @param id (optional) 
-     * @param formFiles (optional) 
-     * @return Success
-     */
-    createAddPhoto(postCode: string | undefined, tenantId: number | undefined, title: string | undefined, contentPost: string | undefined, photo: string | undefined, roomPrice: number | undefined, address: string | undefined, district: string | undefined, city: string | undefined, ward: string | undefined, area: string | undefined, square: number | undefined, roomStatus: boolean | undefined, priceCategory: string | undefined, wifi: boolean | undefined, parking: boolean | undefined, conditioner: boolean | undefined, photos: PhotoDto[] | undefined, confirmAdmin: boolean | undefined, id: number | undefined, formFiles: FileParameter[] | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Post/CreateAddPhoto";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = new FormData();
-        if (postCode === null || postCode === undefined)
-            throw new Error("The parameter 'postCode' cannot be null.");
-        else
-            content_.append("PostCode", postCode.toString());
-        if (tenantId === null || tenantId === undefined)
-            throw new Error("The parameter 'tenantId' cannot be null.");
-        else
-            content_.append("TenantId", tenantId.toString());
-        if (title === null || title === undefined)
-            throw new Error("The parameter 'title' cannot be null.");
-        else
-            content_.append("Title", title.toString());
-        if (contentPost === null || contentPost === undefined)
-            throw new Error("The parameter 'contentPost' cannot be null.");
-        else
-            content_.append("ContentPost", contentPost.toString());
-        if (photo === null || photo === undefined)
-            throw new Error("The parameter 'photo' cannot be null.");
-        else
-            content_.append("Photo", photo.toString());
-        if (roomPrice === null || roomPrice === undefined)
-            throw new Error("The parameter 'roomPrice' cannot be null.");
-        else
-            content_.append("RoomPrice", roomPrice.toString());
-        if (address === null || address === undefined)
-            throw new Error("The parameter 'address' cannot be null.");
-        else
-            content_.append("Address", address.toString());
-        if (district === null || district === undefined)
-            throw new Error("The parameter 'district' cannot be null.");
-        else
-            content_.append("District", district.toString());
-        if (city === null || city === undefined)
-            throw new Error("The parameter 'city' cannot be null.");
-        else
-            content_.append("City", city.toString());
-        if (ward === null || ward === undefined)
-            throw new Error("The parameter 'ward' cannot be null.");
-        else
-            content_.append("Ward", ward.toString());
-        if (area === null || area === undefined)
-            throw new Error("The parameter 'area' cannot be null.");
-        else
-            content_.append("Area", area.toString());
-        if (square === null || square === undefined)
-            throw new Error("The parameter 'square' cannot be null.");
-        else
-            content_.append("Square", square.toString());
-        if (roomStatus === null || roomStatus === undefined)
-            throw new Error("The parameter 'roomStatus' cannot be null.");
-        else
-            content_.append("RoomStatus", roomStatus.toString());
-        if (priceCategory === null || priceCategory === undefined)
-            throw new Error("The parameter 'priceCategory' cannot be null.");
-        else
-            content_.append("PriceCategory", priceCategory.toString());
-        if (wifi === null || wifi === undefined)
-            throw new Error("The parameter 'wifi' cannot be null.");
-        else
-            content_.append("Wifi", wifi.toString());
-        if (parking === null || parking === undefined)
-            throw new Error("The parameter 'parking' cannot be null.");
-        else
-            content_.append("Parking", parking.toString());
-        if (conditioner === null || conditioner === undefined)
-            throw new Error("The parameter 'conditioner' cannot be null.");
-        else
-            content_.append("Conditioner", conditioner.toString());
-        if (photos === null || photos === undefined)
-            throw new Error("The parameter 'photos' cannot be null.");
-        else
-            photos.forEach(item_ => content_.append("Photos", item_.toString()));
-        if (confirmAdmin === null || confirmAdmin === undefined)
-            throw new Error("The parameter 'confirmAdmin' cannot be null.");
-        else
-            content_.append("ConfirmAdmin", confirmAdmin.toString());
-        if (id === null || id === undefined)
-            throw new Error("The parameter 'id' cannot be null.");
-        else
-            content_.append("Id", id.toString());
-        if (formFiles === null || formFiles === undefined)
-            throw new Error("The parameter 'formFiles' cannot be null.");
-        else
-            formFiles.forEach(item_ => content_.append("formFiles", item_.data, item_.fileName ? item_.fileName : "formFiles") );
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateAddPhoto(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateAddPhoto(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processCreateAddPhoto(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-
-    /**
-     * @param id (optional) 
-     * @param file (optional) 
-     * @return Success
-     */
-    createAddPhotos(id: number | undefined, file: FileParameter | undefined): Observable<PhotoDto> {
-        let url_ = this.baseUrl + "/api/Post/create-add-photos?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = new FormData();
-        if (file === null || file === undefined)
-            throw new Error("The parameter 'file' cannot be null.");
-        else
-            content_.append("file", file.data, file.fileName ? file.fileName : "file");
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateAddPhotos(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateAddPhotos(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PhotoDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PhotoDto>;
-        }));
-    }
-
-    protected processCreateAddPhotos(response: HttpResponseBase): Observable<PhotoDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PhotoDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PhotoDto>(null as any);
     }
 }
 
@@ -4987,6 +4848,127 @@ export class StatisticalServiceProxy {
             }));
         }
         return _observableOf<UserScheduleCountDto>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    getBpByDateForReport(body: ReportInput | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/app/Statistical/GetBpByDateForReport";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBpByDateForReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBpByDateForReport(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetBpByDateForReport(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+}
+
+@Injectable()
+export class StatisticalReportServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    bpByDateReport(body: ReportInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/StatisticalReport/BpByDateReport";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBpByDateReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBpByDateReport(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processBpByDateReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
     }
 }
 
@@ -8388,6 +8370,7 @@ export class ConfirmPostByAdminDto implements IConfirmPostByAdminDto {
     tenantId: number | undefined;
     creatorUserId: number;
     confirmAdmin: boolean;
+    isShowCancel: boolean;
 
     constructor(data?: IConfirmPostByAdminDto) {
         if (data) {
@@ -8404,6 +8387,7 @@ export class ConfirmPostByAdminDto implements IConfirmPostByAdminDto {
             this.tenantId = _data["tenantId"];
             this.creatorUserId = _data["creatorUserId"];
             this.confirmAdmin = _data["confirmAdmin"];
+            this.isShowCancel = _data["isShowCancel"];
         }
     }
 
@@ -8420,6 +8404,7 @@ export class ConfirmPostByAdminDto implements IConfirmPostByAdminDto {
         data["tenantId"] = this.tenantId;
         data["creatorUserId"] = this.creatorUserId;
         data["confirmAdmin"] = this.confirmAdmin;
+        data["isShowCancel"] = this.isShowCancel;
         return data;
     }
 
@@ -8436,6 +8421,7 @@ export interface IConfirmPostByAdminDto {
     tenantId: number | undefined;
     creatorUserId: number;
     confirmAdmin: boolean;
+    isShowCancel: boolean;
 }
 
 export class ConfirmSchedulesDto implements IConfirmSchedulesDto {
@@ -8573,6 +8559,7 @@ export class CreateOrEditIPostDto implements ICreateOrEditIPostDto {
     conditioner: boolean;
     photos: PhotoDto[] | undefined;
     confirmAdmin: boolean;
+    isShowCancel: boolean;
 
     constructor(data?: ICreateOrEditIPostDto) {
         if (data) {
@@ -8609,6 +8596,7 @@ export class CreateOrEditIPostDto implements ICreateOrEditIPostDto {
                     this.photos.push(PhotoDto.fromJS(item));
             }
             this.confirmAdmin = _data["confirmAdmin"];
+            this.isShowCancel = _data["isShowCancel"];
         }
     }
 
@@ -8645,6 +8633,7 @@ export class CreateOrEditIPostDto implements ICreateOrEditIPostDto {
                 data["photos"].push(item.toJSON());
         }
         data["confirmAdmin"] = this.confirmAdmin;
+        data["isShowCancel"] = this.isShowCancel;
         return data;
     }
 
@@ -8677,6 +8666,7 @@ export interface ICreateOrEditIPostDto {
     conditioner: boolean;
     photos: PhotoDto[] | undefined;
     confirmAdmin: boolean;
+    isShowCancel: boolean;
 }
 
 export class CreateOrEditSchedulesDto implements ICreateOrEditSchedulesDto {
@@ -10044,6 +10034,7 @@ export class GetPostForViewDto implements IGetPostForViewDto {
     confirmAdmin: boolean;
     packageType: string | undefined;
     totalLike: number;
+    isShowCancel: boolean;
 
     constructor(data?: IGetPostForViewDto) {
         if (data) {
@@ -10085,6 +10076,7 @@ export class GetPostForViewDto implements IGetPostForViewDto {
             this.confirmAdmin = _data["confirmAdmin"];
             this.packageType = _data["packageType"];
             this.totalLike = _data["totalLike"];
+            this.isShowCancel = _data["isShowCancel"];
         }
     }
 
@@ -10126,6 +10118,7 @@ export class GetPostForViewDto implements IGetPostForViewDto {
         data["confirmAdmin"] = this.confirmAdmin;
         data["packageType"] = this.packageType;
         data["totalLike"] = this.totalLike;
+        data["isShowCancel"] = this.isShowCancel;
         return data;
     }
 
@@ -10163,6 +10156,7 @@ export interface IGetPostForViewDto {
     confirmAdmin: boolean;
     packageType: string | undefined;
     totalLike: number;
+    isShowCancel: boolean;
 }
 
 export class GetPostForViewDtoPagedResultDto implements IGetPostForViewDtoPagedResultDto {
@@ -10533,6 +10527,77 @@ export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
 export interface IIsTenantAvailableOutput {
     state: TenantAvailabilityState;
     tenantId: number | undefined;
+}
+
+export class NotificationDto implements INotificationDto {
+    id: number | undefined;
+    notificationName: string | undefined;
+    isSending: boolean;
+    createdAt: moment.Moment;
+    updatedAt: moment.Moment;
+    tenantId: number | undefined;
+    postId: number;
+    creatorUserId: number | undefined;
+
+    constructor(data?: INotificationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.notificationName = _data["notificationName"];
+            this.isSending = _data["isSending"];
+            this.createdAt = _data["createdAt"] ? moment(_data["createdAt"].toString()) : <any>undefined;
+            this.updatedAt = _data["updatedAt"] ? moment(_data["updatedAt"].toString()) : <any>undefined;
+            this.tenantId = _data["tenantId"];
+            this.postId = _data["postId"];
+            this.creatorUserId = _data["creatorUserId"];
+        }
+    }
+
+    static fromJS(data: any): NotificationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NotificationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["notificationName"] = this.notificationName;
+        data["isSending"] = this.isSending;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>undefined;
+        data["tenantId"] = this.tenantId;
+        data["postId"] = this.postId;
+        data["creatorUserId"] = this.creatorUserId;
+        return data;
+    }
+
+    clone(): NotificationDto {
+        const json = this.toJSON();
+        let result = new NotificationDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface INotificationDto {
+    id: number | undefined;
+    notificationName: string | undefined;
+    isSending: boolean;
+    createdAt: moment.Moment;
+    updatedAt: moment.Moment;
+    tenantId: number | undefined;
+    postId: number;
+    creatorUserId: number | undefined;
 }
 
 export class PackagePostDto implements IPackagePostDto {
@@ -11080,6 +11145,53 @@ export class RegisterOutput implements IRegisterOutput {
 
 export interface IRegisterOutput {
     canLogin: boolean;
+}
+
+export class ReportInput implements IReportInput {
+    fromDate: moment.Moment;
+    toDate: moment.Moment;
+
+    constructor(data?: IReportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fromDate = _data["fromDate"] ? moment(_data["fromDate"].toString()) : <any>undefined;
+            this.toDate = _data["toDate"] ? moment(_data["toDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ReportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fromDate"] = this.fromDate ? this.fromDate.toISOString() : <any>undefined;
+        data["toDate"] = this.toDate ? this.toDate.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): ReportInput {
+        const json = this.toJSON();
+        let result = new ReportInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IReportInput {
+    fromDate: moment.Moment;
+    toDate: moment.Moment;
 }
 
 export class ResetPasswordDto implements IResetPasswordDto {

@@ -50,11 +50,12 @@ namespace AccommodationSearchSystem.Controllers
             // lấy user , check email có trong db không
             if (user == null)
             {
-                return NotFound(new
-                {
-                    StatusCode = 404,
-                    Message = "Email doesn't exist"
-                });
+                //return NotFound(new
+                //{
+                //    StatusCode = 404,
+                //    Message = "Email doesn't exist"
+                //});
+                throw new Exception("Email không tồn tại!");
             }
 
             var tokenBytes = RandomNumberGenerator.GetBytes(64);

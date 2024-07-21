@@ -35,19 +35,8 @@ export class AppPackagePostsPaymentSuccessComponent extends AppComponentBase imp
       this.vnp_TransactionStatus = params.get('vnp_TransactionStatus') || '';
       this.vnp_Amount = params.get('vnp_Amount') || '';
       this.vnp_OrderInfo = params.get('vnp_OrderInfo') || '';
-      //this.vnp_ReturnUrl = params.get('vnp_ReturnUrl') || '';
-
-
-
-      console.log(this.vnp_TransactionStatus);
-      console.log(this.vnp_Amount);
-      console.log(this.vnp_OrderInfo);
-      console.log(this.vnp_ReturnUrl);
-
-
     });
     this.callback();
-
   }
 
 
@@ -57,7 +46,6 @@ export class AppPackagePostsPaymentSuccessComponent extends AppComponentBase imp
       this.packages.paymentUrl = this.vnp_ReturnUrl;
       console.log(this.paymentUrl);
       this._packageService.callBack(this.packages).subscribe((res)=>{
-
         this.notify.info('Thanh toán thành công');
       })
     }
@@ -65,6 +53,8 @@ export class AppPackagePostsPaymentSuccessComponent extends AppComponentBase imp
 
 
   returnToPackagePosts(): void {
-    this._router.navigate(['/app/app-package-posts']);
+    // this._router.navigate(['/app/app-package-posts']);
+
+    this._router.navigate(['/app/app-package-posts'], { queryParams: { tab: 2 } });
   }
 }

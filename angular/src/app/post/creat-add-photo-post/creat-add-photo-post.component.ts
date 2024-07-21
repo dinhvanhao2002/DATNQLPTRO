@@ -83,9 +83,15 @@ export class CreatAddPhotoPostComponent extends AppComponentBase implements OnIn
   }
 
   show(): void {
-    this.posts = new CreateOrEditIPostDto();
+    this.resetModalState();
     this.active = true;
     this.modal.show();
+  }
+
+  resetModalState(): void {
+    this.posts = new CreateOrEditIPostDto();
+    this.uploader.clearQueue();
+    this.saving = false;
   }
 
   save(): void {
@@ -98,10 +104,10 @@ export class CreatAddPhotoPostComponent extends AppComponentBase implements OnIn
       .subscribe((result) => {
         this.postId = result;
         console.log(result);
-        this.notify.info(this.l("SavedSuccessfully"));
         this.uploadImages();
         this.close();
         this._postComponent.updateTable();
+        this.notify.info(this.l("SavedSuccessfully"));
       });
   }
 
@@ -117,9 +123,9 @@ export class CreatAddPhotoPostComponent extends AppComponentBase implements OnIn
 
     this._postService.createAndAddPhoto(this.postId, filesToUpload)
       .subscribe(() => {
-        this.notify.success(this.l("Thêm ảnh thành công"));
+        //this.notify.success(this.l("Thêm ảnh thành công"));
       }, (error) => {
-        this.notify.error(this.l("Thêm ảnh thất bại"));
+        //this.notify.error(this.l("Thêm ảnh thất bại"));
       });
   }
 

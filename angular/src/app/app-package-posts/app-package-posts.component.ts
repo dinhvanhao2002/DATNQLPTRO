@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { CancelPostDto, ConfirmPackageDto, GetPackageViewDto, PackagePostsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPackagePostsVipProComponent } from './app-package-posts-vip-pro/app-package-posts-vip-pro.component';
@@ -7,6 +7,9 @@ import { PaginationParamsModel } from '@shared/commom/models/base.model';
 import { ceil } from 'lodash-es';
 import { Table } from 'primeng/table';
 import { AppPackagePostsEditComponent } from './app-package-posts-edit/app-package-posts-edit.component';
+import Swal from 'sweetalert2';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -39,9 +42,13 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
   isLoading = false;
   active: boolean = false;
 
+  @ViewChild('tabset', { static: false }) tabset: TabsetComponent;
+  @ViewChildren(TabDirective) tabs: QueryList<TabDirective>;
+
   constructor(
     injector: Injector,
-    public _packageService: PackagePostsServiceProxy
+    public _packageService: PackagePostsServiceProxy,
+    private activeroute: ActivatedRoute
   ) {
     super(injector);
   }
@@ -67,6 +74,10 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
     // });
     this.getStatus();
     this.updateTable();
+
+    this.selectSecondTab();
+
+
   }
 
   getStatus(): void {
@@ -125,23 +136,48 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
         });
   }
 
+  // confirm(): void {
+  //   this.getStatus();
+  //   this.message.confirm('', 'Bạn có chắc sẽ xác nhận ?', (isConfirme) => {
+  //     if (isConfirme) {
+  //       if (this.statusPackage) {
+  //         this.notify.warn("Gói bài đã được xác nhận");
+  //       } else  {
+  //         this.packageConfirm.tenantId = this.tenantId;
+  //         this._packageService.confirmPackage(this.packageConfirm)
+  //           .subscribe(() => {
+  //             this.notify.success('Gói này đã được lưu');
+  //             this.updateTable();
+  //           })
+  //       }
+  //     }
+  //   })
+  // }
   confirm(): void {
     this.getStatus();
-    this.message.confirm('', 'Bạn có chắc sẽ xác nhận ?', (isConfirme) => {
-      if (isConfirme) {
+
+    Swal.fire({
+      title: 'Xác nhận',
+      text: 'Bạn có chắc sẽ xác nhận ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Có',
+      cancelButtonText: 'Hủy bỏ',
+    }).then((result) => {
+      if (result.isConfirmed) {
         if (this.statusPackage) {
-          this.notify.warn("Gói bài đã được xác nhận");
-        } else  {
+          this.notify.warn('Gói bài đã được xác nhận');
+        } else {
           this.packageConfirm.tenantId = this.tenantId;
-          this._packageService.confirmPackage(this.packageConfirm)
-            .subscribe(() => {
-              this.notify.success('Gói này đã được lưu');
-              this.updateTable();
-            })
+          this._packageService.confirmPackage(this.packageConfirm).subscribe(() => {
+            this.notify.success('Gói này đã được lưu');
+            this.updateTable();
+          });
         }
       }
-    })
+    });
   }
+
 
   // Hủy gói đăng ký
   cancelPackage() {
@@ -159,17 +195,35 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
         });
   }
 
+  // cancel(): void {
+  //   this.message.confirm('', 'Bạn có chắc sẽ hủy ?', (isConfirme) => {
+  //     if (isConfirme) {
+  //       this.packageCancel.tenantId = this.tenantId;
+  //       this._packageService.cancelPackage(this.packageCancel)
+  //         .subscribe(() => {
+  //           this.notify.success('Gói này đã được hủy');
+  //           this.updateTable();
+  //         })
+  //     }
+  //   })
+  // }
   cancel(): void {
-    this.message.confirm('', 'Bạn có chắc sẽ hủy ?', (isConfirme) => {
-      if (isConfirme) {
+    Swal.fire({
+      title: 'Xác nhận',
+      text: 'Bạn có chắc sẽ hủy ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Có',
+      cancelButtonText: 'Hủy bỏ',
+    }).then((result) => {
+      if (result.isConfirmed) {
         this.packageCancel.tenantId = this.tenantId;
-        this._packageService.cancelPackage(this.packageCancel)
-          .subscribe(() => {
-            this.notify.success('Gói này đã được hủy');
-            this.updateTable();
-          })
+        this._packageService.cancelPackage(this.packageCancel).subscribe(() => {
+          this.notify.success('Gói này đã được hủy');
+          this.updateTable();
+        });
       }
-    })
+    });
   }
 
   updateTable() {
@@ -210,4 +264,13 @@ export class AppPackagePostsComponent extends AppComponentBase implements OnInit
       }
     })
   }
+
+  selectSecondTab(): void {
+    if (this.tabset) {
+      this.tabset.tabs[1].active = true; // Index 1 corresponds to the second tab
+    }
+  }
+
+
+
 }

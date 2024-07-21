@@ -1,6 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +11,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
 {
     public class CreateOrEditIPostDto : EntityDto<long?>
     {
-        public string? PostCode { get; set; }
+        public string PostCode { get; set; }
         public int? TenantId { get; set; }
         [StringLength(4000)]
         public string Title { get; set; }
@@ -37,6 +36,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
         public bool Conditioner { get; set; } // Có điều hóa hay không
         public ICollection<PhotoDto> Photos { get; set; }
         public bool ConfirmAdmin { get; set; }
+        public bool IsShowCancel { get; set; }
 
     }
 }

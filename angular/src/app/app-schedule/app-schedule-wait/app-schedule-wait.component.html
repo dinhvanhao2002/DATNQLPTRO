@@ -97,10 +97,6 @@
                                         <td style="min-width:15rem">
                                             {{ rowData.hour | date: 'HH:mm:ss' }}
                                         </td>
-                                        <!-- <td style="min-width:10rem">
-                                            <i class="pi"
-                                                [ngClass]="{ 'text-green-500 pi-check-circle': rowData.confirm === true, 'text-red-500 pi-times-circle': rowData.confirm === false } "></i>
-                                        </td> -->
                                         <td class="text-center" style="min-width:10rem">
                                             <ng-container *ngIf="rowData.confirm; else notConfirmed">
                                                 <span class="text-green-500 font-bold">Đã xác nhận</span>
@@ -181,9 +177,13 @@
                                         <td style="min-width:15rem">
                                             {{ rowData.hour | date: 'HH:mm:ss' }}
                                         </td>
-                                        <td style="min-width:10rem">
-                                            <i class="pi"
-                                                [ngClass]="{ 'text-green-500 pi-check-circle': rowData.confirm === true, 'text-red-500 pi-times-circle': rowData.confirm === false } "></i>
+                                        <td class="text-center" style="min-width:10rem">
+                                            <ng-container *ngIf="rowData.confirm; else notConfirmed">
+                                                <span class="text-green-500 font-bold">Đã xác nhận</span>
+                                            </ng-container>
+                                            <ng-template #notConfirmed>
+                                                <span class="text-yellow-500 font-bold">Chưa xác nhận</span>
+                                            </ng-template>
                                         </td>
                                     </tr>
                                 </ng-template>
@@ -234,19 +234,6 @@
                                                     <i class="pi pi-undo"></i>
                                                     {{ "Reset" | localize }}
                                                 </button>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <!-- <div class="form-outline mb-2" data-mdb-input-init>
-
-                                                    <input pInputText class="form-control" type="search"
-                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                                                        placeholder="Search keyword" />
-
-                                                </div> -->
-                                                <!-- <span class="p-input-icon-left ml-5">
-                                                  <i class="pi pi-search"></i>
-                                                  <input pInputText class="form-control" type="search" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" />
-                                              </span> -->
                                             </div>
                                         </div>
                                     </div>
@@ -303,10 +290,6 @@
                                         <td style="min-width:15rem">
                                             {{ rowDataHost.hour | date: 'HH:mm:ss' }}
                                         </td>
-                                        <!-- <td style="min-width:10rem">
-                                            <i class="pi"
-                                                [ngClass]="{ 'text-green-500 pi-check-circle': rowDataHost.confirm === true, 'text-red-500 pi-times-circle': rowDataHost.confirm === false } "></i>
-                                        </td> -->
                                         <td style="min-width:15rem">
                                             {{ rowDataHost.reasonCancel }}
                                         </td>
@@ -327,7 +310,6 @@
                                 [paginator]="true" [scrollable]="true" responsiveLayout="scroll"
                                 [busy]="isLoading"
                                 [selection]="selectedSchedule"
-
                                 [globalFilterFields]="['title', 'roomPrice', 'id']">
                                 <ng-template pTemplate="caption">
                                     <div>

@@ -6,8 +6,8 @@
 
         <abp-modal-header *ngIf="posts.id" [title]="'EditPosts' | localize"
           (onCloseClick)="modal.hide()"></abp-modal-header>
-        <!-- <abp-modal-header *ngIf="!posts.id" [title]="'CreateNewPost' | localize"
-          (onCloseClick)="modal.hide()"></abp-modal-header> -->
+        <abp-modal-header *ngIf="!posts.id" [title]="'CreateNewPost' | localize"
+          (onCloseClick)="modal.hide()"></abp-modal-header>
 
         <div class="modal-body">
           <tabset>

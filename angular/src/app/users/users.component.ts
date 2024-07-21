@@ -14,6 +14,7 @@ import {
 import { CreateUserDialogComponent } from './create-user/create-user-dialog.component';
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
 import { ResetPasswordDialogComponent } from './reset-password/reset-password.component';
+import Swal from 'sweetalert2';
 
 
 class PagedUsersRequestDto extends PagedRequestDto {
@@ -30,7 +31,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | null;
   advancedFiltersVisible = false;
-  shownLoginRoleId: number;
+  shownUserId = 2;
 
   constructor(
     injector: Injector,
@@ -81,24 +82,45 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       )
       .subscribe((result: UserDtoPagedResultDto) => {
         this.users = result.items;
+        const userId = this.users.map(users => users.id == this.shownUserId);
+        console.log(userId);
+        console.log(this.users);
         this.showPaging(result, pageNumber);
       });
   }
 
   // this.message.confirm('', 'Bạn có chắc sẽ hủy ?', (isConfirme) => {
 
+  // protected delete(user: UserDto): void {
+  //   this.message.confirm(
+  //    '','Bạn có thực sự muốn xóa người dùng này không ?',
+  //     (result: boolean) => {
+  //       if (result) {
+  //         this._userService.delete(user.id).subscribe(() => {
+  //           this.notify.success(this.l('SuccessfullyDeleted'));
+  //           this.refresh();
+  //         });
+  //       }
+  //     }
+  //   );
+  // }
+
   protected delete(user: UserDto): void {
-    this.message.confirm(
-     '','Bạn có chắc sẽ hủy ?',
-      (result: boolean) => {
-        if (result) {
-          this._userService.delete(user.id).subscribe(() => {
-            this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refresh();
-          });
-        }
+    Swal.fire({
+      //title: 'Xác nhận',
+      text: 'Bạn có thực sự muốn xóa người dùng này không ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Có',
+      cancelButtonText: 'Không',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._userService.delete(user.id).subscribe(() => {
+          Swal.fire('Đã xóa!', 'Người dùng đã được xóa thành công.', 'success');
+          this.refresh();
+        });
       }
-    );
+    });
   }
 
   private showResetPasswordUserDialog(id?: number): void {

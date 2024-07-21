@@ -2,7 +2,7 @@ import { Component, HostListener, Injector, OnInit } from '@angular/core';
 import { CommentsService } from '@app/_services/comments.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import { AppAuthService } from '@shared/auth/app-auth.service';
-import { UserCommentServiceProxy, UserCommentViewDto } from '@shared/service-proxies/service-proxies';
+import { ManagePostsServiceProxy, NotificationDto, UserCommentServiceProxy, UserCommentViewDto } from '@shared/service-proxies/service-proxies';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -10,7 +10,8 @@ import { Subscription } from 'rxjs';
   templateUrl: './user-home.component.html',
   styleUrls: ['./user-home.component.css'],
   providers: [
-    UserCommentServiceProxy
+    UserCommentServiceProxy,
+    ManagePostsServiceProxy
   ],
 
 })
@@ -23,11 +24,17 @@ export class UserHomeComponent extends AppComponentBase {
   shownLoginNameRole = '';
   unreadComments: UserCommentViewDto[] = [];
 
+
+ notifications: NotificationDto[] = [];
+
+ unreadCount: number = 0;
+
   constructor(
     injector: Injector,
     private _authService: AppAuthService,
     private _service: UserCommentServiceProxy,
-    private _comment: CommentsService
+    private _comment: CommentsService,
+    private _servicePost: ManagePostsServiceProxy,
 
   ) {
     super(injector);
@@ -65,10 +72,26 @@ export class UserHomeComponent extends AppComponentBase {
     //this.getUnreadComments();S
     this._comment.startConnection();
 
-    this._comment.getCommentsForRent.subscribe((comment) => {
-      this.unreadComments.push(comment);
-      this.showNotification(comment);
-    });
+    if(this.shownLoginRoleId == 2){
+      this.showNotification();
+      // Thông báo admin bài đăng mới
+      this._comment.receiveNotification.subscribe((notification) => {
+        this.notifications.push(notification);
+        this.showNotification();
+      });
+    }
+
+    if(this.shownLoginRoleId == 3)
+    {
+
+      // Thông báo tới chủ trọ
+      this.showNotificationRent();
+
+      this._comment.receiveNotificationForRent.subscribe((notification) => {
+        this.notifications.push(notification);
+        this.showNotificationRent();
+      });
+    }
 
   }
 
@@ -90,9 +113,40 @@ export class UserHomeComponent extends AppComponentBase {
     }
   }
 
-  showNotification(comment) {
-    // Thêm logic để hiển thị thông báo cho người dùng
-    alert(`New comment from ${comment.userId}: ${comment.commentContent}`);
+  // showNotification(comment) {
+  //   // Thêm logic để hiển thị thông báo cho người dùng
+  //   alert(`New comment from ${comment.userId}: ${comment.commentContent}`);
+  // }
+
+  markNotificationAsRead(notification: NotificationDto) {
+    notification.isSending = true;
+    this._servicePost.markNotificationAsRead(notification.id).subscribe(() => {
+      this.checkUnreadNotifications();
+    });
+  }
+  // Thông báo tới Admin
+  showNotification() {
+    this._servicePost.getNotifications().subscribe((notifications) => {
+      this.notifications = notifications;
+      this.checkUnreadNotifications();
+    });
+  }
+
+  checkUnreadNotifications() {
+    this.unreadCount = this.notifications.filter(notification => !notification.isSending ).length;
+  }
+
+  // Thông báo tới chủ trọ
+  showNotificationRent()
+  {
+    this._servicePost.getLandlordNotificationsForApprovedPosts().subscribe((notifications) => {
+      this.notifications = notifications;
+      this.checkUnreadNotificationsForRent();
+    });
+  }
+
+  checkUnreadNotificationsForRent() {
+    this.unreadCount = this.notifications.filter(notification => !notification.isSending ).length;
   }
 
 

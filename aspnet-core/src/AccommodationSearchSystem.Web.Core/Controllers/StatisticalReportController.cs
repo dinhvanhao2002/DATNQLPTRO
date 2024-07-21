@@ -1,4 +1,7 @@
-﻿using AccommodationSearchSystem.AccommodationSearchSystem.Statistical;
+﻿using Abp.Authorization;
+using AccommodationSearchSystem.AccommodationSearchSystem.Statistical;
+using AccommodationSearchSystem.AccommodationSearchSystem.Statistical.Dto;
+using AccommodationSearchSystem.Net.MimeTypes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,6 +24,26 @@ namespace AccommodationSearchSystem.Controllers
         {
             _statisticalAppService = statisticalAppService;
         }
+
+        //Xuất excel thống kê báo cáo 
+
+        #region -- Báo cáo thống kê theo tháng 
+        [HttpPost]
+        [Route("BpByDateReport")]
+        public async Task<IActionResult> GetBpByDateForReport([FromBody] ReportInput input)
+        {
+            try
+            {
+                byte[] reportData = await _statisticalAppService.GetBpByDateForReport(input);
+                return File(reportData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Report.xlsx");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        #endregion
+
 
 
 
