@@ -41,5 +41,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto
         public string PackageType { get; set; }
         public int TotalLike { get; set; }
         public bool IsShowCancel { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public DateTime? CreationTime { get; set; }
     }
 }

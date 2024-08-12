@@ -2,7 +2,7 @@ import { Component, HostListener, Injector, OnInit } from '@angular/core';
 import { CommentsService } from '@app/_services/comments.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import { AppAuthService } from '@shared/auth/app-auth.service';
-import { ManagePostsServiceProxy, NotificationDto, UserCommentServiceProxy, UserCommentViewDto } from '@shared/service-proxies/service-proxies';
+import { ManagePostsServiceProxy, NotificationDto, NotificationScheduleNewDto, UserCommentServiceProxy, UserCommentViewDto, ManageAppointmentSchedulesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,7 +11,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./user-home.component.css'],
   providers: [
     UserCommentServiceProxy,
-    ManagePostsServiceProxy
+    ManagePostsServiceProxy,
+    ManageAppointmentSchedulesServiceProxy
   ],
 
 })
@@ -26,8 +27,11 @@ export class UserHomeComponent extends AppComponentBase {
 
 
  notifications: NotificationDto[] = [];
+ notificationDtos: NotificationScheduleNewDto[] = [];
 
  unreadCount: number = 0;
+
+ unreadSchedule: number = 0;
 
   constructor(
     injector: Injector,
@@ -35,6 +39,7 @@ export class UserHomeComponent extends AppComponentBase {
     private _service: UserCommentServiceProxy,
     private _comment: CommentsService,
     private _servicePost: ManagePostsServiceProxy,
+    private _serviceSchedule: ManageAppointmentSchedulesServiceProxy
 
   ) {
     super(injector);
@@ -91,6 +96,18 @@ export class UserHomeComponent extends AppComponentBase {
         this.notifications.push(notification);
         this.showNotificationRent();
       });
+      // Thông báo tới cho chủ trọ bài đăng của bạn bị hủy
+      this._comment.receiveNotificationCancelForRent.subscribe((notification) => {
+        this.notifications.push(notification);
+        this.showNotificationRent();
+      });
+
+      //Thông báo cho chủ trọ các lịch hẹn người thuê trọ hẹn
+      this._comment.receiveNotificationSchedule.subscribe((notificationDtos) => {
+        this.notificationDtos.push(notificationDtos);
+        this.showNotificationRent();
+      });
+
     }
 
   }
@@ -143,10 +160,23 @@ export class UserHomeComponent extends AppComponentBase {
       this.notifications = notifications;
       this.checkUnreadNotificationsForRent();
     });
+
+    // thông báo lịch hẹn
+    this._serviceSchedule.getNotificationHostSchedule().subscribe((notificationDtos) => {
+      this.notificationDtos = notificationDtos;
+      this.checkUnreadNotificationsSchedule();
+    });
   }
 
   checkUnreadNotificationsForRent() {
     this.unreadCount = this.notifications.filter(notification => !notification.isSending ).length;
+  }
+
+
+
+  // Thông báo hủy bài đăng tới chủ trọ
+  checkUnreadNotificationsSchedule(){
+    this.unreadSchedule = this.notificationDtos.filter(notification => !notification.isSending ).length;
   }
 
 

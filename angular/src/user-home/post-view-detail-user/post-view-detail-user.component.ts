@@ -81,6 +81,16 @@ export class PostViewDetailUserComponent
   showRoleId: number;
   showUserId: number;
 
+  commentContent: string = "";
+  replyContent: string = "";
+  showReplyInput: number | null = null;
+
+  // Trường hợp nếu là gói thường thì hạn 1 tháng
+  // gói vip thì ngày đăng ký + 3 tháng
+  // gói vippro thì ngày đăng ký + 6 tháng
+  getCreationTime: string;
+  getExpirationDate: string;
+
   constructor(
     injector: Injector,
     public _postService: ViewPostServiceProxy,
@@ -324,8 +334,6 @@ export class PostViewDetailUserComponent
     });
   }
 
-
-
   getTransit() {
     if (!this.map) {
       console.error("Map is not initialized yet");
@@ -400,6 +408,17 @@ export class PostViewDetailUserComponent
     // this.getStatus();
     this._postService.getForEdit(postId).subscribe((result) => {
       this.post = result;
+      this.post.creationTime = moment(this.post.creationTime);
+      this.getCreationTime = moment(this.post.creationTime).format(
+        "DD/MM/YYYY"
+      );
+      //this.getExpirationDate = this.post.expirationDate !=null ?  moment(this.post.expirationDate).format("DD/MM/YYYY") : moment(this.post.creationTime).add() ;
+      this.getExpirationDate =
+        this.post.expirationDate != null
+          ? moment(this.post.expirationDate).format("DD/MM/YYYY")
+          : moment(this.post.creationTime)
+              .add(2, "months")
+              .format("DD/MM/YYYY");
       this.postPhotos = result.photos;
       // if (this.roomStatus == true) {
       //   this.buttonDisabled = false;
@@ -451,14 +470,19 @@ export class PostViewDetailUserComponent
     }
     this.post.id = postId;
     this.getStatus();
-    if (this.statusLike) {
-      this.notify.warn("Bạn đã yêu thích bài đăng này");
-    } else {
+    // if (this.statusLike) {
+    //   this.notify.warn("Bạn đã yêu thích bài đăng này");
+    // } else {
       this._postService.likePosts(this.post).subscribe((result) => {
         this.likepost = result;
-        this.notify.success("Cảm ơn bạn đã yêu thích bài đăng này");
+        //this.notify.success("Cảm ơn bạn đã yêu thích bài đăng này");
+        if (this.likepost.like) {
+          this.notify.success("Cảm ơn bạn đã yêu thích bài đăng này");
+        } else {
+          this.notify.info("Bạn đã hủy yêu thích bài đăng này");
+        }
       });
-    }
+    //}
   }
 
   // BÌNH LUẬN
@@ -523,41 +547,6 @@ export class PostViewDetailUserComponent
     });
   }
 
-
-  addComment1() {
-    if (this.editMode) {
-      this.editComment();
-      return;
-    }
-
-    this.userComment = new UserCommentDto();
-    this.userComment.postId = this.postId;
-    this.userComment.tenantId = abp.session.tenantId;
-    this.userComment.commentContent = this.comment;
-
-    this._userCommentService
-      .addComment(this.postId, this.userComment)
-      .subscribe(() => {
-        this.notify.success("Thêm bình luận thành công");
-        this.getComments();
-        this.getTotalComments();
-        this.comment = "";
-      });
-  }
-
-  editComment1() {
-    this.userComment.id = this.commentIdToUpdate;
-    this.userComment.commentContent = this.comment;
-
-    this.userComment.commentContent = this.comment;
-    this._userCommentService.update(this.userComment).subscribe(() => {
-      this.notify.success("Sửa bình luận thành công");
-      this.getComments();
-      this.comment = "";
-      this.editMode = false;
-    });
-  }
-
   deleteComment(CommentID?: number) {
     this._userCommentService.deleteComment(CommentID).subscribe(() => {
       this.notify.success("Xóa bình luận thành công");
@@ -604,16 +593,39 @@ export class PostViewDetailUserComponent
     return timeAgo;
   }
 
-  showChangeDataRead(){
-
-  }
+  showChangeDataRead() {}
 
   openZalo(phoneNumber: string) {
     if (phoneNumber) {
-      window.open('https://zalo.me/' + phoneNumber);
+      //window.open('https://zalo.me/' + phoneNumber);
+      window.open(
+        "https://zalo.me/" + phoneNumber,
+        "_blank",
+        "width=400 ,height=540"
+      );
     }
   }
 
+  submitComment() {}
 
+  toggleReplyInput(commentId: number) {
+    this.showReplyInput = this.showReplyInput === commentId ? null : commentId;
+  }
 
+  submitReply(parentCommentId: number): void {
+    if (this.replyContent.trim()) {
+      const reply = new UserCommentDto();
+      reply.commentContent = this.replyContent;
+      reply.postId = this.postId;
+      reply.parentCommentId = parentCommentId;
+
+      this._userCommentService
+        .addReply(parentCommentId, reply)
+        .subscribe(() => {
+          alert("Gửi phản hồi thành công");
+          this.getComments();
+          this.replyContent = "";
+        });
+    }
+  }
 }

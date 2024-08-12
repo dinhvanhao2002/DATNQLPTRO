@@ -491,3 +491,20 @@
     padding-right: 0;
     border-right: none;
 }
+
+
+df-messenger {
+    --df-messenger-bot-message: #F1F1F1;
+    /* --df-messenger-button-titlebar-color: #FF9100; */
+
+
+
+}
+df-messenger svg {
+    display: none;
+}
+
+
+df-messenger .df-messenger-wrapper .df-messenger-titlebar .df-logo svg {
+    display: none;
+}

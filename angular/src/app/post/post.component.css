@@ -31,3 +31,10 @@
     color: #6c757d; /* Gray color for disabled icons */
     pointer-events: none; /* Disable interaction */
   }
+
+
+  .scrollable-table {
+    max-height: 400px; /* Đặt chiều cao tối đa cho bảng, bạn có thể điều chỉnh giá trị này */
+    overflow-y: auto;  /* Kích hoạt thanh cuộn dọc nếu chiều cao vượt quá giới hạn */
+  }
+

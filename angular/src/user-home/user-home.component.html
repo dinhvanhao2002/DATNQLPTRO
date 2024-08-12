@@ -1,6 +1,6 @@
 <div class="container-xxl bg-white p-0">
   <!-- Header Start  sticky-header -->
-  <div class="container-fluid bg-dark ">
+  <div class="container-fluid bg-dark sticky-header">
     <div class="row gx-0">
       <div class="col-lg-3 bg-dark d-none d-lg-block">
         <a
@@ -67,19 +67,35 @@
             <div ngbDropdown class="dropdown" aria-expanded="true" style="margin-right: 20px;">
               <a id="dropdownBasic1" ngbDropdownToggle class="no-caret" style="color: white; cursor: pointer;">
                 <i class="fa fa-bell"></i>
-                <span class="badge" [style.display]="unreadCount > 0 ? 'inline' : 'none'">{{ unreadCount }}</span>
+                <span class="badge" [style.display]="unreadCount > 0 || unreadSchedule > 0  ? 'inline' : 'none'">{{ unreadCount + unreadSchedule }}</span>
               </a>
               <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right dropdown-menu-lg custom-dropdown-menu">
                 <div class="dropdown-header">Thông báo mới</div>
                 <div class="dropdown-body">
+                  <div *ngIf="notificationDtos.length > 0; else notificationDtos">
+                    <ul class="notification-list">
+                      <li *ngFor="let notification of notificationDtos" (click)="markNotificationAsRead(notification)"
+                          [class.read]="notification.isSending" class="notification-item" [routerLink]="['/app/app-schedule']"
+                          ngbTooltip="{{ notification.notificationScheduleName }}"
+                        >
+                        {{ notification.notificationScheduleName }}
+                      </li>
+                    </ul>
+                  </div>
+
                   <div *ngIf="notifications.length > 0; else noNotifications">
                     <ul class="notification-list">
                       <li *ngFor="let notification of notifications" (click)="markNotificationAsRead(notification)"
-                          [class.read]="notification.isSending" class="notification-item" [routerLink]="['/app/post']">
+                          [class.read]="notification.isSending" class="notification-item" [routerLink]="['/app/post']"
+                          ngbTooltip="{{ notification.notificationName }}"
+                        >
                         {{ notification.notificationName }}
                       </li>
                     </ul>
                   </div>
+                  <!-- Thông báo đặt lịch hẹn  -->
+
+
                   <ng-template #noNotifications>
                     <div class="no-notifications">
                       <p>Không có thông báo</p>

@@ -59,7 +59,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
             // Lấy số lượng bài đăng theo từng loại
             var postCounts = await _repositoryPost.GetAll()
-                .Where(p => p.TenantId == tenantId && !p.IsDeleted && p.ConfirmAdmin)
+                .Where(p => p.TenantId == tenantId && !p.IsDeleted && p.ConfirmAdmin == true)
                 .GroupBy(p => p.PriceCategory)
                 .Select(g => new { PriceCategory = g.Key, Count = g.Count() })
                 .ToListAsync();
@@ -215,7 +215,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
             var data = new DashBoardTotalPost();
 
             data.TotalPost = await (from p in _repositoryPost.GetAll().AsNoTracking()
-                                   where p.TenantId == tenantId && p.IsDeleted == false && p.ConfirmAdmin == true
+                                   where p.TenantId == tenantId && p.IsDeleted == false && p.ConfirmAdmin
                                    select (int)p.Id).CountAsync();
 
             return data;
@@ -306,19 +306,19 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.Statistical
 
                 // Retrieve data from repositories
                 var users = await _repositoryUser.GetAll()
-                    .Where(u => u.CreationTime >= input.FromDate && u.CreationTime <= input.ToDate && u.TenantId == tenantId && !u.IsDeleted)
+                    .Where(u => u.CreationTime >= input.FromDate && u.CreationTime <= input.ToDate)
                     .ToListAsync();
-
+                // Lấy ra bài đăng đã được duyệt 
                 var posts = await _repositoryPost.GetAll()
-                    .Where(p => p.CreationTime >= input.FromDate && p.CreationTime <= input.ToDate && p.TenantId == tenantId && !p.IsDeleted && p.ConfirmAdmin)
+                    .Where(p => p.CreationTime >= input.FromDate && p.CreationTime <= input.ToDate &&  p.ConfirmAdmin == true)
                     .ToListAsync();
 
                 var schedules = await _repositorySchedule.GetAll()
-                    .Where(s => s.CreationTime >= input.FromDate && s.CreationTime <= input.ToDate && s.TenantId == tenantId && !s.IsDeleted)
+                    .Where(s => s.CreationTime >= input.FromDate && s.CreationTime <= input.ToDate && s.Confirm ==true)
                     .ToListAsync();
 
                 var postLikes = await _repositoryUserLikePost.GetAll()
-                    .Where(ul => ul.CreationTime >= input.FromDate && ul.CreationTime <= input.ToDate && ul.TenantId == tenantId && !ul.IsDeleted)
+                    .Where(ul => ul.CreationTime >= input.FromDate && ul.CreationTime <= input.ToDate && ul.TenantId == tenantId)
                     .ToListAsync();
 
                 // Excel template handling

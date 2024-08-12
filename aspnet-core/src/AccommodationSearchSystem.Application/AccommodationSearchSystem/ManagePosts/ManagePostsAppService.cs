@@ -809,7 +809,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
                         join pk in _repositoryPackagePost.GetAll() on u.Id equals pk.HostId into pkGroup
                         from pk in pkGroup.DefaultIfEmpty()
-                        where pk == null || (pk.IsDeleted == false && pk.Cancel == false && (pk.PackageType == "Gói VIP pro" || pk.PackageType == "Gói VIP"))
+                       // where pk == null || (pk.IsDeleted == false && pk.Cancel == false && (pk.PackageType == "Gói VIP pro" || pk.PackageType == "Gói VIP"))
                   
                         select new { Post = p, User = u, PackagePost = pk, Photos = _repositoryPhotoPost.GetAll().AsNoTracking().Where(ph => ph.PostId == p.Id).ToList() };
 
@@ -882,9 +882,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 await _repositoryPost.UpdateAsync(post);
 
                 // Tao thông báo từ admin 
-                var notification = new Notification
+                var notification = new Notification  
                 {
-                    NotificationName = $"Bài đăng có PostId = {input.Id} được phê duyệt",
+                    NotificationName = $"Bài đăng có tiêu đề {post.Title} được phê duyệt",
                     IsSending = false, // Initially set to false (unread)
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
@@ -921,7 +921,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
                 // Tao thông báo từ admin 
                 var notification = new Notification
                 {
-                    NotificationName = $"Bài đăng có mã:{input.Id} đã bị quản trị viên hủy!",
+                    NotificationName = $"Bài đăng có tiêu đề {post.Title} đã bị quản trị viên hủy vì chưa phù hợp!",
                     IsSending = false, // Initially set to false (unread)
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
@@ -1060,7 +1060,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
         {
             var tenantId = AbpSession.TenantId;
             var notifications = await _notification.GetAll().Where( e => e.CreatorUserId!= 2)
-                .OrderByDescending(n => n.CreationTime)
+                .OrderByDescending(n => n.IsSending == false)
+                .ThenByDescending(n => n.CreationTime)
                 .ToListAsync();
             return ObjectMapper.Map<List<NotificationDto>>(notifications);
         }
@@ -1075,14 +1076,15 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
           
             var approvedPosts = await _repositoryPost.GetAll()
-                .Where(p => p.ConfirmAdmin == true && p.CreatorUserId == userId)
+                .Where(p => (p.ConfirmAdmin == true || (p.ConfirmAdmin == false && p.IsShowCancel == true)) && p.CreatorUserId == userId)
                 .ToListAsync();
 
             var notifications = await _notification.GetAll()
                 .Where(n => approvedPosts.Select(p => p.Id).Contains(n.PostId)
                              && n.CreatorUserId == 2)
                 
-                .OrderByDescending(n => n.CreationTime)
+                .OrderByDescending(n => n.IsSending == false)
+                .ThenByDescending(n => n.CreationTime)
                 .ToListAsync();
 
             // Map notifications to DTOs
@@ -1090,6 +1092,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts
 
             return notificationDtos;
         }
+
 
     }
 

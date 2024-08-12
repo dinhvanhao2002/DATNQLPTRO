@@ -26,6 +26,24 @@
           <strong>{{l("Square")}}</strong>
           <p>{{post.square }} (m2)</p>
         </div>
+        <div>
+          <strong>{{l("Ngày đăng")}}</strong>
+          <p>{{this.getCreationTime }}</p>
+        </div>
+        <div>
+          <strong>{{l("Ngày hết hạn")}}</strong>
+          <p>{{this.getExpirationDate }}</p>
+        </div>
+        <div>
+          <strong>Trạng thái:</strong>
+          <span
+            class="room-status {{
+              post.roomStatus ? 'available' : 'not-available'
+            }}"
+          >
+            {{ post.roomStatus ? "Còn phòng" : "Đã hết" }} </span
+          >
+        </div>
       </div>
        <!-- Cần check ngIf nếu như là người thuê trọ thì mới hiển thị còn chủ trọ với admin thì không cần -->
       <div class="card-footer">
@@ -112,7 +130,7 @@
   </div>
 </div>
 
- <div class="content px-4 mt-6">
+ <!-- <div class="content px-4 mt-6">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -132,100 +150,20 @@
             <div class="message-content">
               <img class="message-img" src="assets/img/user.png">
               <div class="chat-body">
-                <strong>{{comment.createByName}}</strong><br>
-                <p class="chat__body-content">{{comment.commentContent}}</p>
-                <p class="chat__body-time">
-                  <i class="fas fa-clock mr-1"></i>{{comment.timeAgo}}</p>
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-primary mr-1" id="commentContent"
-                    (click)="show(comment.id)" [disabled]="!isUserOwner(comment.userId)">Sửa</button>
-                  <button class="btn btn-sm btn-danger"
-                    (click)="deleteComment(comment.id)" [disabled]="!isUserOwner(comment.userId)">Xóa</button>
+                <div>
+                  <strong>{{comment.createByName}}</strong><br>
+                  <p class="chat__body-content">{{comment.commentContent}}</p>
+                  <p class="chat__body-time">
+                    <i class="fas fa-clock mr-1"></i>{{comment.timeAgo}}</p>
                 </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="card-footer">
-        <form (ngSubmit)="show()" autocomplete="off">
-          <div class="input-group">
-            <input name="commentContent" id="commentContent" required [(ngModel)]="this.comment" type="text" class="form-control input-sm"
-              placeholder="Nhập bình luận" (input)="onCommentInput()">
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-primary">{{ editMode ? 'Sửa bình luận' : 'Gửi bình luận' }}</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Bình luận cấp 2 -->
-<!-- <div class="content px-4 mt-6">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <h1 class="font__title">Bình luận</h1>
-      </div>
-    </div>
-  </div>
-  <div class="col-12">
-    <div class="card">
-      <div class="d-flex">
-        <span class="comment__title">Bình luận gần nhất</span>
-        <span class="comment__title-cmt">{{totalCmt}} bình luận</span>
-      </div>
-      <div class="card-body card_chat">
-        <ul class="chat">
-          <li *ngFor="let comment of commentsView">
-            <div class="message-content">
-              <img class="message-img" src="assets/img/user.png">
-              <div class="chat-body">
-                <strong>{{comment.createByName}}</strong><br>
-                <p class="chat__body-content">{{comment.commentContent}}</p>
-                <p class="chat__body-time">
-                  <i class="fas fa-clock mr-1"></i>{{comment.timeAgo}}</p>
-                <div class="action-buttons">
+                <div class="action-buttons" style="padding-left: 100px;">
                   <button class="btn btn-sm btn-primary mr-1" id="commentContent"
                     (click)="show(comment.id)" [disabled]="!isUserOwner(comment.userId)">Sửa</button>
                   <button class="btn btn-sm btn-danger mr-1"
                     (click)="deleteComment(comment.id)" [disabled]="!isUserOwner(comment.userId)">Xóa</button>
-                  <button class="btn btn-sm btn-secondary"
-                    (click)="replyComment(comment.id)">Trả lời</button>
+                  <button class="btn btn-sm btn-danger"
+                    >Trả lời</button>
                 </div>
-                <div *ngIf="replyInputs[comment.id]" class="reply-input">
-                  <div class="input-group mt-2">
-                    <input name="replyContent" [(ngModel)]="comment.replyContent" type="text" class="form-control input-sm"
-                      placeholder="Nhập bình luận">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" (click)="submitReply(comment.id, comment.replyContent)">Gửi</button>
-                    </div>
-                  </div>
-                </div>
-
-
-                <ul *ngIf="comment.replies && comment.replies.length">
-                  <li *ngFor="let reply of comment.replies">
-                    <div class="message-content">
-                      <img class="message-img" src="assets/img/user.png">
-                      <div class="chat-body">
-                        <strong>{{reply.createByName}}</strong><br>
-                        <p class="chat__body-content">{{reply.commentContent}}</p>
-                        <p class="chat__body-time">
-                          <i class="fas fa-clock mr-1"></i>{{reply.timeAgo}}</p>
-                        <div class="action-buttons">
-                          <button class="btn btn-sm btn-primary mr-1" id="commentContent"
-                            (click)="show(reply.id)" [disabled]="!isUserOwner(reply.userId)">Sửa</button>
-                          <button class="btn btn-sm btn-danger mr-1"
-                            (click)="deleteComment(reply.id)" [disabled]="!isUserOwner(reply.userId)">Xóa</button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
               </div>
             </div>
           </li>
@@ -246,5 +184,97 @@
     </div>
   </div>
 </div> -->
+
+<div class="content px-4 mt-6">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="font__title">Bình luận</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card">
+      <div class="d-flex">
+        <span class="comment__title">Bình luận gần nhất</span>
+        <span class="comment__title-cmt">{{totalCmt}} bình luận</span>
+      </div>
+      <div class="card-body card_chat">
+        <ul class="chat">
+          <div *ngFor="let comment of commentsView" class="comment-item">
+            <div class="message-content">
+              <img class="message-img" src="assets/img/user.png" alt="User Image">
+              <div class="chat-body justify-content-between" style="display: flex;">
+                <div>
+                  <strong>{{comment.createByName}}</strong><br>
+                  <p class="chat__body-content">{{comment.commentContent}}</p>
+                  <p class="chat__body-time">
+                    <i class="fas fa-clock mr-1"></i>{{comment.timeAgo}}
+                  </p>
+                </div>
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-primary mr-1" (click)="show(comment.id)" [disabled]="!isUserOwner(comment.userId)">Sửa</button>
+                  <button class="btn btn-sm btn-danger mr-1" (click)="deleteComment(comment.id)" [disabled]="!isUserOwner(comment.userId)">Xóa</button>
+                  <button class="btn btn-sm btn-secondary" (click)="toggleReplyInput(comment.id)">Trả lời</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form để thêm bình luận con -->
+            <div *ngIf="showReplyInput === comment.id" class="reply-form">
+              <form (ngSubmit)="submitReply(comment.id)" class="d-flex" style="padding-left: 100px;" >
+                <img class="message-img" src="assets/img/user.png" alt="User Image">
+                <div class="input-group" >
+                  <input name="replyContent" [(ngModel)]="replyContent" type="text" class="form-control input-sm"
+                         placeholder="Nhập phản hồi" required>
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Danh sách bình luận con -->
+            <ul *ngIf="comment.replies && comment.replies.length > 0" class="reply-container">
+              <li *ngFor="let reply of comment.replies" class="comment-item">
+                <div class="message-content" >
+                  <img class="message-img" src="assets/img/user.png" alt="User Image">
+                  <div class="chat-body">
+                    <div>
+                      <strong>{{reply.createByName}}</strong><br>
+                      <p class="chat__body-content">{{reply.commentContent}}</p>
+                      <p class="chat__body-time">
+                        <i class="fas fa-clock mr-1"></i>{{reply.timeAgo}}
+                      </p>
+                    </div>
+                    <div class="action-buttons">
+                      <button class="btn btn-sm btn-primary mr-1" (click)="show(reply.id)" [disabled]="!isUserOwner(reply.userId)">Sửa</button>
+                      <button class="btn btn-sm btn-danger mr-1" (click)="deleteComment(reply.id)" [disabled]="!isUserOwner(reply.userId)">Xóa</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </ul>
+      </div>
+
+      <div class="card-footer">
+        <form (ngSubmit)="show()" autocomplete="off">
+          <div class="input-group">
+            <input name="commentContent" [(ngModel)]="comment" type="text" class="form-control input-sm"
+                   placeholder="Nhập bình luận" (input)="onCommentInput()" required>
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-primary">{{ editMode ? 'Sửa bình luận' : 'Gửi bình luận' }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 </div>

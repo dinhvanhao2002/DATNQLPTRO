@@ -76,6 +76,11 @@
                                 </th>
                                 <th style="min-width:15rem">
                                     <div class="flex align-items-center">
+                                        Tên bài đăng
+                                    </div>
+                                </th>
+                                <th style="min-width:15rem">
+                                    <div class="flex align-items-center">
                                         Tên người thuê
                                     </div>
                                 </th>
@@ -94,11 +99,11 @@
                                         Giờ hẹn
                                     </div>
                                 </th>
-                                <!-- <th style="min-width:10rem">
+                                <th style="min-width:10rem">
                                     <div class="flex align-items-center">
                                         Trạng thái thuê
                                     </div>
-                                </th> -->
+                                </th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
@@ -106,6 +111,9 @@
                                 [pSelectableRow]="rowData" (click)="selectedRow = rowData">
                                 <td style="min-width:10rem" pFrozenColumn>
                                     {{ rowData.id }}
+                                </td>
+                                <td style="min-width:15rem">
+                                    {{ rowData.title }}
                                 </td>
                                 <td style="min-width:15rem">
                                     {{ rowData.renterHostName }}
@@ -123,14 +131,15 @@
                                     <i class="pi"
                                         [ngClass]="{ 'text-green-500 pi-check-circle': rowData.confirm === true, 'text-red-500 pi-times-circle': rowData.confirm === false } "></i>
                                 </td> -->
-                                <!-- <td class="text-center" style="min-width:10rem">
-                                    <ng-container *ngIf="rowData.confirm; else notConfirmed">
+                                <!-- Lấy lên trạng thái xem đã thuê hay chưa . lên lịch là 1  -->
+                                <td class="text-center" style="min-width:10rem">
+                                    <ng-container *ngIf="!rowData.roomStatus; else notConfirmed">
                                         <span class="text-green-500 font-bold">Đã thuê</span>
                                     </ng-container>
                                     <ng-template #notConfirmed>
                                         <span class="text-yellow-500 font-bold">Chưa thuê</span>
                                     </ng-template>
-                                </td> -->
+                                </td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
@@ -184,6 +193,11 @@
                                 </th>
                                 <th style="min-width:15rem">
                                     <div class="flex align-items-center">
+                                        Tên bài đăng
+                                    </div>
+                                </th>
+                                <th style="min-width:15rem">
+                                    <div class="flex align-items-center">
                                         Tên chủ trọ
                                     </div>
                                 </th>
@@ -214,6 +228,9 @@
                                 [pSelectableRow]="rowData" (click)="selectedRow = rowData">
                                 <td style="min-width:10rem" pFrozenColumn>
                                     {{ rowData.id }}
+                                </td>
+                                <td style="min-width:15rem">
+                                    {{ rowData.title }}
                                 </td>
                                 <td style="min-width:15rem">
                                     {{ rowData.hostName }}

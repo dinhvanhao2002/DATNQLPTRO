@@ -61,5 +61,13 @@ namespace AccommodationSearchSystem.Chat.Signalr
         }
 
 
+        //Gửi thông báo đặt lịch hẹn tới cho chủ trọ 
+        public async Task SendNotificationSchedule(int comments)
+        {
+            // Gửi thông báo đến admin 
+            await Clients.All.SendAsync("ReceiveNotificationSchedule", comments);
+        }
+
+
     }
 }

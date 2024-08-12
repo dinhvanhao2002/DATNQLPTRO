@@ -87,59 +87,61 @@
 <app-header-user-home></app-header-user-home>
 
 <!-- DỊCH VỤ CỦA CHÚNG TÔI -->
-<div class="container-xxl py-5">
+<!-- <div class="container-xxl py-5">
   <div class="container">
     <div class="wow fadeInUp">
       <h6 class="font__title text-primary text-center"
         style="font-size: 30px; font-weight: 600"
       >
-        DỊCH VỤ CỦA CHÚNG TÔI
+        PHÒNG TRỌ NỔI BẬT
       </h6>
     </div>
     <div class="row g-4 align-items-stretch">
-      <!-- Thay đổi align-items thành align-items-stretch -->
+
       <div class="col-lg-4 col-md-6 wow fadeInUp">
         <div class="service-box rounded shadow overflow-hidden h-100">
-          <!-- Thêm class h-100 -->
           <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">AN TOÀN</h5>
-            <small
-              >Chúng tôi cam kết cung cấp dịch vụ an toàn tuyệt đối cho khách
-              hàng.</small
-            >
+            <h5 class="fw-bold mb-0">CHUNG CƯ MINI</h5>
+
           </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 wow fadeInUp">
         <div class="service-box rounded shadow overflow-hidden h-100">
-          <!-- Thêm class h-100 -->
           <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">LÃI 0%</h5>
-            <small
-              >Chúng tôi mang đến cho khách hàng dịch vụ lãi suất 0%, giúp bạn
-              tiết kiệm chi phí tối đa.</small
-            >
+            <h5 class="fw-bold mb-0">PHÒNG ĐƠN</h5>
+
           </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 wow fadeInUp">
         <div class="service-box rounded shadow overflow-hidden h-100">
-          <!-- Thêm class h-100 -->
           <div class="text-center p-4 mt-3">
-            <h5 class="fw-bold mb-0">NHANH</h5>
-            <small
-              >Dịch vụ của chúng tôi được thiết kế để đáp ứng nhu cầu của bạn
-              một cách nhanh chóng và hiệu quả nhất.</small
-            >
+            <h5 class="fw-bold mb-0">TỪ 2 NGƯỜI</h5>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 <!-- Khối hiện thị phòng trọ -->
+<div class="container">
+  <div class="search-container">
+    <button class="location-button">
+        RENT24H
+    </button>
+    <input type="text" class="search-input"
+    placeholder="Tìm kiếm"
+    [(ngModel)]="filterText" placeholder="Tìm kiếm địa điểm...">
+    <button class="search-button">
+      <i class="fas fa-search"  (click)="search()"></i>
+    </button>
+  </div>
+</div>
+
+
 
 <div class="container">
   <section class="content-header">
@@ -190,33 +192,39 @@
             >
             </p-dropdown>
           </div>
-          <div class="col-md-2">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Tìm kiếm"
-              [(ngModel)]="filterText"
-            />
-          </div>
-          <!-- Search button -->
+          <!-- <div class="col-md-2">
+            <p-dropdown
+              [options]="listpro"
+              [(ngModel)]="datasquare"
+              placeholder="Tiện ích"
+              [style]="{ width: '100%' }"
+            >
+            </p-dropdown>
+          </div> -->
           <div class="col-md-2">
             <button
               class="btn btn-outline-secondary btn-search"
               (click)="search()"
             >
-              Tìm kiếm
+              Áp dụng
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-info" (click)="refresh()">
+              <i class="pi pi-undo"></i>
+              {{ "Reset" | localize }}
             </button>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <div class="col-2">
+  <!-- <div class="col-2">
     <button class="btn btn-info" (click)="refresh()">
       <i class="pi pi-undo"></i>
       {{ "Reset" | localize }}
     </button>
-  </div>
+  </div> -->
 
   <section class="content px-2">
     <div class="container-fluid">
@@ -284,7 +292,8 @@
                           }}"
                         >
                           {{ post.roomStatus ? "Còn phòng" : "Đã hết" }} </span
-                        ><br />
+                        >
+                        <br />
                         <span
                           style="color: rgb(234, 102, 194); font-style: italic"
                         >

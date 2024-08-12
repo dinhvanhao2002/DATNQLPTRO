@@ -84,11 +84,14 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                         .Where(e => tenantId == e.TenantId && e.Id == input.Id)
                         orderby p.Id descending
                         join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id
+                        join pk in _repositoryPackagePost.GetAll().AsNoTracking() on p.CreatorUserId equals pk.CreatorUserId into pkGroup
+                        from pk in pkGroup.DefaultIfEmpty()
                         where u.TenantId == p.TenantId
                         select new
                         {
                             Post = p,  // lấy toàn bộ thuộc tính bảng Post và bảng User
-                            User = u
+                            User = u,
+                            PackagePost = pk
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -100,6 +103,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
 
             var post = result.Post;
             var user = result.User;
+            var packPost = result.PackagePost;
 
             // Lấy toàn bộ ảnh đối với bài đăng đó 
             var photoData = await _repositoryPhotoPost.GetAllListAsync(e => e.PostId == input.Id);
@@ -127,6 +131,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                 EmailAddress = user.EmailAddress,
                 CreateByName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
+                CreationTime = post.CreationTime,
+                ExpirationDate = packPost != null ? packPost.ExpirationDate : (DateTime?)null,
                 Photos = photoData.Select(photo => new PhotoDto
                 {
                     Url = photo.Url,
@@ -260,6 +266,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                 EmailAddress = item.User.EmailAddress,
                 PhoneNumber = item.User.PhoneNumber,
                 PackageType = item.PackagePost != null ? item.PackagePost.PackageType : null,
+                ExpirationDate = item.PackagePost != null ? item.PackagePost.ExpirationDate : (DateTime?)null,
                 Photos = item.Photos.Select(photo => new PhotoDto
                 {
                     Id = photo.Id,
@@ -299,9 +306,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                          //Check điều kiện diện tích
                          .Where(e => (input.Square == 1 && e.Square < 20) || (input.Square == 2 && (e.Square >= 20 && e.Square < 30)) || (input.Square == 3 && (e.Square >= 30 && e.Square < 40)) || (input.Square == 4 && e.Square >= 40) || input.Square == null)
                          // Check điều kiện giá phòng
-                         .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 && e.RoomPrice < 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 && e.RoomPrice < 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
+                         .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 && e.RoomPrice <= 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 && e.RoomPrice <= 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 3 && e.RoomPrice <= 4)) ||(input.RoomPrice == 5 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
                         .Where(e => input.filterText == null || e.Title.Contains(input.filterText)
-                                    || e.Address.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
+                                    || e.Address.Contains(input.filterText) || e.District.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
 
                         join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id into uGroup
                         from u in uGroup.DefaultIfEmpty()
@@ -342,6 +349,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                 CreateByName = item.User?.FullName,
                 EmailAddress = item.User?.EmailAddress,
                 PhoneNumber = item.User?.PhoneNumber,
+                ExpirationDate = item.PackagePost !=null ? item.PackagePost.ExpirationDate : (DateTime?)null,
                 Photos = item.Photos.Select(photo => new PhotoDto
                 {
                     Id = photo.Id,
@@ -379,10 +387,12 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
             .Where(e => e.District == input.District || input.District == null)
             //Check điều kiện diện tích
             .Where(e => (input.Square == 1 && e.Square < 20) || (input.Square == 2 && (e.Square >= 20 || e.Square < 30)) || (input.Square == 3 && (e.Square >= 30 || e.Square < 40)) || (input.Square == 4 && e.Square >= 40) || input.Square == null)
-            // Check điều kiện giá phòng
-            .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 || e.RoomPrice < 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 || e.RoomPrice < 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
+                         // Check điều kiện giá phòng
+             .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 && e.RoomPrice <= 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 && e.RoomPrice <= 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 3 && e.RoomPrice <= 4)) || (input.RoomPrice == 5 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
+
+            // .Where(e => (input.RoomPrice == 1 && (e.RoomPrice < 1)) || (input.RoomPrice == 2 && (e.RoomPrice >= 1 || e.RoomPrice < 2)) || (input.RoomPrice == 3 && (e.RoomPrice >= 2 || e.RoomPrice < 3)) || (input.RoomPrice == 4 && (e.RoomPrice >= 4)) || input.RoomPrice == null)
             .Where(e => input.filterText == null || e.Title.Contains(input.filterText)
-                                || e.Address.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
+                                || e.Address.Contains(input.filterText) || e.District.Contains(input.filterText) || e.RoomPrice.Equals(input.filterText))
                         orderby p.Id descending
 
                         join u in _repositoryUser.GetAll().AsNoTracking() on p.CreatorUserId equals u.Id into uGroup
@@ -424,6 +434,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
                 EmailAddress = item.User.EmailAddress,
                 PhoneNumber = item.User.PhoneNumber,
                 PackageType = item.PackagePost != null ? item.PackagePost.PackageType : null,
+                ExpirationDate = item.PackagePost != null ? item.PackagePost.ExpirationDate : (DateTime?)null,
                 Photos = item.Photos.Select(photo => new PhotoDto
                 {
                     Id = photo.Id,
@@ -502,30 +513,59 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
     
                               }).FirstOrDefaultAsync();
             // Kiểm tra xem bài đăng đã được yêu thích hay chưa
-            var postCount = await (from ul in _repositoryUserLikePost.GetAll()
-                                   join user in _repositoryUser.GetAll() on ul.HostId equals user.Id
-                                   where ul.PostId == input.Id && ul.TenantId == tenantId && ul.Like == true && ul.HostId == userId && ul.IsDeleted == false
-                                   select ul).CountAsync();
+            //var postCount = await (from ul in _repositoryUserLikePost.GetAll()
+            //                       join user in _repositoryUser.GetAll() on ul.HostId equals user.Id
+            //                       where ul.PostId == input.Id && ul.TenantId == tenantId && ul.Like == true && ul.HostId == userId && ul.IsDeleted == false
+            //                       select ul).CountAsync();
 
-            if (postCount >= 1)
+            //if (postCount >= 1)
+            //{
+            //    throw new UserFriendlyException(00, "Bạn đã yêu thích bài đăng này ");
+            //}
+            //else
+            //{
+            //    if (post == null)
+            //    {
+            //        // Xử lý khi không tìm thấy bài đăng tương ứng
+            //        throw new UserFriendlyException(00, L("PostNotFound"));
+            //    }
+
+            //    // Khởi tạo đối tượng Schedule và chèn vào repository
+            //    var userlike = ObjectMapper.Map<UserLikePost>(post);
+            //    userlike.TenantId = tenantId;
+            //    userlike.Like = true;
+            //    await _repositoryUserLikePost.InsertAsync(userlike);
+            //}
+            //// Trả về thông tin về schedule đã được tạo
+            //return post;
+            if (post == null)
             {
-                throw new UserFriendlyException(00, "Bạn đã yêu thích bài đăng này ");
+                throw new UserFriendlyException(00, L("PostNotFound"));
+            }
+
+            var existingLike = await (from ul in _repositoryUserLikePost.GetAll()
+                                      where ul.PostId == input.Id && ul.TenantId == tenantId && ul.HostId == userId && ul.IsDeleted == false
+                                      select ul).FirstOrDefaultAsync();
+
+            if (existingLike != null)
+            {
+                existingLike.Like = !existingLike.Like;  // Toggle the like status
+                await _repositoryUserLikePost.UpdateAsync(existingLike);
+                post.Like = existingLike.Like;
             }
             else
             {
-                if (post == null)
+                var userLike = new UserLikePost
                 {
-                    // Xử lý khi không tìm thấy bài đăng tương ứng
-                    throw new UserFriendlyException(00, L("PostNotFound"));
-                }
-
-                // Khởi tạo đối tượng Schedule và chèn vào repository
-                var userlike = ObjectMapper.Map<UserLikePost>(post);
-                userlike.TenantId = tenantId;
-                userlike.Like = true;
-                await _repositoryUserLikePost.InsertAsync(userlike);
+                    TenantId = tenantId,
+                    HostId = (int)userId,
+                    PostId = (int)post.PostId,
+                    Like = true
+                };
+                await _repositoryUserLikePost.InsertAsync(userLike);
+                post.Like = true;
             }
-            // Trả về thông tin về schedule đã được tạo
+
             return post;
         }
         [AbpAllowAnonymous]
@@ -536,7 +576,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ViewPost
 
             // Lấy sô lượng yêu thích theo từng bài đăng
             var postCountLike = await _repositoryUserLikePost.GetAll()
-                .Where(p => p.TenantId == tenantId && !p.IsDeleted)
+                .Where(p => p.TenantId == tenantId && !p.IsDeleted && p.Like == true)
             .GroupBy(p => p.PostId)
                 .Select(g => new { TenantId = tenantId, PostId = g.Key, Count = g.Count() })
                 .ToListAsync();

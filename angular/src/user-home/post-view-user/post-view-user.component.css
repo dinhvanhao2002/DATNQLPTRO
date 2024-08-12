@@ -96,7 +96,12 @@
     border-bottom-right-radius: 3px;
     margin-bottom: 5px;
     padding-right: 5px;
+    width: 100px;
 }
+
+.special-width {
+    width: 100px;
+  }
 
 .home-product-item__favourite::after{
     position: absolute;

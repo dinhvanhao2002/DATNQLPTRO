@@ -44,18 +44,53 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
   //   "Hai Bà Trưng", "Hoàn Kiếm", "Hoàng Mai", "Long Biên", "Nam Từ Liêm", "Bắc từ Liêm", "Thanh Xuân" ];
 
   districts: { value: string, label: string}[] = [
-    { value: "Ba Đình", label: "Ba Đình" },
-    { value: "Bắc Từ Liêm", label: "Bắc Từ Liêm" },
-    { value: "Cầu Giấy", label: "Cầu Giấy" },
-    { value: "Đống Đa", label: "Đống Đa" },
-    { value: "Hà Đông", label: "Hà Đông" },
-    { value: "Hai Bà Trưng", label: "Hai Bà Trưng" },
-    { value: "Hoàn Kiếm", label: "Hoàn Kiếm" },
-    { value: "Hoàng Mai", label: "Hoàng Mai" },
-    { value: "Long Biên", label: "Long Biên" },
-    { value: "Nam Từ Liêm", label: "Nam Từ Liêm" },
-    { value: "Bắc từ Liêm", label: "Bắc từ Liêm" },
-    { value: "Thanh Xuân", label: "Thanh Xuân" }
+    // { value: "Ba Đình", label: "Ba Đình" },
+    // { value: "Bắc Từ Liêm", label: "Bắc Từ Liêm" },
+    // { value: "Cầu Giấy", label: "Cầu Giấy" },
+    // { value: "Đống Đa", label: "Đống Đa" },
+    // { value: "Hà Đông", label: "Hà Đông" },
+    // { value: "Hai Bà Trưng", label: "Hai Bà Trưng" },
+    // { value: "Hoàn Kiếm", label: "Hoàn Kiếm" },
+    // { value: "Hoàng Mai", label: "Hoàng Mai" },
+    // { value: "Long Biên", label: "Long Biên" },
+    // { value: "Nam Từ Liêm", label: "Nam Từ Liêm" },
+    // { value: "Bắc từ Liêm", label: "Bắc từ Liêm" },
+    // { value: "Thanh Xuân", label: "Thanh Xuân" }
+    { value: "Quận Ba Đình", label: "Quận Ba Đình" },
+    { value: "Quận Bắc Từ Liêm", label: "Quận Bắc Từ Liêm" },
+    { value: "Quận Cầu Giấy", label: "Quận Cầu Giấy" },
+    { value: "Quận Hà Đông", label: "Quận Hà Đông" },
+    { value: "Quận Hai Bà Trưng", label: "Quận Hai Bà Trưng" },
+    { value: "Quận Hoàn Kiếm", label: "Quận Hoàn Kiếm" },
+    { value: "Quận Hoàng Mai", label: "Quận Hoàng Mai" },
+    { value: "Quận Long Biên", label: "Quận Long Biên" },
+    { value: "Quận Nam Từ Liêm", label: "Quận Nam Từ Liêm" },
+    { value: "Quận Tây Hồ", label: "Quận Tây Hồ" },
+    { value: "Quận Thanh Xuân", label: "Quận Thanh Xuân" },
+    { value: "Quận Đống Đa", label: "Quận Đống Đa" },
+    { value: "Huyện Ba Vì", label: "Huyện Ba Vì" },
+    { value: "Huyện Chương Mỹ", label: "Huyện Chương Mỹ" },
+    { value: "Huyện Gia Lâm", label: "Huyện Gia Lâm" },
+    { value: "Huyện Hoài Đức", label: "Huyện Hoài Đức" },
+    { value: "Huyện Mê Linh", label: "Huyện Mê Linh" },
+    { value: "Huyện Mỹ Đức", label: "Huyện Mỹ Đức" },
+    { value: "Huyện Phú Xuyên", label: "Huyện Phú Xuyên" },
+    { value: "Huyện Phúc Thọ", label: "Huyện Phúc Thọ" },
+    { value: "Huyện Quốc Oai", label: "Huyện Quốc Oai" },
+    { value: "Huyện Sóc Sơn", label: "Huyện Sóc Sơn" },
+    { value: "Huyện Thạch Thất", label: "Huyện Thạch Thất" },
+    { value: "Huyện Thanh Oai", label: "Huyện Thanh Oai" },
+    { value: "Huyện Thanh Trì", label: "Huyện Thanh Trì" },
+    { value: "Huyện Thường Tín", label: "Huyện Thường Tín" },
+    { value: "Huyện Ứng Hòa", label: "Huyện Ứng Hòa" },
+    { value: "Huyện Đan Phượng", label: "Huyện Đan Phượng" },
+    { value: "Huyện Đông Anh", label: "Huyện Đông Anh" },
+    { value: "Thị Xã Sơn Tây", label: "Thị Xã Sơn Tây" }
+  ];
+
+  districtss: { value: string, label: string}[] = [
+    { value: "Quận Ba Đình", label: "Quận Ba Đình" },
+
   ];
 
   square: { value: number, label: string}[] = [
@@ -64,6 +99,14 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
     { value: 3, label: "Từ 30m2 đến 40m2" },
     { value: 4, label: "Trên 40m2" }
   ];
+
+  listpro: { value: string, label: string}[] = [
+    { value: "Điều hòa", label: "Điều hòa" },
+    { value: "Nóng lạnh", label: "Nóng lạnh" },
+    { value: "Chỗ để xe", label: "Chỗ để xe" },
+
+  ];
+
   roomPrice: { value: number, label: string}[] = [
     { value: 1, label: "Dưới 1 triệu đồng" },
     { value: 2, label: "Từ 1 đến 2 triệu đồng" },
@@ -247,7 +290,9 @@ export class PostHomeUserComponent extends AppComponentBase implements OnInit {
 
   openZalo(phoneNumber: string) {
     if (phoneNumber) {
-      window.open('https://zalo.me/' + phoneNumber);
+     // window.open('https://zalo.me/' + phoneNumber);
+
+      window.open('https://zalo.me/' + phoneNumber, '_blank', 'width=400 ,height=540');
     }
   }
 

@@ -1245,6 +1245,64 @@ export class ManageAppointmentSchedulesServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getNotificationHostSchedule(): Observable<NotificationScheduleNewDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/ManageAppointmentSchedules/GetNotificationHostSchedule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetNotificationHostSchedule(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNotificationHostSchedule(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<NotificationScheduleNewDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<NotificationScheduleNewDto[]>;
+        }));
+    }
+
+    protected processGetNotificationHostSchedule(response: HttpResponseBase): Observable<NotificationScheduleNewDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(NotificationScheduleNewDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<NotificationScheduleNewDto[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -6774,6 +6832,238 @@ export class UserCommentServiceProxy {
         }
         return _observableOf<UserCommentDto>(null as any);
     }
+
+    /**
+     * @param parentCommentId (optional) 
+     * @param body (optional) 
+     * @return Success
+     */
+    addReply(parentCommentId: number | undefined, body: UserCommentDto | undefined): Observable<UserCommentDto> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/AddReply?";
+        if (parentCommentId === null)
+            throw new Error("The parameter 'parentCommentId' cannot be null.");
+        else if (parentCommentId !== undefined)
+            url_ += "parentCommentId=" + encodeURIComponent("" + parentCommentId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddReply(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddReply(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentDto>;
+        }));
+    }
+
+    protected processAddReply(response: HttpResponseBase): Observable<UserCommentDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserCommentDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentDto>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateReply(body: UserCommentDto | undefined): Observable<UserCommentDto> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/UpdateReply";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateReply(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateReply(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentDto>;
+        }));
+    }
+
+    protected processUpdateReply(response: HttpResponseBase): Observable<UserCommentDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserCommentDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentDto>(null as any);
+    }
+
+    /**
+     * @param commentId (optional) 
+     * @return Success
+     */
+    deleteReply(commentId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/DeleteReply?";
+        if (commentId === null)
+            throw new Error("The parameter 'commentId' cannot be null.");
+        else if (commentId !== undefined)
+            url_ += "commentId=" + encodeURIComponent("" + commentId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteReply(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteReply(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteReply(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param parentCommentId (optional) 
+     * @return Success
+     */
+    getReplies(parentCommentId: number | undefined): Observable<UserCommentDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/UserComment/GetReplies?";
+        if (parentCommentId === null)
+            throw new Error("The parameter 'parentCommentId' cannot be null.");
+        else if (parentCommentId !== undefined)
+            url_ += "parentCommentId=" + encodeURIComponent("" + parentCommentId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetReplies(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetReplies(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserCommentDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserCommentDto[]>;
+        }));
+    }
+
+    protected processGetReplies(response: HttpResponseBase): Observable<UserCommentDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(UserCommentDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserCommentDto[]>(null as any);
+    }
 }
 
 @Injectable()
@@ -9368,6 +9658,9 @@ export class GetAllSchedulesDto implements IGetAllSchedulesDto {
     confirm: boolean;
     cancel: boolean;
     reasonCancel: string | undefined;
+    roomStatus: boolean;
+    title: string | undefined;
+    postId: number;
 
     constructor(data?: IGetAllSchedulesDto) {
         if (data) {
@@ -9390,6 +9683,9 @@ export class GetAllSchedulesDto implements IGetAllSchedulesDto {
             this.confirm = _data["confirm"];
             this.cancel = _data["cancel"];
             this.reasonCancel = _data["reasonCancel"];
+            this.roomStatus = _data["roomStatus"];
+            this.title = _data["title"];
+            this.postId = _data["postId"];
         }
     }
 
@@ -9412,6 +9708,9 @@ export class GetAllSchedulesDto implements IGetAllSchedulesDto {
         data["confirm"] = this.confirm;
         data["cancel"] = this.cancel;
         data["reasonCancel"] = this.reasonCancel;
+        data["roomStatus"] = this.roomStatus;
+        data["title"] = this.title;
+        data["postId"] = this.postId;
         return data;
     }
 
@@ -9434,6 +9733,9 @@ export interface IGetAllSchedulesDto {
     confirm: boolean;
     cancel: boolean;
     reasonCancel: string | undefined;
+    roomStatus: boolean;
+    title: string | undefined;
+    postId: number;
 }
 
 export class GetAllSchedulesDtoPagedResultDto implements IGetAllSchedulesDtoPagedResultDto {
@@ -10035,6 +10337,8 @@ export class GetPostForViewDto implements IGetPostForViewDto {
     packageType: string | undefined;
     totalLike: number;
     isShowCancel: boolean;
+    expirationDate: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
 
     constructor(data?: IGetPostForViewDto) {
         if (data) {
@@ -10077,6 +10381,8 @@ export class GetPostForViewDto implements IGetPostForViewDto {
             this.packageType = _data["packageType"];
             this.totalLike = _data["totalLike"];
             this.isShowCancel = _data["isShowCancel"];
+            this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
         }
     }
 
@@ -10119,6 +10425,8 @@ export class GetPostForViewDto implements IGetPostForViewDto {
         data["packageType"] = this.packageType;
         data["totalLike"] = this.totalLike;
         data["isShowCancel"] = this.isShowCancel;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data;
     }
 
@@ -10157,6 +10465,8 @@ export interface IGetPostForViewDto {
     packageType: string | undefined;
     totalLike: number;
     isShowCancel: boolean;
+    expirationDate: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
 }
 
 export class GetPostForViewDtoPagedResultDto implements IGetPostForViewDtoPagedResultDto {
@@ -10598,6 +10908,73 @@ export interface INotificationDto {
     tenantId: number | undefined;
     postId: number;
     creatorUserId: number | undefined;
+}
+
+export class NotificationScheduleNewDto implements INotificationScheduleNewDto {
+    id: number | undefined;
+    notificationScheduleName: string | undefined;
+    scheduleId: number;
+    creationTime: moment.Moment;
+    postId: number;
+    isSending: boolean;
+    creatorUserId: number;
+
+    constructor(data?: INotificationScheduleNewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.notificationScheduleName = _data["notificationScheduleName"];
+            this.scheduleId = _data["scheduleId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.postId = _data["postId"];
+            this.isSending = _data["isSending"];
+            this.creatorUserId = _data["creatorUserId"];
+        }
+    }
+
+    static fromJS(data: any): NotificationScheduleNewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NotificationScheduleNewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["notificationScheduleName"] = this.notificationScheduleName;
+        data["scheduleId"] = this.scheduleId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["postId"] = this.postId;
+        data["isSending"] = this.isSending;
+        data["creatorUserId"] = this.creatorUserId;
+        return data;
+    }
+
+    clone(): NotificationScheduleNewDto {
+        const json = this.toJSON();
+        let result = new NotificationScheduleNewDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface INotificationScheduleNewDto {
+    id: number | undefined;
+    notificationScheduleName: string | undefined;
+    scheduleId: number;
+    creationTime: moment.Moment;
+    postId: number;
+    isSending: boolean;
+    creatorUserId: number;
 }
 
 export class PackagePostDto implements IPackagePostDto {

@@ -173,6 +173,7 @@
     border-bottom-right-radius: 3px;
     margin-bottom: 5px;
     padding-right: 5px;
+    width: 100px;
 }
 
 .home-product-item__favourite::after{
@@ -452,3 +453,62 @@
   transform: scale(1.1); /* Scale ảnh lên khi di chuột qua */
 }
 
+/* css nut search */
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f8ff;
+  margin: 0;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #FFF6EE;
+  border-radius: 50px;
+  padding: 10px 20px;
+  width: 800px;
+  margin: 50px auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.location-button {
+  display: flex;
+  align-items: center;
+  background-color: #FFEED9;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #FF9100;
+  font-size: 16px;
+  margin-right: 10px;
+}
+.location-button svg {
+  margin-right: 5px;
+}
+.location-button span {
+  margin-left: 5px;
+}
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #999;
+}
+.search-button {
+  background-color: #FF9100;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.search-button i {
+  font-size: 16px;
+}

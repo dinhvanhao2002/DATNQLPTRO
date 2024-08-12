@@ -1,0 +1,35 @@
+.policy-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .policy-container .policy-notice {
+    margin-bottom: 15px;
+  }
+
+  .policy-container .policy-notice h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+
+  .policy-container .policy-notice p {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+
+  .policy-container .policy-confirmation {
+    display: flex;
+    align-items: center;
+  }
+
+  .policy-container .policy-confirmation input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .policy-container .policy-confirmation label {
+    font-size: 1rem;
+  }

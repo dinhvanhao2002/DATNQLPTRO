@@ -11,8 +11,11 @@ using AccommodationSearchSystem.AccommodationSearchSystem.ManagePosts.Dto;
 using AccommodationSearchSystem.AccommodationSearchSystem.PackagePosts.Dto;
 using AccommodationSearchSystem.Authorization;
 using AccommodationSearchSystem.Authorization.Users;
+using AccommodationSearchSystem.Chat.Signalr;
 using AccommodationSearchSystem.Entity;
 using AccommodationSearchSystem.EntityFrameworkCore;
+using AccommodationSearchSystem.Migrations;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -27,6 +30,8 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
     {
         private readonly IRepository<AppointmentSchedule, long> _repositorySchedule;
         private readonly IRepository<User, long> _repositoryUser;
+        private readonly IRepository<NotificationScheduleNew, long> _repositoryNotiSchedule;
+        private readonly IHubContext<CommentHub> _hubContext;
         private readonly IRepository<PhotoPost, long> _repositoryPhotoPost;
         private readonly IRepository<Post, long> _repositoryPost;
  
@@ -34,11 +39,16 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
            IRepository<AppointmentSchedule, long> repositorySchedule,
            IRepository<Post, long> repositoryPost,
            IRepository<PhotoPost, long> repositoryPhotoPost,
-           IRepository<User, long> repositoryUser)
+           IRepository<User, long> repositoryUser,
+           IRepository<NotificationScheduleNew, long> repositoryNotiSchedule,
+            IHubContext<CommentHub> hubContext
+           )
 
         {
             _repositorySchedule = repositorySchedule;
             _repositoryUser = repositoryUser;
+            _repositoryNotiSchedule = repositoryNotiSchedule;
+            _hubContext = hubContext;
             _repositoryPost = repositoryPost;
             _repositoryPhotoPost = repositoryPhotoPost;
         }
@@ -178,6 +188,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
                             Hour = s.Hour,
                             Confirm = s.Confirm,
                             Cancel = s.Cancel,
+                            PostId = p.Id,
+                            Title = p.Title,
+                            RoomStatus = p.RoomStatus
                         };
 
             var totalCount = await query.CountAsync();
@@ -190,6 +203,25 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
         public async Task<CreateOrEditSchedulesDto> CreateSchedule(EntityDto<long> input)
         {
             var tenantId = AbpSession.TenantId;
+
+            var UserId = AbpSession.UserId;
+
+            var username = await _repositoryUser.FirstOrDefaultAsync(s => s.Id == UserId);
+
+            // kiểm tra xem lịch hẹn mà chưa hủy tức là đã lên lịch ( mà trường hợp chưa bị hủy là cancel = 0) 
+            var existingSchedule = await _repositorySchedule.FirstOrDefaultAsync(s => s.CreatorUserId == UserId && s.PostId == input.Id && s.Cancel == false);
+
+            //var existingSchedule = await (from s in _repositorySchedule.GetAll()
+            //                              join u in _repositoryUser.GetAll() on s.CreatorUserId equals u.Id
+            //                              where s.CreatorUserId == UserId && s.PostId == input.Id && !s.Cancel
+            //                              select new { s, u }).FirstOrDefaultAsync();
+
+
+            if (existingSchedule != null)
+            {
+                // Nếu đã tồn tại lịch hẹn cho bài đăng này và người thuê trọ này, thông báo lỗi
+                throw new UserFriendlyException(00, ("Bạn đã lên lịch bài đăng này!"));
+            }
             // Lấy dữ liệu của post và user thông qua join
             var post = await (from p in _repositoryPost.GetAll()
                               join user in _repositoryUser.GetAll() on p.CreatorUserId equals user.Id
@@ -200,6 +232,7 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
                                   HostId = (int)p.CreatorUserId,
                                   HostName = user.Name,
                                   HostPhoneNumber = user.PhoneNumber,
+                                  RenterHostName = user.UserName,
                                   Day = DateTime.Now.Date, // Gán ngày hiện tại
                                   GetPostForViewDtos = new GetPostForViewDto
                                   {
@@ -221,8 +254,65 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
             var schedulev1 = ObjectMapper.Map<AppointmentSchedule>(post);
             schedulev1.TenantId = tenantId;
             await _repositorySchedule.InsertAsync(schedulev1);
+
+            var schedulev1Id = await _repositorySchedule.InsertAndGetIdAsync(schedulev1);
+
+            // Khởi tạo thông báo
+            var notificationSchedule = new NotificationScheduleNew
+            {
+                NotificationScheduleName = $"Người thuê trọ có {username.UserName} đã đặt lịch hẹn bài đăng có tiêu đề {post.GetPostForViewDtos.Title}.",
+                ScheduleId = (int)schedulev1Id,  // lấy ra Id bài đăng đó
+                CreationTime = DateTime.Now,
+                PostId = post.PostId,
+                IsSending = false,  // Not read yet
+                CreatorUserId = UserId
+            };
+
+            // Insert the notification into the database
+            await _repositoryNotiSchedule.InsertAsync(notificationSchedule);
+
+            // Send notification to the landlord
+            await _hubContext.Clients.User(post.HostId.ToString()).SendAsync("ReceiveNotificationSchedule", new { Message = notificationSchedule.NotificationScheduleName, ScheduleId = schedulev1.Id });
+
             return post;
+            // return post;
         }
+        #endregion
+
+        #region Hàm để cho chủ trọ nhận được thông báo, với mỗi chủ trọ sẽ nhận được thông báo lịch hẹn từ bài đăng của mình, tức là lấy thông báo trong bảng NotificationScheduleNew, 
+        // check xem bài đăng đó, có phải bài đăng của mình không 
+
+        public async Task<List<NotificationScheduleNewDto>> GetNotificationHostSchedule()
+        {
+            var tenantId = AbpSession.TenantId;
+            var userId = AbpSession.UserId;
+
+            // cần lấy ra bài đăng của bạn đã được lên lịch hẹn 
+            var query = await (from s in _repositorySchedule.GetAll()
+                                       join p in _repositoryPost.GetAll() on s.PostId equals p.Id
+                                       join u in _repositoryUser.GetAll() on s.CreatorUserId equals u.Id
+                                       where (p.CreatorUserId == userId && s.Confirm == false && s.Cancel == false) ||
+                                             (tenantId == s.TenantId && userId == s.HostId && s.Confirm == false && s.Cancel == false)
+                                       select new NotificationScheduleNewDto
+                                       {
+                                           NotificationScheduleName = $"Lịch hẹn mới từ {u.UserName} cho bài đăng {p.Title}",
+                                           ScheduleId = s.Id,
+                                           CreationTime = s.CreationTime,
+                                           PostId = p.Id,
+                                       }).ToListAsync();
+            // lọc xem trong bảng 
+            var notification = await _repositoryNotiSchedule.GetAll()
+               .Where(n => query.Select(p => p.PostId).Contains(n.PostId)
+                            )
+               .OrderByDescending(n => n.IsSending == false)
+               .ThenByDescending(n => n.CreationTime)
+               .ToListAsync();
+
+            var notificationDtos = ObjectMapper.Map<List<NotificationScheduleNewDto>>(notification);
+            return notificationDtos;
+
+        }
+
         #endregion
 
 
@@ -353,6 +443,10 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
                             Hour = s.Hour,
                             Confirm = s.Confirm,
                             Cancel = s.Cancel,
+                            RoomStatus = p.RoomStatus,
+                            Title = p.Title,
+                            PostId = p.Id
+                            
                         };
 
             var totalCount = await query.CountAsync();
@@ -384,6 +478,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
                             Confirm = s.Confirm,
                             Cancel = s.Cancel,
                             ReasonCancel = s.ReasonCancel,
+                            PostId = p.Id,
+                            RoomStatus = p.RoomStatus,
+                            Title = p.Title
                         };
 
             var totalCount = await query.CountAsync();
@@ -415,6 +512,9 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.ManageAppointmentS
                             Confirm = s.Confirm,
                             Cancel = s.Cancel,
                             ReasonCancel = s.ReasonCancel,
+                            Title = p.Title,
+                            RoomStatus = p.RoomStatus,
+                            PostId = p.Id
                         };
 
             var totalCount = await query.CountAsync();

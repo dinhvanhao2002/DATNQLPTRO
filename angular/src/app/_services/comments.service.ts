@@ -22,6 +22,12 @@ export class CommentsService {
   // Lấy thông báo phê duyệt từ chủ trọ
   receiveNotificationForRent = new Subject<any>();
 
+  // Lấy thông báo hủy bài đăng cho chủ trọ
+  receiveNotificationCancelForRent = new Subject<any>();
+
+  //chủ trọ
+  receiveNotificationSchedule = new Subject<any>();
+
   baseUrl = environment.apiUrl;
 
   constructor() {
@@ -73,6 +79,14 @@ export class CommentsService {
 
     this.hubConnection.on('ReceiveNotificationForRent', (data) => {  // tới chủ trọ
       this.receiveNotificationForRent.next(data);;
+    });
+
+    this.hubConnection.on('ReceiveNotificationCancelForRent', (data) => {  // tới chủ trọ về lí do hủy bài đăng
+      this.receiveNotificationCancelForRent.next(data);;
+    });
+
+    this.hubConnection.on('ReceiveNotificationSchedule', (data) => {  // tới chủ trọ về lí do hủy bài đăng
+      this.receiveNotificationSchedule.next(data);
     });
   }
 }

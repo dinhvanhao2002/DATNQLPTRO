@@ -5,12 +5,12 @@
             <form class="form-horizontal" autocomplete="off" #editPackageFormModal="ngForm" (ngSubmit)="save()"
                 *ngIf="active">
 
-                <abp-modal-header *ngIf="packages.id" [title]="'Lịch hẹn'"
+                <abp-modal-header *ngIf="packages.id" [title]="'Ngày hết hạn'"
                     (onCloseClick)="editPackageModal.hide()"></abp-modal-header>
 
                 <div class="modal-body">
                     <tabset>
-                        <tab [heading]="'Điều chỉnh lịch hẹn'" class="pt-3 px-2">
+                        <tab [heading]="'Thiết lập thời gian'" class="pt-3 px-2">
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label" for="day">
                                     Ngày hết hạn

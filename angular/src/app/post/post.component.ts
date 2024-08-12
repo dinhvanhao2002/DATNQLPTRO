@@ -303,7 +303,7 @@ export class PostComponent extends AppComponentBase {
       (isConfirme) => {
         if (isConfirme) {
           if (this.statusPost) {
-            this.notify.warn("Bài đăng đã được hủy");
+            this.notify.warn("Bài đăng đã được xác nhận không thể hủy!");
           } else {
             this.postConfirmAdmin.tenantId = this.tenantId;
             this._postService

@@ -273,5 +273,104 @@ namespace AccommodationSearchSystem.AccommodationSearchSystem.UserComment
             return ObjectMapper.Map<UserCommentDto>(comment);
         }
         #endregion
+
+        #region Tạo phản hồi bình luận 
+        public async Task<UserCommentDto> AddReply(long parentCommentId, UserCommentDto input)
+        {
+            var userId = AbpSession.UserId;
+            var tenantId = AbpSession.TenantId;
+
+            // Kiểm tra bình luận cha có tồn tại không
+            var parentComment = await _repositoryComment.FirstOrDefaultAsync(c => c.Id == parentCommentId);
+            if (parentComment == null)
+            {
+                throw new UserFriendlyException("Bình luận cha không tồn tại");
+            }
+
+            // Tạo bình luận mới và thiết lập các thuộc tính
+            var replyComment = ObjectMapper.Map<UserComments>(input);
+            replyComment.ParentCommentId = parentCommentId;
+            replyComment.PostId = parentComment.PostId; // Đảm bảo bình luận con thuộc cùng bài đăng
+            replyComment.TenantId = tenantId;
+            replyComment.UserId = (long)userId;
+
+            await _repositoryComment.InsertAsync(replyComment);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            // Gửi bình luận con đến client
+            await _hubContext.Clients.All.SendAsync("ReceiveReply", replyComment);
+
+            return ObjectMapper.Map<UserCommentDto>(replyComment);
+        }
+        #endregion
+
+        #region Chỉnh sửa bình luận phản hồi 
+        public async Task<UserCommentDto> UpdateReply(UserCommentDto input)
+        {
+            var userId = AbpSession.UserId;
+
+            // Lấy bình luận cần chỉnh sửa
+            var comment = await _repositoryComment.FirstOrDefaultAsync(c => c.Id == input.Id && c.UserId == userId);
+            if (comment == null)
+            {
+                throw new UserFriendlyException("Không tìm thấy bình luận để sửa");
+            }
+
+            comment.CommentContent = input.CommentContent;
+
+            await _repositoryComment.UpdateAsync(comment);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            // Gửi bình luận đã chỉnh sửa đến client
+            await _hubContext.Clients.All.SendAsync("UpdateReply", comment);
+
+            return ObjectMapper.Map<UserCommentDto>(comment);
+        }
+        #endregion
+
+        #region Xóa bình luận 
+        public async Task DeleteReply(long commentId)
+        {
+            var userId = AbpSession.UserId;
+
+            // Lấy bình luận cần xóa
+            var comment = await _repositoryComment.FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+            if (comment == null)
+            {
+                throw new UserFriendlyException("Không tìm thấy bình luận để xóa");
+            }
+
+            await _repositoryComment.DeleteAsync(comment);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            // Gửi thông báo xóa bình luận đến client
+            await _hubContext.Clients.All.SendAsync("DeleteReply", commentId);
+        }
+
+        #endregion
+
+        #region Lấy danh sách bình luận 
+        public async Task<List<UserCommentDto>> GetReplies(long parentCommentId)
+        {
+            var tenantId = AbpSession.TenantId;
+
+            var replies = await (from c in _repositoryComment.GetAll()
+                                 join u in _repositoryUser.GetAll() on c.UserId equals u.Id
+                                 where c.ParentCommentId == parentCommentId && c.TenantId == tenantId
+                                 orderby c.Id descending
+                                 select new UserCommentDto
+                                 {
+                                     Id = c.Id,
+                                     TenantId = c.TenantId,
+                                     PostId = c.PostId,
+                                     UserId = u.Id,
+                                     CommentContent = c.CommentContent,
+                                     ParentCommentId = c.ParentCommentId
+                                 }).ToListAsync();
+
+            return replies;
+        }
+
+        #endregion
     }
 }

@@ -50,6 +50,7 @@
             selectionMode="single"
             [rowsPerPageOptions]="[5, 25, 50]"
             [paginator]="true"
+            scrollHeight="500px"
             [scrollable]="true"
             responsiveLayout="scroll"
             [busy]="isLoading"
@@ -60,10 +61,7 @@
               <div>
                 <div class="row">
                   <div class="col-md-6">
-                    <!-- <button class="btn btn-outline-info" (click)="updateTable()">
-                                            <i class="pi pi-undo"></i>
-                                            {{ "Reset" | localize }}
-                                        </button> -->
+                    <span>Tổng: {{ this.paginationParams.totalCount }}</span>
                   </div>
                   <div class="col-md-6">
                     <div class="form-outline mb-2" data-mdb-input-init>
@@ -259,8 +257,9 @@
             selectionMode="single"
             [rowsPerPageOptions]="[5, 25, 50]"
             [paginator]="true"
-            [scrollable]="true"
+            scrollHeight="500px"
             responsiveLayout="scroll"
+            [scrollable]="true"
             [busy]="isLoading"
             [selection]="selectedPost"
             [globalFilterFields]="['title', 'roomPrice', 'id']"
@@ -268,7 +267,9 @@
             <ng-template pTemplate="caption">
               <div>
                 <div class="row">
-                  <div class="col-md-6"></div>
+                  <div class="col-md-6">
+                    <span>Tổng: {{ rowData.length }}</span>
+                  </div>
                   <div class="col-md-6">
                     <div class="form-outline mb-2" data-mdb-input-init>
                       <input
@@ -410,6 +411,7 @@
             </ng-template>
           </p-table>
         </div>
+        <!-- tổng số lượng bản ghi  -->
       </div>
     </div>
   </section>

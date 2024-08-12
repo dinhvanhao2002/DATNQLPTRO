@@ -23,6 +23,8 @@ namespace AccommodationSearchSystem.EntityFrameworkCore
         public virtual DbSet<UserLikePost> UserLikePosts { get; set; }
         public virtual DbSet<UserComments> UserCommentes { get; set; }
         public virtual DbSet<VnPayments> VnPaymentes { get; set; }
+        public virtual DbSet<NotificationScheduleNew> NotificationScheduleNews { get; set; }
+
 
 
 

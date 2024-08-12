@@ -47,6 +47,8 @@ namespace AccommodationSearchSystem.Helpers
 
             configuration.CreateMap<VnPayments, VnPaymentRequestDto>().ReverseMap();
             configuration.CreateMap<Notification, NotificationDto>().ReverseMap();
+            configuration.CreateMap<NotificationScheduleNew, NotificationScheduleNewDto>().ReverseMap();
+
 
 
 

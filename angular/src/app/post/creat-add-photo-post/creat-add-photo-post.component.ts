@@ -41,6 +41,7 @@ export class CreatAddPhotoPostComponent extends AppComponentBase implements OnIn
   uploader: FileUploader;
   baseUrl = environment.apiUrl;
   private postId: number;
+  isPolicyAgreed: boolean = false;
 
   constructor(
     injector: Injector,
@@ -95,6 +96,10 @@ export class CreatAddPhotoPostComponent extends AppComponentBase implements OnIn
   }
 
   save(): void {
+    // if (!this.isPolicyAgreed) {
+    //   this.notify.warn(this.l("Bạn phải đồng ý với chính sách đăng bài."));
+    //   return;
+    // }
     this.saving = true;
     this.posts.tenantId = this.tenantId;
     this._postService.createOrEdit(this.posts)
